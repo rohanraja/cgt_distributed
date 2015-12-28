@@ -262,6 +262,9 @@ cdef extern from "execution.h" namespace "cgt":
 
     Interpreter* create_interpreter(ExecutionGraph*, vector[MemLocation], int)
 
+    Interpreter* interpreter_from_file(char *)
+    void interpreter_to_file(Interpreter *, const string &)
+
 cdef vector[long] _tovectorlong(object xs):
     cdef vector[long] out = vector[long]()
     for x in xs: out.push_back(<long>x)
@@ -417,12 +420,21 @@ cdef class CppInterpreterWrapper:
     cdef Interpreter* interp # owned
     cdef object input_types
     cdef object storage
-    def __init__(self, pyeg, input_types, output_locs, parallel):
+    def __init__(self, pyeg, input_types, output_locs, parallel, fname=None):
+
+        if fname != None:
+            self.input_types = input_types
+            self.loadfromFile(fname)
+            return
+
         self.storage = []
         self.eg = make_cpp_execution_graph(pyeg, self.storage)
         cdef vector[MemLocation] cpp_output_locs = _tocppmemvec(output_locs)
         self.interp = create_interpreter(self.eg, cpp_output_locs, parallel)
         self.input_types = input_types
+
+        self.saveToFile(fname)
+
     def __dealloc__(self):
         if self.interp != NULL: del self.interp
         if self.eg != NULL: del self.eg
@@ -438,6 +450,14 @@ cdef class CppInterpreterWrapper:
         cdef IRC[cgtTuple] ret = IRC[cgtTuple](self.interp.run(cargs))
         del cargs
         return list(cgt2py_object(ret.get(), False)) # TODO maybe allow returning view?
+
+    def loadfromFile(self, fname):
+        fname = "/home/rohanraja/code/compgraphlob/executor/eg.bin"
+        self.interp = interpreter_from_file(fname)
+
+    def saveToFile(self, fname):
+        fname = "/home/rohanraja/code/compgraphlob/executor/eg.bin"
+        interpreter_to_file(self.interp, fname)
 
 def cgt_build_root():
     return osp.dirname(osp.dirname(osp.abspath(__file__)))

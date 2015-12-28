@@ -486,6 +486,9 @@ class Op(object):
         """
         return type(self).__name__
 
+    def get_closure_filestring(self):
+        return ''
+
 
 def as_node(val_or_node):
     """    
@@ -558,14 +561,14 @@ class InMemoryData(GetData):
                 return *(cgtArray**)cldata->pptr;
             }"""
         pptr = self.get_pptr()
-        return NativeCompileInfo(code, closure_triples=[("pptr", ctypes.c_void_p, pptr)], 
+        return NativeCompileInfo(code, closure_triples=[("pptr", ctypes.c_void_p, pptr)],
             store_objects=self._value)
     def __repr__(self):
         return "Data{%s}"%(self.typ)
     def get_device(self):
         return self.device
     def get_value(self):
-        return self._value if self.use_numpy else self._value.to_numpy()        
+        return self._value if self.use_numpy else self._value.to_numpy()
         # XXX use more explicit names
     def get_shape(self):
         return self._value.shape
@@ -629,13 +632,13 @@ def differentiably_influenced_by(wrt, outputs=None, nodelist=None):
     return dibset
 
 def pullback(outputs, goutputs, wrt):
-    """    
+    """
     This function propagates derivative information backwards from the outputs of a computation
-    to the inputs. 
+    to the inputs.
     All of these operations are performed symbolically, and we construct expressions for derivatives
     of inputs in terms of derivatives of outputs.
     This function is called 'pullback' as a reference to the similar concept in differential geometry.
-    
+
     More precisely, suppose f is a function with (y_1, y_2, ..., y_k) = f(x_1, x_2, ..., x_n)
     Then pullback([x_1,...,x_n], [y_1,...,y_k], [gy_1, ..., gy_k]) := [gx_1, ..., gx_n]
     """
@@ -681,13 +684,13 @@ def pullback(outputs, goutputs, wrt):
                 # A little complication that arises when we have a node of Tuple type
                 # Instead of having a list of gradient terms, we're going to store a list with one element
                 # and inside that list, we have a list of gradient terms for each tuple element
-                # Let's say we have a tuple node (y,z) with predecessor x                
+                # Let's say we have a tuple node (y,z) with predecessor x
                 # x       ->      (y, z)      ->      y
                 # input        Result{foo_op}      Result{TupleIndex{0}}
                 # At this point in the code, we just got gy.
                 # we first set the gradient at (y,z) to [[None,None]]
                 # then we set the first element to gy to get
-                # [[gy, None]]                
+                # [[gy, None]]
                 par = node.parents[0]
                 if par not in var2gs: var2gs[par] = [[None for _ in par.typ]]
                 var2gs[par][0][node.op.idx] = gnode
@@ -708,7 +711,7 @@ def infer_shape(arr):
     """
     return tuple(x.op.value if isinstance(x.op, Constant) else None for x in  CACHER.simplify(cgt.shape(arr)))
 
-def grad(cost, wrt):    
+def grad(cost, wrt):
     """
     Compute the gradient of scalar-valued `cost` with respect to a list of variables `wrt`
     """
@@ -726,14 +729,14 @@ def grad(cost, wrt):
     return retval
 
 # ================================================================
-# Compilation 
+# Compilation
 # ================================================================
 
 class NativeCompileInfo(object):
     """
     Stores the information necessary to create a NativeCallable object
     """
-    def __init__(self, func_code, closure_triples = None, includes=(), link_flags="", 
+    def __init__(self, func_code, closure_triples = None, includes=(), link_flags="",
             setup=False, teardown=False, gpu_deref_mask=None, store_objects = (), extra_srcs=()):
         """
         func_code : code implementing function
@@ -781,7 +784,7 @@ class Callable(object):
     @property
     def n_in(self):
         raise NotImplementedError
-    
+
 class PyCallable(Callable):
     """
     Callable object with an underlying python function acting on python objects
@@ -793,7 +796,7 @@ class PyCallable(Callable):
         self._func = func
         self._kind = "py"
     def call(self, *args):
-        return self._func(*args)    
+        return self._func(*args)
     @property
     def op_str(self):
         return self._op_str
@@ -809,13 +812,13 @@ class PyCallable(Callable):
     @property
     def n_in(self):
         return self._n_in
-    
-    
+
+
 class NativeCallable(object):
     """
     Callable object with an underlying function pointer that acts on cgtObject
-    """    
-    def __init__(self, n_in, return_type, op_str, fptr, cldata=None, 
+    """
+    def __init__(self, n_in, return_type, op_str, fptr, cldata=None,
             store_objects=None, setup_fptr=None, teardown_fptr=None):
         self._n_in = n_in
         self._return_type = return_type
@@ -842,7 +845,7 @@ class NativeCallable(object):
     @property
     def n_in(self):
         return self._n_in
-    def _call_byval(self, inputs):        
+    def _call_byval(self, inputs):
         raise Todo
         # cgt.cycgt.apply_byval(self.fptr, self.cldata, inputs) #pylint: disable=E1101
     def _call_byref(self, inputs, output):
@@ -852,10 +855,10 @@ class NativeCallable(object):
         elif self.return_type == "byref": self._call_byref(*args)
         else: raise Unreachable
 
-    
-    
+
+
 # ================================================================
-# Ops 
+# Ops
 # ================================================================
 
 
@@ -863,7 +866,7 @@ class NativeCallable(object):
 # ----------------------------------------------------------------
 
 class Constant(Op): #pylint: disable=W0223
-    available_impls = ("python","native_cpu")    
+    available_impls = ("python","native_cpu")
     def __init__(self, value):
         self.value = value
     def get_value(self):
@@ -881,7 +884,7 @@ class ConstantTensor(Constant):
         return "Const{%s}"%self._value_str()
     def _value_str(self):
         ndim = self.value.ndim
-        return "%g"%self.value if ndim==0 else "%s%g...%s"%("["*ndim, self.value.flat[0], "]"*ndim)        
+        return "%g"%self.value if ndim==0 else "%s%g...%s"%("["*ndim, self.value.flat[0], "]"*ndim)
     def get_py_func(self, input_types):
         def f(_, write):
             np.copyto(write, self.value)
@@ -902,7 +905,7 @@ class ConstantTensor(Constant):
     def pullback(self, _inps, _out, _gout):
         return []
     def shp_apply(self, _inputs):
-        return [cgt.constant(x) for x in self.value.shape] 
+        return [cgt.constant(x) for x in self.value.shape]
     def typ_apply(self, input_types):
         assert len(input_types)==0
         return _ndarray_type(self.value)
@@ -917,6 +920,59 @@ class ConstantTensor(Constant):
         ("shape",ctypes.c_void_p,shapeptr),
         ("dtype",ctypes.c_byte,self.value.dtype.num),
         ("data",ctypes.c_void_p,self.value.ctypes.data)]
+
+    def get_closure_filestring(self):
+        triples = self.get_closure()
+        if triples is None:
+            return ""
+
+        vals = []
+        fields = []
+        for (fieldname,fieldtype,val) in triples:
+            vals.append(val)
+            fields.append((fieldname,fieldtype))
+
+        class S(ctypes.Structure):
+            _fields_ = fields
+        closure = S(*vals)
+
+        clsize = ctypes.sizeof(closure)
+        out = ctypes.string_at(ctypes.pointer(ctypes.c_int(clsize)), ctypes.sizeof(ctypes.c_int))
+        out += ctypes.string_at(ctypes.pointer(closure), clsize)
+
+        clstrs = self.get_closure_strings()
+
+        numptrs = len(clstrs)
+        out += ctypes.string_at(ctypes.pointer(ctypes.c_int(numptrs)), ctypes.sizeof(ctypes.c_int))
+
+        for idx, clstr in clstrs:
+            if clstr == None:
+                continue
+            out += ctypes.string_at(ctypes.pointer(ctypes.c_int(len(clstr))), ctypes.sizeof(ctypes.c_int))
+            out += clstr
+            offset = getattr(S, fields[idx][0]).offset
+            out += ctypes.string_at(ctypes.pointer(ctypes.c_int(offset)), ctypes.sizeof(ctypes.c_int))
+
+        return out
+
+
+    def get_closure_strings(self):
+        out = []
+        try:
+            shapestr = ctypes.string_at(self.value.ctypes.shape, ctypes.sizeof(self.value.ctypes.shape))
+            out.append((1, shapestr))
+        except:
+            pass
+
+        try:
+            dtypestr = ctypes.string_at(self.value.ctypes.data, self.value.nbytes)
+            out.append((3, dtypestr))
+        except:
+            pass
+
+        return out
+
+
     def get_native_compile_info(self, input_types, devtype):
         code = None
         if self.return_type == "byval": code = self._c_code_valret()
@@ -928,13 +984,14 @@ class ConstantTensor(Constant):
             raise MethodNotDefined
         return r"""
             CGT_EXPORT_C void $function($closure* cldata, cgtArray** reads, cgtArray* write) {
+                printf("\n Size of closure = %d\n", sizeof($closure) );
                 cgt_memcpy(cgtCPU, cgtCPU, write->data(), cldata->data, write->nbytes());
             }
             """
     def _c_code_valret(self):
         return r"""
             CGT_EXPORT_C cgtArray* $function($closure* cldata, cgtArray** reads) {
-                    auto out = new cgtArray(cldata->ndim, (long*)cldata->shape, 
+                    auto out = new cgtArray(cldata->ndim, (long*)cldata->shape,
                         (cgtDtype)cldata->dtype, cgtCPU, (void*)cldata->data, false);
                     return out;
             }"""
@@ -965,7 +1022,7 @@ class Fill(Op):
     """
     (value, shape...) -> array filled with `value`, with shape `shape`
     """
-    available_impls = ("python","native_cpu")        
+    available_impls = ("python","native_cpu")
     def __init__(self, value):
         self.value = as_valid_array(value)
         assert self.value.ndim ==0
@@ -1014,7 +1071,7 @@ class Arange(Op):
     """
     (start,stop,step) -> 1D array, just like numpy
     """
-    available_impls = ("python","native_cpu")        
+    available_impls = ("python","native_cpu")
     return_type="byval"
     def __init__(self, dtype='i8'):
         self.dtype = dtype
@@ -1049,7 +1106,7 @@ class ScalarRng(Op):
     """
     (shape...) -> array filled with iid random numbers, from either uniform or normal distribution
     """
-    available_impls = ("python",)        
+    available_impls = ("python",)
     is_random_op = True
     def __init__(self, kind):
         assert kind in ("uniform","gaussian")
@@ -1144,7 +1201,7 @@ BINARY_INFO = {
     ">"   : BinaryInfo("greater",   np.greater,    False,    (False,False),  'i1',     lambda x, y, z, gz: _no_grad(), "x>y"),
     "<="   : BinaryInfo("less_equal",   np.less_equal,    False,    (False,False),  'i1',     lambda x, y, z, gz: _no_grad(), "x<=y"),
     ">="   : BinaryInfo("greater_equal",   np.greater_equal,    False,    (False,False),  'i1',     lambda x, y, z, gz: _no_grad(), "x>=y"),
-    "**"   : BinaryInfo("power",  np.power,      False,    (True,True), 'p',      lambda x, y, z, gz: [gz*y*cgt.power(x,y-1),gz*z*cgt.log(x)],"pow(x,y)"), 
+    "**"   : BinaryInfo("power",  np.power,      False,    (True,True), 'p',      lambda x, y, z, gz: [gz*y*cgt.power(x,y-1),gz*z*cgt.log(x)],"pow(x,y)"),
     "=="  : BinaryInfo("equal", lambda x,y,out : np.equal(x,y,out=out),      True,      (False, False), 'i1',  lambda x, y, z, gz: _no_grad(), "x==y"),
     "!="  : BinaryInfo("not_equal", lambda x,y,out : np.not_equal(x,y,out=out),      True,      (False, False), 'i1',  lambda x, y, z, gz: _no_grad(), "x!=y"),
 }
@@ -1159,7 +1216,7 @@ class ElwiseUnary(Op):
     """
     Elementwise unary operation
     """
-    available_impls = ("python","native_cpu","native_gpu")    
+    available_impls = ("python","native_cpu","native_gpu")
     def __init__(self, opname, info=None):
         self.opname = opname
         self.info = UNARY_INFO[opname] if info is None else info
@@ -1214,7 +1271,7 @@ class ElwiseUnary(Op):
         elif devtype == "gpu":
             cuda_code = r"""
                 #include "cgt_cuda.h"
-                __forceinline__ __device__ %(cdtype1)s $function(%(cdtype0)s x) {return %(cexpr)s;}        
+                __forceinline__ __device__ %(cdtype1)s $function(%(cdtype0)s x) {return %(cexpr)s;}
                 __global__ void ${function}_kernel(const long n, const %(cdtype0)s* in, %(cdtype1)s* out) {
                   CUDA_KERNEL_LOOP(i, n) {
                     out[i] = $function(in[i]);
@@ -1223,11 +1280,11 @@ class ElwiseUnary(Op):
                 void launchker_$function(long n, %(cdtype0)s* x, %(cdtype1)s* y) {
                     int num_blocks, num_threads;
                     cgt_get_bt(n, num_blocks, num_threads);
-                    ${function}_kernel<<<num_blocks, num_threads>>>(n, x, y);                
+                    ${function}_kernel<<<num_blocks, num_threads>>>(n, x, y);
                 }
                 """%d
             cpp_code = """
-                extern void launchker_${function}(long, %(cdtype0)s*, %(cdtype1)s*);            
+                extern void launchker_${function}(long, %(cdtype0)s*, %(cdtype1)s*);
                 CGT_EXPORT_C void $function(void* cldata, cgtArray** reads, cgtArray* write) {
                     cgtArray* read = reads[0];
                     long n = read->size();
@@ -1239,17 +1296,17 @@ class ElwiseUnary(Op):
             raise Unreachable
 
 class ElwiseBinary(Op):
-    available_impls = ("python","native_cpu","native_gpu")        
+    available_impls = ("python","native_cpu","native_gpu")
     # +, -, *, /, <, ^, //
     def __init__(self, opname, scalar_mask, info=None):
-        assert opname in BINARY_INFO        
+        assert opname in BINARY_INFO
         self.opname = opname
         self.info = BINARY_INFO[opname] if info is None else info
         self.scalar_mask = scalar_mask
     def get_diff(self, _):
         return BINARY_INFO[self.opname].diff
     def get_hash(self):
-        return utils.hash_seq1(self.opname)        
+        return utils.hash_seq1(self.opname)
     def get_expr(self, parent_exprs):
         return "(%s %s %s)"%(parent_exprs[0], self.opname, parent_exprs[1])
     def __str__(self):
@@ -1258,7 +1315,7 @@ class ElwiseBinary(Op):
         l,r = parents
         node2sv = analysis["node2sv"]
         out = None
-        
+
         # The following replacements are allowed to return a scalar constant value
         # Before returning, we'll broadcast it back to the right shape
 
@@ -1361,9 +1418,9 @@ class ElwiseBinary(Op):
                   }
                 }
                 void launchker_$function(long n, %(cdtype0)s* x, %(cdtype1)s* y, %(cdtype2)s* z) {
-                    int num_blocks,num_threads;                    
+                    int num_blocks,num_threads;
                     cgt_get_bt(n, num_blocks, num_threads);
-                    ${function}_kernel<<<num_blocks, num_threads>>>(n, x, y, z);                
+                    ${function}_kernel<<<num_blocks, num_threads>>>(n, x, y, z);
                 }
             """%d
             cpp_code = """
@@ -1391,7 +1448,7 @@ class Size(Op):
     Return an element of the shape of a tensor
     """
     return_type = "byval"
-    available_impls = ("python","native_cpu")        
+    available_impls = ("python","native_cpu")
     def __init__(self, axis):
         self.axis = axis
     def get_diff(self, _):
@@ -1428,7 +1485,7 @@ class Size(Op):
         return NativeCompileInfo(code,closure_triples = self.get_closure())
 
 class Reshape(Op):
-    available_impls = ("python","native_cpu")        
+    available_impls = ("python","native_cpu")
     return_type = "byval"
     def get_diff(self, num_inputs):
         return [True] + [False]*(num_inputs-1)
@@ -1463,7 +1520,7 @@ class Reshape(Op):
         return NativeCompileInfo(code, closure_triples=self.get_closure(len(input_types)))
 
 class Concatenate(Op):
-    available_impls = ("python","native_cpu")        
+    available_impls = ("python","native_cpu")
     def __init__(self, axis):
         self.axis = axis
     def get_diff(self, num_inputs):
@@ -1502,12 +1559,12 @@ class Concatenate(Op):
                     n += in->shape()[%(axis)s];
                 }
             }
-            """%dict(openloops=openloops, closeloops=closeloops, inidxexpr=inidxexpr, outidxexpr=outidxexpr, 
+            """%dict(openloops=openloops, closeloops=closeloops, inidxexpr=inidxexpr, outidxexpr=outidxexpr,
                 n_in=len(input_types), cdtype=np2c[input_types[0].dtype],axis=self.axis)
         return NativeCompileInfo(code)
 
 class Repeat(Op):
-    available_impls = ("python","native_cpu")        
+    available_impls = ("python","native_cpu")
     def __init__(self, axes):
         self.axes = axes
     def get_diff(self, num_inputs):
@@ -1555,7 +1612,7 @@ class Repeat(Op):
         return input_types[0]
 
 class Transpose(Op):
-    available_impls = ("python","native_cpu")        
+    available_impls = ("python","native_cpu")
     def __init__(self, axes):
         self.axes = axes
     def get_diff(self, _):
@@ -1611,7 +1668,7 @@ class Transport(Op):
 
 # TODO save computation by removing negative freq components
 class RFFT(Op):
-    available_impls = ("python",)        
+    available_impls = ("python",)
     def __init__(self, axes):
         self.axes = axes
     def get_diff(self, num_inputs):
@@ -1635,7 +1692,7 @@ class RFFT(Op):
         return TensorType(cgt.complexX,x.ndim)
 
 class IRFFT(Op):
-    available_impls = ("python",)        
+    available_impls = ("python",)
     def __init__(self, axes):
         self.axes = axes
     def get_diff(self, _):
@@ -1675,7 +1732,7 @@ def gen_reduction_code(dtype, axes, ndim, reduction_expr, initval):
             cgtArray *read=reads[0];
             for (int i=0; i < write->size(); ++i) write->at<%(cdtype)s>(i) = %(initval)s;
             %(openloops)s
-                %(cdtype)s x = write->at<%(cdtype)s>(%(outidxexpr)s); 
+                %(cdtype)s x = write->at<%(cdtype)s>(%(outidxexpr)s);
                 %(cdtype)s y = read->at<%(cdtype)s>(%(inidxexpr)s) ;
                 write->at<%(cdtype)s>(%(outidxexpr)s) = reduction_$function(x, y);
             %(closeloops)s
@@ -1702,12 +1759,12 @@ class Sum(Op):
         return [(cgt.constant(1) if i in self.axes else s[i]) for i in xrange(x.ndim)]
     def typ_apply(self, input_types):
         return input_types[0]
-    def get_native_compile_info(self, input_types, devtype):        
+    def get_native_compile_info(self, input_types, devtype):
         code = gen_reduction_code(input_types[0].dtype, self.axes, input_types[0].ndim, "x+y","0")
         return NativeCompileInfo(code, includes=["string.h"])
 
 class Max(Op):
-    available_impls = ("python","native_cpu")    
+    available_impls = ("python","native_cpu")
     def __init__(self, axes):
         self.axes = tuple(axes)
     def get_diff(self, _):
@@ -1736,7 +1793,7 @@ class Max(Op):
         return NativeCompileInfo(code, includes=["string.h","limits","math.h"])
 
 class Argmax(Op):
-    available_impls = ("python",)    
+    available_impls = ("python",)
     def __init__(self, axis):
         self.axis = axis
     def get_diff(self, _):
@@ -1785,7 +1842,7 @@ class GetSli(Op):
         s = cgt.shape(arr) #pylint: disable=W0621
         s[self.axis] = cgt.ceil_divide(stop - start, step)
         return s
-    def typ_apply(self, input_types):        
+    def typ_apply(self, input_types):
         assert _list_is_valid_sli(input_types[1:])
         return input_types[0]
     def get_native_compile_info(self, input_types, devtype):
@@ -1819,9 +1876,9 @@ class IncSli(Op):
     def get_py_func(self, input_types):
         def f(reads, write):
             x, start, stop, step, y=reads
-            if step<0 and stop==-1: stop=None            
+            if step<0 and stop==-1: stop=None
             slices = [slice(None,None,None) for _ in xrange(x.ndim)]
-            slices[self.axis] = slice(start,stop,step)          
+            slices[self.axis] = slice(start,stop,step)
             if x.data != write.data:
                 utils.warn("incsli not inplace!")
                 np.copyto(write, x)
@@ -1829,7 +1886,7 @@ class IncSli(Op):
         return f
     def pullback(self, inputs, output, goutput):
         _x, start,stop,step, _y = inputs
-        return [goutput, None, None,None,Result(GetSli(self.axis), [goutput, start,stop,step])]        
+        return [goutput, None, None,None,Result(GetSli(self.axis), [goutput, start,stop,step])]
     def shp_apply(self, inputs):
         return cgt.shape(inputs[0])
     def typ_apply(self, input_types):
@@ -1956,7 +2013,7 @@ class IncFancySli(Op):
 
 
 class GetFlatIndices(Op):
-    available_impls = ("python","native_cpu")        
+    available_impls = ("python","native_cpu")
     def get_diff(self, _):
         return [True,False]
     def get_py_func(self, input_types):
@@ -1981,11 +2038,11 @@ class GetFlatIndices(Op):
                     z->at<%(cdtype)s>(i) = x->at<%(cdtype)s>(k->at<long>(i));
                 }
             }
-            """%dict(cdtype = np2c[npdtype])    
+            """%dict(cdtype = np2c[npdtype])
         return NativeCompileInfo(code)
 
 class IncFlatIndices(Op):
-    available_impls = ("python","native_cpu")        
+    available_impls = ("python","native_cpu")
     writes_to_input = 0
     def get_diff(self, _):
         return [True,False,True]
@@ -1996,13 +2053,13 @@ class IncFlatIndices(Op):
                 utils.warn("incsli not inplace!")
                 np.copyto(write, x)
             for (i,ind) in enumerate(inds):
-                write.flat[ind] += y[i] 
+                write.flat[ind] += y[i]
             # This is unvectorized so it gives the right answer when inds are non-unique
             # faster vectorized version: write[inds] += y
         return f
     def pullback(self, inputs, output, goutput):
         x, inds, y = inputs
-        return [goutput, None, Result(GetFlatIndices(), [goutput, inds])]        
+        return [goutput, None, Result(GetFlatIndices(), [goutput, inds])]
     def shp_apply(self, inputs):
         return cgt.shape(inputs[0])
     def typ_apply(self, input_types):
@@ -2012,16 +2069,16 @@ class IncFlatIndices(Op):
         code = r"""
             CGT_EXPORT_C void $function(void**, cgtArray** xkp, cgtArray* write) {
                 cgtArray *x=xkp[0], *k=xkp[1], *p=xkp[2];
-                if (write->data() != x->data()) cgt_memcpy(cgtCPU, cgtCPU, write, x, write->nbytes());            
+                if (write->data() != x->data()) cgt_memcpy(cgtCPU, cgtCPU, write, x, write->nbytes());
                 for (int i=0; i < p->size(); ++i) {
                     write->at<%(cdtype)s>(k->at<long>(i)) += p->at<%(cdtype)s>(i);
                 }
             }
-            """%dict(cdtype = np2c[npdtype])    
+            """%dict(cdtype = np2c[npdtype])
         return NativeCompileInfo(code)
 
 class Flip(Op):
-    available_impls = ("python","native_cpu")        
+    available_impls = ("python","native_cpu")
     def __init__(self, axes):
         self.axes = axes
     def get_diff(self, _):
@@ -2054,7 +2111,7 @@ class Flip(Op):
                     out->at<%(cdtype)s>(%(outidxexpr)s) = in->at<%(cdtype)s>(%(inidxexpr)s);
                 %(closeloops)s
             }
-            """%dict(openloops=openloops, outidxexpr=outidxexpr, closeloops=closeloops, 
+            """%dict(openloops=openloops, outidxexpr=outidxexpr, closeloops=closeloops,
     inidxexpr=inidxexpr, cdtype=np2c[input_types[0].dtype])
         return NativeCompileInfo(code)
 
@@ -2065,7 +2122,7 @@ class Flip(Op):
 
 
 class Mul21(Op):
-    available_impls = ("python","native_cpu")        
+    available_impls = ("python","native_cpu")
     def __init__(self, tA):
         self.tA = tA
     def get_py_func(self, input_types):
@@ -2094,7 +2151,7 @@ class Mul21(Op):
             letter = {"f4":"s","f8":"d","c8":"c","c16":"z"}[npdtype]
         except KeyError:
             raise MethodNotDefined("Dtype %s not supported by this BLAS. Falling back to numpy"%npdtype)
-        if devtype == "cpu":            
+        if devtype == "cpu":
             code = r"""
                 CGT_EXPORT_C void $function($closure* cl, cgtArray** Ax, cgtArray* y) {
                     cgtArray *A=Ax[0], *x=Ax[1];
@@ -2110,7 +2167,7 @@ class Mul21(Op):
         elif devtype == "gpu":
             code = r"""
                 CGT_EXPORT_C void $function($closure* cl, cgtArray** Ax, cgtArray* y) {
-                    if (!cl->handle) cublasCreate_v2((cublasHandle_t*)&cl->handle);                                    
+                    if (!cl->handle) cublasCreate_v2((cublasHandle_t*)&cl->handle);
                     cgtArray *A=Ax[0], *x=Ax[1];
                     int lda = A->shape()[1];
                     int M = A->shape()[0];
@@ -2119,7 +2176,7 @@ class Mul21(Op):
                     int incx = 1, incy = 1;
                   cublas_%(letter)sgemv((cublasHandle_t)cl->handle, (cublasOperation_t)(!cl->tA), N, M, alpha, (%(cdtype)s*)A->data(), lda, (%(cdtype)s*)x->data(),
                       incx, beta, (%(cdtype)s*)y->data(), incy);
-                }"""%dict(letter=letter, cdtype = np2c[npdtype])         
+                }"""%dict(letter=letter, cdtype = np2c[npdtype])
         return NativeCompileInfo(code, includes=["cblas.h"], link_flags="-lopenblas", closure_triples = self.get_closure())
     def get_expr(self, (xexpr,yexpr)):
         return u"%s%s \u00D7 %s"%(xexpr, u"\u1d57" if self.tA else "", yexpr)
@@ -2142,7 +2199,7 @@ class Mul22(Op):
         """
         mul(F,F) Aij Bjk -> Cik
         g[0]: GAij = mul(F,T) GCik Bjk
-        g[1]: GBjk = mul(T,F) Aij GCik 
+        g[1]: GBjk = mul(T,F) Aij GCik
 
         mul(F,T) Aij Bkj -> Cik
         g[0]: GAij = mul(F,F) GCik Bkj
@@ -2150,7 +2207,7 @@ class Mul22(Op):
 
         mul(T,F) Aji Bjk -> Cik
         g[0]: GAji = mul(F,T) Bjk GCik
-        g[1]: GBjk = mul(F,F) Aji GCik 
+        g[1]: GBjk = mul(F,F) Aji GCik
 
         mul(T,T) Aji Bkj -> Cik
         g[0]: GAji = mul(T,T) Bkj GCik
@@ -2175,8 +2232,8 @@ class Mul22(Op):
     def shp_apply(self, inputs):
         return [cgt.size(inputs[0], 1 if self.tA else 0),cgt.size(inputs[1],0 if self.tB else 1)]
     def typ_apply(self, input_types):
-        # assertequal1(cgt.size(inputs[0],0 if self.tA else 1),cgt.size(inputs[1],1 if self.tB else 0), 
-        #     "shape mismatch at matrix-matrix multiplication")         
+        # assertequal1(cgt.size(inputs[0],0 if self.tA else 1),cgt.size(inputs[1],1 if self.tB else 0),
+        #     "shape mismatch at matrix-matrix multiplication")
         # TODO put shape check somewhere
         assert input_types[0].dtype==cgt.floatX and input_types[1].dtype==cgt.floatX
         return input_types[0]
@@ -2227,7 +2284,7 @@ class Mul22(Op):
         return "Mul22{%s,%s}"%("T" if self.tA else "N", "T" if self.tB else "N")
 
 class BatchedMul22(Op):
-    available_impls = ("python","native_cpu")        
+    available_impls = ("python","native_cpu")
     def __init__(self, tA, tB):
         self.tA = tA
         self.tB = tB
@@ -2235,7 +2292,7 @@ class BatchedMul22(Op):
         def f((x,y), z):
             for (xmat, ymat, zmat) in zip(x,y, z):
                 if self.tA: xmat = xmat.T
-                if self.tB: ymat = ymat.T            
+                if self.tB: ymat = ymat.T
                 xmat.dot(ymat, out=zmat)
         return f
     def pullback(self, inputs, output, goutput):
@@ -2252,14 +2309,14 @@ class BatchedMul22(Op):
                     Result(BatchedMul22(False,False), [A, GC])]
         elif (self.tA, self.tB) == (True,True):
             return [Result(BatchedMul22(True,True), [B, GC]),
-                    Result(BatchedMul22(True,True), [GC, A])]    
+                    Result(BatchedMul22(True,True), [GC, A])]
     def shp_apply(self, inputs):
         return [cgt.size(inputs[0],0), cgt.size(inputs[0], 2 if self.tA else 1),cgt.size(inputs[1],1 if self.tB else 2)]
     def typ_apply(self, input_types):
         # assert inputs[0].dtype==cgt.floatX and inputs[1].dtype==cgt.floatX
         return input_types[0]
     def get_closure(self):
-        return [("tA",ctypes.c_bool, self.tA), ("tB",ctypes.c_bool, self.tB)]        
+        return [("tA",ctypes.c_bool, self.tA), ("tB",ctypes.c_bool, self.tB)]
     # <COPIED FROM Mul22> but incremented all dimensions
     def get_native_compile_info(self, input_types, devtype):
         npdtype = input_types[0].dtype
@@ -2277,8 +2334,8 @@ class BatchedMul22(Op):
                 int K = A->shape()[1+(cl->tA ? 0 : 1)];
                 const %(cdtype)s alpha=1, beta=0;
               for (int i=0; i < P; ++i) {
-                  cblas_%(letter)sgemm(CblasRowMajor, (CBLAS_TRANSPOSE)(cl->tA + 111), (CBLAS_TRANSPOSE)(cl->tB + 111), M, N, K, alpha, (%(cdtype)s*)A->data()+i*A->stride(0), lda, 
-                    (%(cdtype)s*)B->data()+i*B->stride(0), ldb, beta, (%(cdtype)s*)C->data()+ i*C->stride(0), ldc);  
+                  cblas_%(letter)sgemm(CblasRowMajor, (CBLAS_TRANSPOSE)(cl->tA + 111), (CBLAS_TRANSPOSE)(cl->tB + 111), M, N, K, alpha, (%(cdtype)s*)A->data()+i*A->stride(0), lda,
+                    (%(cdtype)s*)B->data()+i*B->stride(0), ldb, beta, (%(cdtype)s*)C->data()+ i*C->stride(0), ldc);
               }
             }
             """%dict(letter=letter, cdtype = np2c[npdtype])
@@ -2286,7 +2343,7 @@ class BatchedMul22(Op):
     # </COPIED>
 
 class Outer(Op):
-    available_impls = ("python","native_cpu")        
+    available_impls = ("python","native_cpu")
     def get_py_func(self, input_types):
         def f(reads, write):
             write[:] = np.outer(reads[0], reads[1])
@@ -2302,21 +2359,21 @@ class Outer(Op):
         npdtype = input_types[0].dtype
         code = r"""
             CGT_EXPORT_C void $function(void**, cgtArray** xy, cgtArray* z) {
-                cgtArray *x=xy[0], *y=xy[1];                
+                cgtArray *x=xy[0], *y=xy[1];
                 for (int i=0; i < x->size(); ++i) {
                     for (int j=0; j < y->size(); ++j) {
                         z->at<%(cdtype)s>(i,j) = x->at<%(cdtype)s>(i) * y->at<%(cdtype)s>(j);
                     }
                 }
             }
-            """%dict(cdtype = np2c[npdtype])    
+            """%dict(cdtype = np2c[npdtype])
         return NativeCompileInfo(code)
 
 # BLAS 1
 # ----------------------------------------------------------------
 
 class Dot(Op):
-    available_impls = ("python","native_cpu")    
+    available_impls = ("python","native_cpu")
     return_type = "byref"
     def get_py_func(self, input_types):
         def f(reads,write):
@@ -2341,14 +2398,14 @@ class Dot(Op):
                 }
                 z->at<%(cdtype)s>(0) = out;
             }
-            """%dict(cdtype = np2c[npdtype])    
+            """%dict(cdtype = np2c[npdtype])
         return NativeCompileInfo(code)
 
 # Composition
 # ----------------------------------------------------------------
 
 class Composition(Op):
-    available_impls = ("python",)        
+    available_impls = ("python",)
     return_type = "byval"
     def __init__(self, inputs, outputs):
         self._inputs = inputs
@@ -2369,7 +2426,7 @@ class Composition(Op):
 
         self._goutput = [Argument(x.typ) for x in outputs]
         gwrt = pullback(self._outputs, self._goutput, wrt)
-        
+
         wrtidx = 0
         self._gin = []
         for x in inputs:
@@ -2416,7 +2473,7 @@ class Composition(Op):
         return self._nodes
 
 class TupleIndex(Op):
-    available_impls = ("python","native_cpu","native_gpu")        
+    available_impls = ("python","native_cpu","native_gpu")
     return_type="byval"
     def __init__(self, idx):
         self.idx = idx
@@ -2442,7 +2499,7 @@ class TupleIndex(Op):
 
 
 class MakeTuple(Op):
-    available_impls = ("python",)        
+    available_impls = ("python",)
     return_type="byval"
     def get_py_func(self, input_types):
         def f(inputs):
@@ -2453,7 +2510,7 @@ class MakeTuple(Op):
     def typ_apply(self, input_types):
         assert all(isinstance(t, TensorType) for t in input_types), "Can only create tuples of tensors" # @TUPLES_OF_TENSORS
         return TupleType(*input_types)
-    
+
 def unpack(tup):
     return [Result(TupleIndex(i),[tup]) for i in xrange(len(tup.typ))]
 
@@ -2466,7 +2523,7 @@ class Assertion(Op):
     """
     Assertion gets evaluated when the graph is executed, and it prints out a stack trace on failure
     """
-    available_impls = ("python",)        
+    available_impls = ("python",)
     def __init__(self, msg):
         self.stack = traceback.extract_stack()[:-2]
         self.msg = msg
@@ -2484,16 +2541,16 @@ class Assertion(Op):
         return f
     def display_error(self):
         print "Stack trace at failed assertion:"
-        print "**************************"        
+        print "**************************"
         traceback.print_list(self.stack)
-        print "**************************"        
+        print "**************************"
         raise AssertionError("Assertion failed. Message: %s. Above, you can find the stack trace of the failed node"%self.msg)
 
 class DebugFunc(Op):
     """
     Call a function when the graph is executed
     """
-    available_impls = ("python",)    
+    available_impls = ("python",)
     def __init__(self, yourfunc):
         self.yourfunc = yourfunc
     def typ_apply(self, _):
@@ -2550,9 +2607,9 @@ def simplify_and_analyze(outputs):
 
 def process_top_stack_item_and_maybe_get_replacement(stack, analysis, repl): #pylint: disable=W0621
     """
-    Helper function for update_simplify_map, which performs an update to the 
+    Helper function for update_simplify_map, which performs an update to the
     stack, which stores the state of the simplification computation.
-    
+
     Suppose the top element of the stack is `(orig, node)`, where `orig` is
     the original node and `node` is simpler than `orig` but not fully simplified.
     We can only guarantee that `node` is fully simplified after all of its parents are in the
@@ -2568,7 +2625,7 @@ def process_top_stack_item_and_maybe_get_replacement(stack, analysis, repl): #py
     if node.is_input():
         return (orig,node)
     else:
-        for par in node.parents: 
+        for par in node.parents:
             if par not in repl:
                 stack.append((orig,node))
                 stack.append((par,par))
@@ -2591,11 +2648,11 @@ def update_simplify_map(node, analysis, repl):
     Compute a fully simplified version of `node` and its ancestors
     When this function finishes, `repl[node]` is the simplified version of `node`,
     and repl[anc] is the simplified version of each node `anc` which is an ancestor of `node`.
-    Moreover, analysis contains 
+    Moreover, analysis contains
 
     This algorithm is most simply described recursively, and the implementation below is
     a conversion of the recursive algorithm into a stack-based algorithm (to avoid
-    stack overflows). 
+    stack overflows).
     (TODO: bring back recursive version for reference)
 
     The stack contains pairs `(orig, replacement_candidate)`, where `orig` is a node in the original
@@ -2616,7 +2673,7 @@ def update_simplify_map(node, analysis, repl):
         if maybe_pair:
             (orig,node) = maybe_pair                                    #pylint: disable=W0633
             # if not node.is_input():
-            #     for shpcmp in node.op.shp_apply(node.parents): 
+            #     for shpcmp in node.op.shp_apply(node.parents):
             #         update_simplify_map(shpcmp, analysis, repl, True)
             do_analysis(node, analysis)
             repl[orig] = node
@@ -2626,7 +2683,7 @@ def update_simplify_map(node, analysis, repl):
 def do_analysis(node, analysis):
 
     node2hash = analysis["node2hash"]
-    node2shape = analysis["node2shape"]    
+    node2shape = analysis["node2shape"]
     node2sv = analysis["node2sv"]
 
     # -- HASH --
@@ -2683,12 +2740,12 @@ def maybe_replace(node, analysis, repl):
     # -- SIZE --
     if isinstance(node.op, Size):
         s = analysis["node2shape"][parents[0]][node.op.axis]
-        if not (isinstance(s.op, Size) and s.parents[0] == node.parents[0]): 
+        if not (isinstance(s.op, Size) and s.parents[0] == node.parents[0]):
             if VERBOSE_OPTIMIZATION: print "Did size prop"
             return s
     # -- OP IDENTITY --
     maybe_repl = node.op.get_replacement(parents, analysis)
-    if maybe_repl is not None: 
+    if maybe_repl is not None:
         if VERBOSE_OPTIMIZATION: print "Applied op-specific identity for %s"%node.op
         return maybe_repl
 

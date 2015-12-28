@@ -338,7 +338,6 @@ def run_compilation_pipeline(inputs, outputs, updates, givens):
     add_transports(nodelist, node2dev, analysis["node2shape"])
     # XXX we're missing stuff used for shape computation
     # XXX i think we might also have unnecessary stuff from shape comp in exe graph
-
     # Phase 3: build execution graph
     # ------------------------------------------------------
     # Sort nodes so that shape elements appear before a given node
@@ -354,14 +353,37 @@ def run_compilation_pipeline(inputs, outputs, updates, givens):
         inputs, nodes_sorted, analysis["node2shape"], node2memowner, node2dev)
 
     # print execution graph
-    if config["verbose"]:
+    if config["verbose"] or True:
         print 'begin'
         print '\n'.join(str(i)+'.) \t'+repr(instr) for (i,instr) in enumerate(eg.instrs))
         print 'end'
 
     # Phase 3: create C or Python interpreter for graph
     # ------------------------------------------------------
-    interp = create_interpreter(inputs, outputs_simple, eg, node2memloc)
+    import dill
+    isinp = True
+
+    if isinp:
+        # print "WRITING"
+        inps_intep = inputs, outputs_simple, eg, node2memloc
+        dill.dump(inps_intep, open("eg.bin", 'w'))
+        #
+        # for i in eg.instrs:
+        #     try:
+        #         outstr = i.op.get_closure_filestring()
+        #     except:
+        #         pass
+
+        # i = eg.instrs[2]
+        # outstr = i.op.get_closure_filestring()
+        # f = open("const.bin", 'w')
+        # f.write(outstr)
+        # f.close()
+    else:
+        print "READING"
+        inps_intep = dill.load(open("eg.bin", 'r'))
+
+    interp = create_interpreter(*inps_intep)
 
     # Done!
     return interp
@@ -602,6 +624,7 @@ class TranslationUnit(object):
         Compiles all of the files, places them in the cache directory
         Then links them creating prefix.so
         """
+        # print "Here"
         CACHE_ROOT = get_compile_info()["CACHE_ROOT"]
         cmds = ["cd %s"%CACHE_ROOT]
         objs = []
@@ -745,7 +768,7 @@ def _build_closure(triples):
         class S(ctypes.Structure):
             _fields_ = fields
         _struct_cache[key] = S
-    closure = S(*vals)    
+    closure = S(*vals)
     return closure
 
 

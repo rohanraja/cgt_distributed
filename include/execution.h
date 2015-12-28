@@ -3,7 +3,10 @@
 #include <vector>
 #include <thread>
 #include <string>
+#include <fstream>
+#include"helpers.h"
 
+using namespace std ;
 namespace cgt {
 using std::vector;
 
@@ -35,8 +38,25 @@ class MemLocation {
 public:
     MemLocation() : index_(0), devtype_(cgtCPU) {}
     MemLocation(long index, cgtDevtype devtype) : index_(index), devtype_(devtype) {}
+
+    MemLocation(ifstream &f){
+
+      long indx;
+      int devtype;
+      readf(f, indx);
+      readf(f, devtype);
+      index_ = indx ;
+      devtype_ = cgtCPU ;
+    }
     long index() const { return index_; }
     cgtDevtype devtype() const { return devtype_; }
+
+    void save(ofstream &f){
+      writef(f, index_);
+      int devtype = 0;
+      writef(f, devtype);
+
+    }
 private:
     long index_;
     cgtDevtype devtype_; // TODO: full device, not just devtype
@@ -59,6 +79,7 @@ public:
     virtual ~Instruction() {};
     virtual const vector<MemLocation>& get_readlocs() const=0;
     virtual const MemLocation& get_writeloc() const=0;
+    virtual void save(ofstream &f){}
     const std::string& repr() const { return repr_; }
     const InstructionKind kind() const {return kind_;}
     const bool quick() {return quick_;}
@@ -77,6 +98,7 @@ public:
     long n_args() const {return n_args_;}
     long n_locs() const {return n_locs_;}
     long n_instrs() const {return instrs_.size();}
+    void save(ofstream &f);
 private:
     vector<Instruction*> instrs_; // owns, will delete
     long n_args_;
@@ -92,10 +114,12 @@ public:
     virtual void set(const MemLocation&, cgtObject *)=0;
     virtual cgtObject * getarg(int)=0;
     virtual ~Interpreter() {}
+    virtual void saveToFile(char *){}
 };
 
 // pass by value because of cython
 Interpreter* create_interpreter(ExecutionGraph*, vector<MemLocation> output_locs, int num_threads);
+
 
 class LoadArgument : public Instruction  {
 public:
@@ -103,12 +127,17 @@ public:
     void fire(Interpreter*);
     const vector<MemLocation>& get_readlocs() const { return readlocs; }
     const MemLocation& get_writeloc() const { return writeloc; }
+    void save(ofstream &f){
+      int type = 0;
+      writef(f, type);
+      writef(f, ind);
+      writeloc.save(f);
+    }
 private:
     int ind;
     vector<MemLocation> readlocs;  // empty
     MemLocation writeloc;
 };
-
 
 class Alloc : public Instruction {
 public:
@@ -117,6 +146,12 @@ public:
     void fire(Interpreter*);
     const vector<MemLocation>& get_readlocs() const { return readlocs; }
     const MemLocation& get_writeloc() const { return writeloc; }
+    void save(ofstream &f){
+      int type = 1;
+      writef(f, type);
+      writef(f, dtype);
+      writeloc.save(f);
+    }
 private:
     cgtDtype dtype;
     vector<MemLocation> readlocs;
@@ -161,5 +196,20 @@ private:
     ByValCallable callable;
 };
 
+Instruction * LoadArgument_load(ifstream &f);
+
+void saveMemVector(vector<MemLocation> &mems, ofstream &f);
+vector<MemLocation> loadMemVector(ifstream &f);
+
+void saveInstVector(vector<Instruction *> &mems, ofstream &f);
+vector<Instruction *>  loadInstVector(ifstream &f);
+
+ExecutionGraph * loadExecutionGraph(ifstream &f);
+
+// load interpreter from file
+Interpreter* interpreter_from_file(char *) ;
+
+// save interpreter to file
+void interpreter_to_file(Interpreter *, const string &) ;
 
 }

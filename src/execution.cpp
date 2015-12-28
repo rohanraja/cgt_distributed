@@ -1,10 +1,13 @@
 #include "execution.h"
 #include <cstdio>
+#include <iostream>
 #include <queue>
 #include <set>
 #include <vector>
 #include "util/ThreadPool.h"
 #include "unistd.h"
+
+using namespace std ;
 
 namespace cgt {
 
@@ -49,6 +52,18 @@ public:
         // todo actually do something with outputs
     }
     ~SequentialInterpreter() {
+    }
+
+    void saveToFile(char *fname){
+      
+      printf("\nSaving Interpreter to file: %s\n", fname);
+
+      ofstream f ;
+      f.open(fname, ios::binary | ios::out);
+
+      saveMemVector(output_locs_, f);
+      eg_->save(f);
+
     }
 private:
     ExecutionGraph* eg_;
@@ -308,6 +323,147 @@ Interpreter* create_interpreter(ExecutionGraph* eg, vector<MemLocation> output_l
     else{
         return new SequentialInterpreter(eg, output_locs);
     }
+}
+
+Instruction * LoadArgument_load(ifstream &f){
+
+  int ind;
+  readf(f,ind);
+  MemLocation wloc(f);
+
+  return new LoadArgument("Load Argument", ind, wloc);
+}
+
+#include"dummyinter.h"
+#include"helpers.h"
+
+Interpreter* interpreter_from_file(char * fname){
+
+  printf("\nLoading Interpreter from file: %s\n\n", fname);
+  ifstream f;
+  f.open(fname, ios::binary | ios::in);
+
+  vector<MemLocation> outps = loadMemVector(f);
+  ExecutionGraph *eg = loadExecutionGraph(f) ;
+
+  Interpreter * inp = create_interpreter(eg,outps,0);
+
+  return inp;
+  return new DummyInterpreter(fname) ;
+
+  // DummyInterpreter *inp = new DummyInterpreter(fname) ;
+  // return inp ;
+}
+
+
+void interpreter_to_file(Interpreter * intp, const string &str) {
+
+  intp->saveToFile((char*) str.c_str()) ;
+
+}
+
+void ExecutionGraph::save(ofstream &f) {
+
+  writef(f, n_args_);
+  writef(f, n_locs_);
+  saveInstVector(instrs_, f);
+
+}
+
+void saveMemVector(vector<MemLocation> &mems, ofstream &f){
+
+  int numInstrs = mems.size() ;
+
+  writef(f, numInstrs);
+
+  rep(i, numInstrs){
+
+    mems[i].save(f) ;
+  }
+
+
+}
+
+vector<MemLocation> loadMemVector(ifstream &f){
+
+  int numOuts;
+
+  readf(f, numOuts);
+
+  vector<MemLocation> outps(numOuts) ;
+
+  rep(i, numOuts){
+
+    outps[i] = * new MemLocation(f);
+  }
+
+  return outps ;
+
+}
+
+
+void saveInstVector(vector<Instruction *> &mems, ofstream &f)
+{
+  long numInstrs = mems.size() ;
+
+  writef(f, numInstrs);
+
+  rep(i, numInstrs){
+
+    mems[i]->save(f) ;
+  }
+
+}
+
+
+vector<Instruction *> loadInstVector(ifstream &f){
+
+  long num_instrs ;
+
+  readf(f, num_instrs);
+  trace(num_instrs);
+
+  vector<Instruction *> instrs(num_instrs);
+
+  int type ;
+
+  rep(i,num_instrs){
+
+    readf(f, type);
+    trace(type);
+
+    switch(type)
+    {
+      case 0:
+        instrs[i] = LoadArgument_load(f);
+        trace(instrs[i]->repr());
+        break;
+
+    };
+
+  }
+
+  return instrs ;
+
+
+}
+
+
+ExecutionGraph * loadExecutionGraph(ifstream &f){
+
+  long nargs, nlocs ;
+
+  readf(f, nargs);
+  readf(f, nlocs);
+
+  trace(nargs);
+  trace(nlocs);
+  
+  cout << "\n**** Loaded Instructions ****\n\n" ;
+  vector<Instruction *> instrs = loadInstVector(f);
+  cout << "\n**** Loaded Instructions ****\n" ;
+
+  return new ExecutionGraph(instrs, nargs, nlocs) ;
 }
 
 
