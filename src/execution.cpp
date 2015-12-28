@@ -1,6 +1,5 @@
 #include "execution.h"
 #include <cstdio>
-#include <iostream>
 #include <queue>
 #include <set>
 #include <vector>
@@ -311,6 +310,8 @@ void ReturnByVal::fire(Interpreter* interp) {
 // Misc
 // ================================================================
 
+#include"dummyinter.h"
+#include"helpers.h"
 
 ExecutionGraph::~ExecutionGraph() {
     for (auto instr : instrs_) delete instr;
@@ -334,9 +335,26 @@ Instruction * LoadArgument_load(ifstream &f){
   return new LoadArgument("Load Argument", ind, wloc);
 }
 
-#include"dummyinter.h"
-#include"helpers.h"
+Instruction * Alloc_load(ifstream &f){
 
+  cgtDtype dtype;
+  readf(f,dtype);
+  MemLocation wloc(f);
+  vector<MemLocation> readlocs = loadMemVector(f);
+
+  return new Alloc("Alloc", dtype, readlocs, wloc);
+}
+
+
+Instruction * Byref_load(ifstream &f){
+
+  MemLocation wloc(f);
+  vector<MemLocation> readlocs = loadMemVector(f);
+  ByRefCallable callable(f) ;
+
+  return new ReturnByRef("Return By Ref", readlocs, wloc, callable, false);
+
+}
 Interpreter* interpreter_from_file(char * fname){
 
   printf("\nLoading Interpreter from file: %s\n\n", fname);
@@ -348,6 +366,7 @@ Interpreter* interpreter_from_file(char * fname){
 
   Interpreter * inp = create_interpreter(eg,outps,0);
 
+  printf("\nFINISHED LOADING INTERPRETER\n\n");
   return inp;
   return new DummyInterpreter(fname) ;
 
@@ -436,10 +455,16 @@ vector<Instruction *> loadInstVector(ifstream &f){
     {
       case 0:
         instrs[i] = LoadArgument_load(f);
-        trace(instrs[i]->repr());
+        break;
+      case 1:
+        instrs[i] = Alloc_load(f);
+        break;
+      case 3:
+        instrs[i] = Byref_load(f);
         break;
 
     };
+    trace(instrs[i]->repr());
 
   }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "cgt_common.h"
 #include <vector>
+#include <iostream>
 #include <thread>
 #include <string>
 #include <fstream>
@@ -18,7 +19,14 @@ public:
     void* data;
     ByRefCallable(cgtByRefFun fptr, void* data) : fptr(fptr), data(data) {}
     ByRefCallable() : fptr(NULL), data(NULL) {}
+    ByRefCallable(ifstream &f){
+      trace("Loading callable!!");
+    }
+    void save(ofstream &f){
+      trace("Saving callable!!");
+    }
     void operator()(cgtObject ** reads, cgtObject * write) {
+        printf("Byref Called!!\n\n");
         (*fptr)(data, reads, write);
     }
 };
@@ -41,26 +49,24 @@ public:
 
     MemLocation(ifstream &f){
 
-      long indx;
-      int devtype;
-      readf(f, indx);
-      readf(f, devtype);
-      index_ = indx ;
-      devtype_ = cgtCPU ;
+      readf(f, index_);
+      readf(f, devtype_);
     }
     long index() const { return index_; }
     cgtDevtype devtype() const { return devtype_; }
 
     void save(ofstream &f){
+
       writef(f, index_);
-      int devtype = 0;
-      writef(f, devtype);
+      writef(f, devtype_);
 
     }
 private:
     long index_;
     cgtDevtype devtype_; // TODO: full device, not just devtype
 };
+
+void saveMemVector(vector<MemLocation> &mems, ofstream &f);
 
 class Interpreter;
 
@@ -151,6 +157,7 @@ public:
       writef(f, type);
       writef(f, dtype);
       writeloc.save(f);
+      saveMemVector(readlocs, f);
     }
 private:
     cgtDtype dtype;
@@ -177,6 +184,13 @@ public:
     void fire(Interpreter*);
     const vector<MemLocation>& get_readlocs() const { return readlocs; }
     const MemLocation& get_writeloc() const { return writeloc; }
+    void save(ofstream &f){
+      int type = 3;
+      writef(f, type);
+      writeloc.save(f);
+      saveMemVector(readlocs, f);
+      callable.save(f);
+    }
 private:
     vector<MemLocation> readlocs;
     MemLocation writeloc;
@@ -197,8 +211,9 @@ private:
 };
 
 Instruction * LoadArgument_load(ifstream &f);
+Instruction * Alloc_load(ifstream &f);
+Instruction * Byref_load(ifstream &f);
 
-void saveMemVector(vector<MemLocation> &mems, ofstream &f);
 vector<MemLocation> loadMemVector(ifstream &f);
 
 void saveInstVector(vector<Instruction *> &mems, ofstream &f);
