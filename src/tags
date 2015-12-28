@@ -1,0 +1,46 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+CppArrayWrapper	cycgt.pyx	/^cdef class CppArrayWrapper:$/;"	c
+CppInterpreterWrapper	cycgt.pyx	/^cdef class CppInterpreterWrapper:$/;"	c
+__call__	cycgt.pyx	/^    def __call__(self, *pyargs):$/;"	m	class:CppInterpreterWrapper	file:
+__dealloc__	cycgt.pyx	/^    def __dealloc__(self):$/;"	m	class:CppInterpreterWrapper	file:
+__init__	cycgt.pyx	/^    def __init__(self, pyeg, input_types, output_locs, parallel):$/;"	m	class:CppInterpreterWrapper
+_getfuncptr	cycgt.pyx	/^cdef void* _getfuncptr(object o) except NULL:$/;"	f
+_getstructptr	cycgt.pyx	/^cdef void* _getstructptr(object o) except NULL: # XXX except NULL causes unnecessary exception check$/;"	f
+_is_valid_array	cycgt.pyx	/^cdef bint _is_valid_array(cnp.ndarray arr):$/;"	f
+_isquick	cycgt.pyx	/^def _isquick(pyinstr):$/;"	f
+_pyfunc_byref	cycgt.pyx	/^cdef void _pyfunc_byref(void* cldata, cgtObject** reads, cgtObject* write):$/;"	f
+_pyfunc_byval	cycgt.pyx	/^cdef cgtObject* _pyfunc_byval(void* cldata, cgtObject** args):$/;"	f
+_to_valid_array	cycgt.pyx	/^cdef cnp.ndarray _to_valid_array(object arr):$/;"	f
+_tocppbyrefcallable	cycgt.pyx	/^cdef ByRefCallable _tocppbyrefcallable(callable, storage) except *:$/;"	f
+_tocppbyvalcallable	cycgt.pyx	/^cdef ByValCallable _tocppbyvalcallable(callable, storage) except *:$/;"	f
+_tocppinstr	cycgt.pyx	/^cdef Instruction* _tocppinstr(object pyinstr, object storage) except *:$/;"	f
+_tocppmem	cycgt.pyx	/^cdef MemLocation _tocppmem(object pymem):$/;"	f
+_tocppmemvec	cycgt.pyx	/^cdef vector[MemLocation] _tocppmemvec(object pymemlist) except *:$/;"	f
+_tovectorlong	cycgt.pyx	/^cdef vector[long] _tovectorlong(object xs):$/;"	f
+apply_byref	cycgt.pyx	/^def apply_byref(fptr, cldata, inputs, output):$/;"	f
+cgt2py_array	cycgt.pyx	/^cdef object cgt2py_array(cgtArray* a, bint view):$/;"	f
+cgt2py_object	cycgt.pyx	/^cdef object cgt2py_object(cgtObject* o, bint view):$/;"	f
+cgt2py_tuple	cycgt.pyx	/^cdef object cgt2py_tuple(cgtTuple* t, bint view):$/;"	f
+cgt_build_root	cycgt.pyx	/^def cgt_build_root():$/;"	f
+data	cycgt.pyx	/^    def data(self):$/;"	m	class:CppArrayWrapper
+devtype_fromstr	cycgt.pyx	/^cdef cgtDevtype devtype_fromstr(object s):$/;"	f
+devtype_tostr	cycgt.pyx	/^cdef object devtype_tostr(cgtDevtype d):$/;"	f
+dtype	cycgt.pyx	/^    def dtype(self):$/;"	m	class:CppArrayWrapper
+dtype_fromstr	cycgt.pyx	/^cdef cgtDtype dtype_fromstr(s):$/;"	f
+dtype_tostr	cycgt.pyx	/^cdef object dtype_tostr(cgtDtype d):$/;"	f
+from_numpy	cycgt.pyx	/^    def from_numpy(cnp.ndarray nparr, object pydevtype="cpu", view=True):$/;"	m	class:CppArrayWrapper
+make_cpp_execution_graph	cycgt.pyx	/^cdef ExecutionGraph* make_cpp_execution_graph(pyeg, storage) except *:$/;"	f
+ndim	cycgt.pyx	/^    def ndim(self):$/;"	m	class:CppArrayWrapper
+ptr	cycgt.pyx	/^    def ptr(self):$/;"	m	class:CppArrayWrapper
+py2cgt_array	cycgt.pyx	/^cdef cgtArray* py2cgt_array(cnp.ndarray arr, cgtDevtype devtype):$/;"	f
+py2cgt_arrayview	cycgt.pyx	/^cdef cgtArray* py2cgt_arrayview(cnp.ndarray arr):$/;"	f
+py2cgt_object	cycgt.pyx	/^cdef cgtObject* py2cgt_object(object o, bint view) except *:$/;"	f
+py2cgt_tuple	cycgt.pyx	/^cdef cgtTuple* py2cgt_tuple(object o, bint view):$/;"	f
+shape	cycgt.pyx	/^    def shape(self):$/;"	m	class:CppArrayWrapper
+size	cycgt.pyx	/^    def size(self):$/;"	m	class:CppArrayWrapper
+to_numpy	cycgt.pyx	/^    def to_numpy(self):$/;"	m	class:CppArrayWrapper

@@ -1,0 +1,618 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+AllocationError	core.py	/^class AllocationError(Exception):$/;"	c
+AnalysisCacher	core.py	/^class AnalysisCacher(object):$/;"	c
+Arange	core.py	/^class Arange(Op):$/;"	c
+Argmax	core.py	/^class Argmax(Op):$/;"	c
+Argument	core.py	/^def Argument(typ, name=None, fixed_shape=None, props=None):    $/;"	f
+Assertion	core.py	/^class Assertion(Op):$/;"	c
+BINARY_INFO	core.py	/^BINARY_INFO = {$/;"	v
+BatchedMul22	core.py	/^class BatchedMul22(Op):$/;"	c
+BinaryInfo	core.py	/^BinaryInfo = namedtuple("BinaryInfo", ("short", "pyfunc","commutes","diff","typeinfo","gradexpr", "cexpr"))$/;"	v
+CACHER	core.py	/^CACHER = AnalysisCacher()$/;"	v
+CACHER_ENABLED	core.py	/^CACHER_ENABLED = False$/;"	v
+Callable	core.py	/^class Callable(object):$/;"	c
+Composition	core.py	/^class Composition(Op):$/;"	c
+Concatenate	core.py	/^class Concatenate(Op):$/;"	c
+Constant	core.py	/^class Constant(Op): #pylint: disable=W0223$/;"	c
+ConstantTensor	core.py	/^class ConstantTensor(Constant):$/;"	c
+ConstantTuple	core.py	/^class ConstantTuple(Constant):$/;"	c
+DebugFunc	core.py	/^class DebugFunc(Op):$/;"	c
+Device	core.py	/^class Device(object):$/;"	c
+Disconnected	core.py	/^class Disconnected(Exception):$/;"	c
+Dot	core.py	/^class Dot(Op):$/;"	c
+Dtype	core.py	/^class Dtype: #pylint: disable=W0232$/;"	c
+ElwiseBinary	core.py	/^class ElwiseBinary(Op):$/;"	c
+ElwiseUnary	core.py	/^class ElwiseUnary(Op):$/;"	c
+Fill	core.py	/^class Fill(Op):$/;"	c
+Flip	core.py	/^class Flip(Op):$/;"	c
+GetData	core.py	/^class GetData(Op):$/;"	c
+GetFancySli	core.py	/^class GetFancySli(Op):$/;"	c
+GetFlatIndices	core.py	/^class GetFlatIndices(Op):$/;"	c
+GetSli	core.py	/^class GetSli(Op):$/;"	c
+IRFFT	core.py	/^class IRFFT(Op):$/;"	c
+InMemoryData	core.py	/^class InMemoryData(GetData):$/;"	c
+IncFancySli	core.py	/^class IncFancySli(Op):$/;"	c
+IncFlatIndices	core.py	/^class IncFlatIndices(Op):$/;"	c
+IncSli	core.py	/^class IncSli(Op):$/;"	c
+MakeTuple	core.py	/^class MakeTuple(Op):$/;"	c
+Max	core.py	/^class Max(Op):$/;"	c
+MethodNotDefined	core.py	/^class MethodNotDefined(Exception):$/;"	c
+Mul21	core.py	/^class Mul21(Op):$/;"	c
+Mul22	core.py	/^class Mul22(Op):$/;"	c
+NativeCallable	core.py	/^class NativeCallable(object):$/;"	c
+NativeCompileInfo	core.py	/^class NativeCompileInfo(object):$/;"	c
+Node	core.py	/^class Node(object):$/;"	c
+NonDifferentiable	core.py	/^class NonDifferentiable(Exception):$/;"	c
+Op	core.py	/^class Op(object):$/;"	c
+Outer	core.py	/^class Outer(Op):$/;"	c
+PyCallable	core.py	/^class PyCallable(Callable):$/;"	c
+RFFT	core.py	/^class RFFT(Op):$/;"	c
+Repeat	core.py	/^class Repeat(Op):$/;"	c
+Reshape	core.py	/^class Reshape(Op):$/;"	c
+Result	core.py	/^def Result(op, parents, typ=None, props=None, name=None):$/;"	f
+ScalarRng	core.py	/^class ScalarRng(Op):$/;"	c
+ShapeError	core.py	/^class ShapeError(Exception):$/;"	c
+Size	core.py	/^class Size(Op):$/;"	c
+SrcFile	core.py	/^SrcFile = namedtuple("SrcFile", ["lang","code"])$/;"	v
+Sum	core.py	/^class Sum(Op):$/;"	c
+T	core.py	/^    def T(self):$/;"	m	class:Node
+TensorType	core.py	/^class TensorType(Type):$/;"	c
+Todo	core.py	/^class Todo(Exception):$/;"	c
+Transport	core.py	/^class Transport(Op):$/;"	c
+Transpose	core.py	/^class Transpose(Op):$/;"	c
+TupleIndex	core.py	/^class TupleIndex(Op):$/;"	c
+TupleType	core.py	/^class TupleType(Type):$/;"	c
+Type	core.py	/^class Type(object):$/;"	c
+UNARY_INFO	core.py	/^UNARY_INFO = {$/;"	v
+UnaryInfo	core.py	/^UnaryInfo = namedtuple("UnaryInfo", ("short","pyfunc","diff","typeinfo", "gradexpr", "cexpr"))$/;"	v
+Unreachable	core.py	/^class Unreachable(Exception):$/;"	c
+VERBOSE_OPTIMIZATION	core.py	/^VERBOSE_OPTIMIZATION = False$/;"	v
+_CONFIG	core.py	/^_CONFIG = None$/;"	v
+__add__	core.py	/^    def __add__(self, other):$/;"	m	class:Node	file:
+__array_priority__	core.py	/^    __array_priority__ = 1000 # precedence over numpy operators$/;"	v	class:Node
+__del__	core.py	/^    def __del__(self):$/;"	m	class:NativeCallable	file:
+__div__	core.py	/^    def __div__(self, other):$/;"	m	class:Node	file:
+__enter__	core.py	/^    def __enter__(self):$/;"	m	class:debug_context	file:
+__enter__	core.py	/^    def __enter__(self):$/;"	m	class:disable_cacher	file:
+__enter__	core.py	/^    def __enter__(self):$/;"	m	class:scoped_update_config	file:
+__eq__	core.py	/^    def __eq__(self, other):$/;"	m	class:Device	file:
+__eq__	core.py	/^    def __eq__(self, other):$/;"	m	class:TensorType	file:
+__eq__	core.py	/^    def __eq__(self, other):$/;"	m	class:TupleType	file:
+__exit__	core.py	/^    def __exit__(self, *_args):$/;"	m	class:debug_context	file:
+__exit__	core.py	/^    def __exit__(self, *args):$/;"	m	class:disable_cacher	file:
+__exit__	core.py	/^    def __exit__(self, *args):$/;"	m	class:scoped_update_config	file:
+__floordiv__	core.py	/^    def __floordiv__(self, other):$/;"	m	class:Node	file:
+__ge__	core.py	/^    def __ge__(self, other):$/;"	m	class:Node	file:
+__getitem__	core.py	/^    def __getitem__(self, i):$/;"	m	class:TupleType	file:
+__getitem__	core.py	/^    def __getitem__(self, slis):$/;"	m	class:Node	file:
+__gt__	core.py	/^    def __gt__(self, other):$/;"	m	class:Node	file:
+__hash__	core.py	/^    def __hash__(self):$/;"	m	class:Device	file:
+__hash__	core.py	/^    def __hash__(self):$/;"	m	class:TensorType	file:
+__hash__	core.py	/^    def __hash__(self):$/;"	m	class:TupleType	file:
+__init__	core.py	/^    def __init__(self):$/;"	m	class:AnalysisCacher
+__init__	core.py	/^    def __init__(self):$/;"	m	class:debug_context
+__init__	core.py	/^    def __init__(self, **kw):$/;"	m	class:scoped_update_config
+__init__	core.py	/^    def __init__(self, *eltypes):$/;"	m	class:TupleType
+__init__	core.py	/^    def __init__(self, axes):$/;"	m	class:Flip
+__init__	core.py	/^    def __init__(self, axes):$/;"	m	class:IRFFT
+__init__	core.py	/^    def __init__(self, axes):$/;"	m	class:Max
+__init__	core.py	/^    def __init__(self, axes):$/;"	m	class:RFFT
+__init__	core.py	/^    def __init__(self, axes):$/;"	m	class:Repeat
+__init__	core.py	/^    def __init__(self, axes):$/;"	m	class:Sum
+__init__	core.py	/^    def __init__(self, axes):$/;"	m	class:Transpose
+__init__	core.py	/^    def __init__(self, axis):$/;"	m	class:Argmax
+__init__	core.py	/^    def __init__(self, axis):$/;"	m	class:Concatenate
+__init__	core.py	/^    def __init__(self, axis):$/;"	m	class:GetFancySli
+__init__	core.py	/^    def __init__(self, axis):$/;"	m	class:GetSli
+__init__	core.py	/^    def __init__(self, axis):$/;"	m	class:IncFancySli
+__init__	core.py	/^    def __init__(self, axis):$/;"	m	class:IncSli
+__init__	core.py	/^    def __init__(self, axis):$/;"	m	class:Size
+__init__	core.py	/^    def __init__(self, dev):$/;"	m	class:Transport
+__init__	core.py	/^    def __init__(self, devtype="cpu", idx=0):$/;"	m	class:Device
+__init__	core.py	/^    def __init__(self, dtype, ndim):$/;"	m	class:TensorType
+__init__	core.py	/^    def __init__(self, dtype='i8'):$/;"	m	class:Arange
+__init__	core.py	/^    def __init__(self, func_code, closure_triples = None, includes=(), link_flags="", $/;"	m	class:NativeCompileInfo
+__init__	core.py	/^    def __init__(self, idx):$/;"	m	class:TupleIndex
+__init__	core.py	/^    def __init__(self, inputs, outputs):$/;"	m	class:Composition
+__init__	core.py	/^    def __init__(self, kind):$/;"	m	class:ScalarRng
+__init__	core.py	/^    def __init__(self, msg):$/;"	m	class:Assertion
+__init__	core.py	/^    def __init__(self, n_in, return_type, op_str, fptr, cldata=None, $/;"	m	class:NativeCallable
+__init__	core.py	/^    def __init__(self, op,  n_in, func):$/;"	m	class:PyCallable
+__init__	core.py	/^    def __init__(self, opname, info=None):$/;"	m	class:ElwiseUnary
+__init__	core.py	/^    def __init__(self, opname, scalar_mask, info=None):$/;"	m	class:ElwiseBinary
+__init__	core.py	/^    def __init__(self, tA):$/;"	m	class:Mul21
+__init__	core.py	/^    def __init__(self, tA, tB):$/;"	m	class:BatchedMul22
+__init__	core.py	/^    def __init__(self, tA, tB):$/;"	m	class:Mul22
+__init__	core.py	/^    def __init__(self, typ):$/;"	m	class:GetData
+__init__	core.py	/^    def __init__(self, typ, op, parents, props=None, fixed_shape=None, name=None):$/;"	m	class:Node
+__init__	core.py	/^    def __init__(self, value):$/;"	m	class:Constant
+__init__	core.py	/^    def __init__(self, value):$/;"	m	class:ConstantTensor
+__init__	core.py	/^    def __init__(self, value):$/;"	m	class:ConstantTuple
+__init__	core.py	/^    def __init__(self, value):$/;"	m	class:Fill
+__init__	core.py	/^    def __init__(self, value, device=None, fixed_shape_mask=None):$/;"	m	class:InMemoryData
+__init__	core.py	/^    def __init__(self, yourfunc):$/;"	m	class:DebugFunc
+__iter__	core.py	/^    def __iter__(self):$/;"	m	class:Node	file:
+__iter__	core.py	/^    def __iter__(self):$/;"	m	class:TupleType	file:
+__le__	core.py	/^    def __le__(self, other):$/;"	m	class:Node	file:
+__len__	core.py	/^    def __len__(self):$/;"	m	class:Node	file:
+__len__	core.py	/^    def __len__(self):$/;"	m	class:TupleType	file:
+__lt__	core.py	/^    def __lt__(self, other):$/;"	m	class:Node	file:
+__mul__	core.py	/^    def __mul__(self, other):$/;"	m	class:Node	file:
+__neg__	core.py	/^    def __neg__(self):$/;"	m	class:Node	file:
+__nonzero__	core.py	/^    def __nonzero__(self):$/;"	m	class:Node	file:
+__pow__	core.py	/^    def __pow__(self, other):$/;"	m	class:Node	file:
+__radd__	core.py	/^    def __radd__(self, other):$/;"	m	class:Node	file:
+__rdiv__	core.py	/^    def __rdiv__(self, other):$/;"	m	class:Node	file:
+__repr__	core.py	/^    def __repr__(self):$/;"	m	class:Device	file:
+__repr__	core.py	/^    def __repr__(self):$/;"	m	class:InMemoryData	file:
+__repr__	core.py	/^    def __repr__(self):$/;"	m	class:Mul22	file:
+__repr__	core.py	/^    def __repr__(self):$/;"	m	class:Node	file:
+__repr__	core.py	/^    def __repr__(self):$/;"	m	class:Op	file:
+__repr__	core.py	/^    def __repr__(self):$/;"	m	class:TensorType	file:
+__rfloordiv__	core.py	/^    def __rfloordiv__(self, other):$/;"	m	class:Node	file:
+__rmul__	core.py	/^    def __rmul__(self, other):$/;"	m	class:Node	file:
+__rsub__	core.py	/^    def __rsub__(self, other):$/;"	m	class:Node	file:
+__rtruediv__	core.py	/^    def __rtruediv__(self, other):$/;"	m	class:Node	file:
+__str__	core.py	/^    def __str__(self):$/;"	m	class:Argmax	file:
+__str__	core.py	/^    def __str__(self):$/;"	m	class:ConstantTensor	file:
+__str__	core.py	/^    def __str__(self):$/;"	m	class:ConstantTuple	file:
+__str__	core.py	/^    def __str__(self):$/;"	m	class:ElwiseBinary	file:
+__str__	core.py	/^    def __str__(self):$/;"	m	class:ElwiseUnary	file:
+__str__	core.py	/^    def __str__(self):$/;"	m	class:Fill	file:
+__str__	core.py	/^    def __str__(self):$/;"	m	class:Max	file:
+__str__	core.py	/^    def __str__(self):$/;"	m	class:ScalarRng	file:
+__str__	core.py	/^    def __str__(self):$/;"	m	class:Size	file:
+__str__	core.py	/^    def __str__(self):$/;"	m	class:Sum	file:
+__str__	core.py	/^    def __str__(self):$/;"	m	class:Transpose	file:
+__str__	core.py	/^    def __str__(self):$/;"	m	class:TupleType	file:
+__sub__	core.py	/^    def __sub__(self, other):$/;"	m	class:Node	file:
+__truediv__	core.py	/^    def __truediv__(self, other):$/;"	m	class:Node	file:
+_c_code_inplace	core.py	/^    def _c_code_inplace(self):$/;"	m	class:ConstantTensor
+_c_code_valret	core.py	/^    def _c_code_valret(self):$/;"	m	class:ConstantTensor
+_call_byref	core.py	/^    def _call_byref(self, inputs, output):$/;"	m	class:NativeCallable
+_call_byval	core.py	/^    def _call_byval(self, inputs):        $/;"	m	class:NativeCallable
+_clone_list	core.py	/^def _clone_list(nodes, replace):$/;"	f
+_compute_pullback	core.py	/^    def _compute_pullback(self):$/;"	m	class:Composition
+_dtype_itemsize	core.py	/^def _dtype_itemsize(dtype):$/;"	f
+_flatten_lists	core.py	/^def _flatten_lists(lis):$/;"	f
+_get_value_type	core.py	/^def _get_value_type(value):$/;"	f
+_isintscalar	core.py	/^def _isintscalar(typ):$/;"	f
+_list_is_valid_sli	core.py	/^def _list_is_valid_sli(input_types):$/;"	f
+_load_config	core.py	/^def _load_config():$/;"	f
+_ndarray_type	core.py	/^def _ndarray_type(value):$/;"	f
+_no_grad	core.py	/^def _no_grad():$/;"	f
+_noderepr	core.py	/^def _noderepr(x):$/;"	f
+_nu_divide	core.py	/^def _nu_divide(x, y, out=None):$/;"	f
+_nu_iceil	core.py	/^def _nu_iceil(x,out=None):$/;"	f
+_nu_ifloor	core.py	/^def _nu_ifloor(x,out=None):$/;"	f
+_nu_sigmoid	core.py	/^def _nu_sigmoid(x, out=None):$/;"	f
+_promote	core.py	/^def _promote(typ1, typ2):$/;"	f
+_promote_multi	core.py	/^def _promote_multi(xtypes):$/;"	f
+_singleton_ones	core.py	/^def _singleton_ones(dtype, ndim):$/;"	f
+_type_to_int	core.py	/^def _type_to_int(typ1):$/;"	f
+_unflatten_list	core.py	/^def _unflatten_list(li,sizes):$/;"	f
+_value_str	core.py	/^    def _value_str(self):$/;"	m	class:ConstantTensor
+add_debug_node	core.py	/^def add_debug_node(x):$/;"	f
+alloc_from_shp	core.py	/^def alloc_from_shp(shp, typ):$/;"	f
+alloc_output	core.py	/^def alloc_output(node, vals):$/;"	f
+analyze	core.py	/^def analyze(outputs):$/;"	f
+argmax	core.py	/^    def argmax(self, axis=None, keepdims=False):$/;"	m	class:Node
+as_node	core.py	/^def as_node(val_or_node):$/;"	f
+as_valid_arg	core.py	/^def as_valid_arg(x):$/;"	f
+as_valid_array	core.py	/^def as_valid_array(x, dtype=None):$/;"	f
+as_valid_tuple	core.py	/^def as_valid_tuple(x):$/;"	f
+assert1	core.py	/^def assert1(x, msg=""):$/;"	f
+assert_	core.py	/^def assert_(x,msg=None):$/;"	f
+assertequal1	core.py	/^def assertequal1(x,y,msg):$/;"	f
+assertequaln	core.py	/^def assertequaln(xs,ys,msg):$/;"	f
+assertn	core.py	/^def assertn(xs,msg=""):$/;"	f
+available_impls	core.py	/^    available_impls = ("native_cpu","native_gpu")$/;"	v	class:Transport
+available_impls	core.py	/^    available_impls = ("python","native_cpu")        $/;"	v	class:Arange
+available_impls	core.py	/^    available_impls = ("python","native_cpu")        $/;"	v	class:BatchedMul22
+available_impls	core.py	/^    available_impls = ("python","native_cpu")        $/;"	v	class:Concatenate
+available_impls	core.py	/^    available_impls = ("python","native_cpu")        $/;"	v	class:Fill
+available_impls	core.py	/^    available_impls = ("python","native_cpu")        $/;"	v	class:Flip
+available_impls	core.py	/^    available_impls = ("python","native_cpu")        $/;"	v	class:GetFlatIndices
+available_impls	core.py	/^    available_impls = ("python","native_cpu")        $/;"	v	class:IncFlatIndices
+available_impls	core.py	/^    available_impls = ("python","native_cpu")        $/;"	v	class:Mul21
+available_impls	core.py	/^    available_impls = ("python","native_cpu")        $/;"	v	class:Outer
+available_impls	core.py	/^    available_impls = ("python","native_cpu")        $/;"	v	class:Repeat
+available_impls	core.py	/^    available_impls = ("python","native_cpu")        $/;"	v	class:Reshape
+available_impls	core.py	/^    available_impls = ("python","native_cpu")        $/;"	v	class:Size
+available_impls	core.py	/^    available_impls = ("python","native_cpu")        $/;"	v	class:Transpose
+available_impls	core.py	/^    available_impls = ("python","native_cpu")    $/;"	v	class:Constant
+available_impls	core.py	/^    available_impls = ("python","native_cpu")    $/;"	v	class:Dot
+available_impls	core.py	/^    available_impls = ("python","native_cpu")    $/;"	v	class:Max
+available_impls	core.py	/^    available_impls = ("python","native_cpu")$/;"	v	class:GetFancySli
+available_impls	core.py	/^    available_impls = ("python","native_cpu")$/;"	v	class:GetSli
+available_impls	core.py	/^    available_impls = ("python","native_cpu")$/;"	v	class:IncFancySli
+available_impls	core.py	/^    available_impls = ("python","native_cpu")$/;"	v	class:IncSli
+available_impls	core.py	/^    available_impls = ("python","native_cpu")$/;"	v	class:Sum
+available_impls	core.py	/^    available_impls = ("python","native_cpu","native_gpu")        $/;"	v	class:ElwiseBinary
+available_impls	core.py	/^    available_impls = ("python","native_cpu","native_gpu")        $/;"	v	class:TupleIndex
+available_impls	core.py	/^    available_impls = ("python","native_cpu","native_gpu")    $/;"	v	class:ElwiseUnary
+available_impls	core.py	/^    available_impls = ("python",)        $/;"	v	class:Assertion
+available_impls	core.py	/^    available_impls = ("python",)        $/;"	v	class:Composition
+available_impls	core.py	/^    available_impls = ("python",)        $/;"	v	class:IRFFT
+available_impls	core.py	/^    available_impls = ("python",)        $/;"	v	class:MakeTuple
+available_impls	core.py	/^    available_impls = ("python",)        $/;"	v	class:RFFT
+available_impls	core.py	/^    available_impls = ("python",)        $/;"	v	class:ScalarRng
+available_impls	core.py	/^    available_impls = ("python",)    $/;"	v	class:Argmax
+available_impls	core.py	/^    available_impls = ("python",)    $/;"	v	class:DebugFunc
+available_impls	core.py	/^    available_impls = () # python, native_cpu, native_gpu$/;"	v	class:Op
+available_impls	core.py	/^    available_impls=("python","native_cpu","native_gpu")$/;"	v	class:GetData
+available_impls	core.py	/^    def available_impls(self):$/;"	m	class:Mul22
+call	core.py	/^    def call(self, *args):$/;"	m	class:Callable
+call	core.py	/^    def call(self, *args):$/;"	m	class:NativeCallable
+call	core.py	/^    def call(self, *args):$/;"	m	class:PyCallable
+canon	core.py	/^    def canon(dt):$/;"	m	class:Dtype
+cdtype	core.py	/^    cdtype=np2c[input_types[0].dtype])$/;"	v	class:GetFancySli
+cdtype	core.py	/^    cdtype=np2c[input_types[0].dtype])$/;"	v	class:GetSli
+clone	core.py	/^    def clone(self, newparents):$/;"	m	class:Node
+clone	core.py	/^def clone(nodes, replace=None):$/;"	f
+count_nodes	core.py	/^def count_nodes(outputs):$/;"	f
+counter	core.py	/^    counter = 0 # allows unique identification of argument nodes$/;"	v	class:Node
+dbg_call	core.py	/^def dbg_call(yourfunc, *args):$/;"	f
+debug_context	core.py	/^class debug_context(object):$/;"	c
+default_props	core.py	/^def default_props():$/;"	f
+differentiably_influenced_by	core.py	/^def differentiably_influenced_by(wrt, outputs=None, nodelist=None):$/;"	f
+differentiably_influences	core.py	/^def differentiably_influences(outputs, nodelist=None):$/;"	f
+dimshuffle	core.py	/^    def dimshuffle(self, pattern):$/;"	m	class:Node
+disable_cacher	core.py	/^class disable_cacher(object):$/;"	c
+display_error	core.py	/^    def display_error(self):$/;"	m	class:Assertion
+do_analysis	core.py	/^def do_analysis(node, analysis):$/;"	f
+dot	core.py	/^    def dot(self, other):$/;"	m	class:Node
+dtype	core.py	/^    def dtype(self):$/;"	m	class:Node
+dtype_kind	core.py	/^def dtype_kind(dtype):$/;"	f
+elwise_binary	core.py	/^def elwise_binary(opname, x, y):$/;"	f
+expand	core.py	/^    def expand(self, inputs):$/;"	m	class:Composition
+f	core.py	/^        def f((start, stop, step)):$/;"	f	function:Arange.get_py_func
+f	core.py	/^        def f((x,y), z):$/;"	f	function:BatchedMul22.get_py_func
+f	core.py	/^        def f(_): $/;"	f	function:InMemoryData.get_py_func
+f	core.py	/^        def f(_):$/;"	f	function:ConstantTuple.get_py_func
+f	core.py	/^        def f(_, __):$/;"	f	function:DebugFunc.get_py_func
+f	core.py	/^        def f(_, write):$/;"	f	function:ConstantTensor.get_py_func
+f	core.py	/^        def f(inputs):$/;"	f	function:MakeTuple.get_py_func
+f	core.py	/^        def f(reads):$/;"	f	function:Reshape.get_py_func
+f	core.py	/^        def f(reads):$/;"	f	function:Size.get_py_func
+f	core.py	/^        def f(reads):$/;"	f	function:TupleIndex.get_py_func
+f	core.py	/^        def f(reads, _):$/;"	f	function:Assertion.get_py_func
+f	core.py	/^        def f(reads, write): write[...] = np.concatenate(reads,axis=self.axis)$/;"	f	function:Concatenate.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:Argmax.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:ElwiseBinary.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:ElwiseUnary.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:Fill.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:Flip.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:GetFancySli.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:GetFlatIndices.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:GetSli.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:IRFFT.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:IncFancySli.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:IncFlatIndices.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:IncSli.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:Max.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:Mul21.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:Mul22.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:Outer.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:RFFT.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:Repeat.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:ScalarRng.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:Sum.get_py_func
+f	core.py	/^        def f(reads, write):$/;"	f	function:Transpose.get_py_func
+f	core.py	/^        def f(reads,write):$/;"	f	function:Dot.get_py_func
+flatten	core.py	/^    def flatten(self):$/;"	m	class:Node
+fn	core.py	/^            def fn(*reads):$/;"	f	function:DebugFunc.get_py_func.f
+fn	core.py	/^    def fn(vals):$/;"	f	function:get_numeric_shape_fun
+func	core.py	/^    def func(self):$/;"	m	class:PyCallable
+gen_reduction_code	core.py	/^def gen_reduction_code(dtype, axes, ndim, reduction_expr, initval):$/;"	f
+get_cgt_src_root	core.py	/^def get_cgt_src_root():$/;"	f
+get_closure	core.py	/^    def get_closure(self):$/;"	m	class:BatchedMul22
+get_closure	core.py	/^    def get_closure(self):$/;"	m	class:ConstantTensor
+get_closure	core.py	/^    def get_closure(self):$/;"	m	class:Fill
+get_closure	core.py	/^    def get_closure(self):$/;"	m	class:Mul21
+get_closure	core.py	/^    def get_closure(self):$/;"	m	class:Mul22
+get_closure	core.py	/^    def get_closure(self):$/;"	m	class:Size
+get_closure	core.py	/^    def get_closure(self, _inputs):$/;"	m	class:TupleIndex
+get_closure	core.py	/^    def get_closure(self, n_parents):$/;"	m	class:Reshape
+get_config	core.py	/^def get_config(force_reload = False):$/;"	f
+get_device	core.py	/^    def get_device(self):$/;"	m	class:InMemoryData
+get_diff	core.py	/^    def get_diff(self):$/;"	m	class:Node
+get_diff	core.py	/^    def get_diff(self, _):$/;"	m	class:Argmax
+get_diff	core.py	/^    def get_diff(self, _):$/;"	m	class:Composition
+get_diff	core.py	/^    def get_diff(self, _):$/;"	m	class:ElwiseBinary
+get_diff	core.py	/^    def get_diff(self, _):$/;"	m	class:ElwiseUnary
+get_diff	core.py	/^    def get_diff(self, _):$/;"	m	class:Flip
+get_diff	core.py	/^    def get_diff(self, _):$/;"	m	class:GetFancySli
+get_diff	core.py	/^    def get_diff(self, _):$/;"	m	class:GetFlatIndices
+get_diff	core.py	/^    def get_diff(self, _):$/;"	m	class:GetSli
+get_diff	core.py	/^    def get_diff(self, _):$/;"	m	class:IRFFT
+get_diff	core.py	/^    def get_diff(self, _):$/;"	m	class:IncFancySli
+get_diff	core.py	/^    def get_diff(self, _):$/;"	m	class:IncFlatIndices
+get_diff	core.py	/^    def get_diff(self, _):$/;"	m	class:IncSli
+get_diff	core.py	/^    def get_diff(self, _):$/;"	m	class:Max
+get_diff	core.py	/^    def get_diff(self, _):$/;"	m	class:Size
+get_diff	core.py	/^    def get_diff(self, _):$/;"	m	class:Sum
+get_diff	core.py	/^    def get_diff(self, _):$/;"	m	class:Transpose
+get_diff	core.py	/^    def get_diff(self, num_inputs):$/;"	m	class:Arange
+get_diff	core.py	/^    def get_diff(self, num_inputs):$/;"	m	class:Concatenate
+get_diff	core.py	/^    def get_diff(self, num_inputs):$/;"	m	class:Fill
+get_diff	core.py	/^    def get_diff(self, num_inputs):$/;"	m	class:Op
+get_diff	core.py	/^    def get_diff(self, num_inputs):$/;"	m	class:RFFT
+get_diff	core.py	/^    def get_diff(self, num_inputs):$/;"	m	class:Repeat
+get_diff	core.py	/^    def get_diff(self, num_inputs):$/;"	m	class:Reshape
+get_diff	core.py	/^    def get_diff(self, num_inputs):$/;"	m	class:ScalarRng
+get_expr	core.py	/^    def get_expr(self, (xexpr,yexpr)):$/;"	m	class:Mul21
+get_expr	core.py	/^    def get_expr(self, (xexpr,yexpr)):$/;"	m	class:Mul22
+get_expr	core.py	/^    def get_expr(self, parent_exprs):$/;"	m	class:ConstantTensor
+get_expr	core.py	/^    def get_expr(self, parent_exprs):$/;"	m	class:ConstantTuple
+get_expr	core.py	/^    def get_expr(self, parent_exprs):$/;"	m	class:ElwiseBinary
+get_expr	core.py	/^    def get_expr(self, parent_exprs):$/;"	m	class:Op
+get_fixed_shape	core.py	/^    def get_fixed_shape(self):$/;"	m	class:InMemoryData
+get_fixed_shape	core.py	/^    def get_fixed_shape(self):$/;"	m	class:Node
+get_hash	core.py	/^    def get_hash(self):$/;"	m	class:ConstantTensor
+get_hash	core.py	/^    def get_hash(self):$/;"	m	class:ConstantTuple
+get_hash	core.py	/^    def get_hash(self):$/;"	m	class:ElwiseBinary
+get_hash	core.py	/^    def get_hash(self):$/;"	m	class:ElwiseUnary
+get_hash	core.py	/^    def get_hash(self):$/;"	m	class:Fill
+get_hash	core.py	/^    def get_hash(self):$/;"	m	class:Op
+get_hash	core.py	/^    def get_hash(self, node2hash):$/;"	m	class:Node
+get_name	core.py	/^    def get_name(self):$/;"	m	class:Op
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, _input_types, _devtype):$/;"	m	class:InMemoryData
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, _input_types, devtype):$/;"	m	class:Fill
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, _inputs, _devtype):$/;"	m	class:Transport
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):        $/;"	m	class:Sum
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:Arange
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:BatchedMul22
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:Concatenate
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:ConstantTensor
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:Dot
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:ElwiseBinary
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:ElwiseUnary
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:Flip
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:GetFancySli
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:GetFlatIndices
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:GetSli
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:IncFancySli
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:IncFlatIndices
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:IncSli
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:Max
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:Mul21
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:Mul22
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:Outer
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:Repeat
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:Reshape
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:ScalarRng
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:Size
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:Transpose
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, input_types, devtype):$/;"	m	class:TupleIndex
+get_native_compile_info	core.py	/^    def get_native_compile_info(self, inputs, devtype):$/;"	m	class:Op
+get_nodes	core.py	/^    def get_nodes(self):$/;"	m	class:Composition
+get_numeric_shape_fun	core.py	/^def get_numeric_shape_fun(node):$/;"	f
+get_pptr	core.py	/^    def get_pptr(self):$/;"	m	class:InMemoryData
+get_py_callable	core.py	/^    def get_py_callable(self, input_types):$/;"	m	class:Op
+get_py_func	core.py	/^    def get_py_func(self, _):$/;"	m	class:InMemoryData
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Arange
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Argmax
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Assertion
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:BatchedMul22
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Composition
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Concatenate
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:ConstantTensor
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:ConstantTuple
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:DebugFunc
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Dot
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:ElwiseBinary
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Fill
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Flip
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:GetFancySli
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:GetFlatIndices
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:GetSli
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:IRFFT
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:IncFancySli
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:IncFlatIndices
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:IncSli
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:MakeTuple
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Max
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Mul21
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Mul22
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Op
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Outer
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:RFFT
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Repeat
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Reshape
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:ScalarRng
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Size
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Sum
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:Transpose
+get_py_func	core.py	/^    def get_py_func(self, input_types):$/;"	m	class:TupleIndex
+get_py_func	core.py	/^    def get_py_func(self,_):$/;"	m	class:ElwiseUnary
+get_replacement	core.py	/^    def get_replacement(self, _newparents, _analysis):$/;"	m	class:ElwiseUnary
+get_replacement	core.py	/^    def get_replacement(self, _newparents, _analysis):$/;"	m	class:Op
+get_replacement	core.py	/^    def get_replacement(self, inputs, _analysis):$/;"	m	class:Size
+get_replacement	core.py	/^    def get_replacement(self, inputs, analysis):$/;"	m	class:Mul21
+get_replacement	core.py	/^    def get_replacement(self, parents, analysis):$/;"	m	class:ElwiseBinary
+get_replacement	core.py	/^    def get_replacement(self, parents, analysis):$/;"	m	class:Repeat
+get_shape	core.py	/^    def get_shape(self):$/;"	m	class:InMemoryData
+get_size	core.py	/^    def get_size(self):$/;"	m	class:InMemoryData
+get_value	core.py	/^    def get_value(self):$/;"	m	class:Constant
+get_value	core.py	/^    def get_value(self):$/;"	m	class:InMemoryData
+global_context	core.py	/^    global_context = None # TODO: what is this?$/;"	v	class:debug_context
+grad	core.py	/^def grad(cost, wrt):    $/;"	f
+infer_shape	core.py	/^def infer_shape(arr):$/;"	f
+init_analysis	core.py	/^def init_analysis():$/;"	f
+involves_gpu	core.py	/^    def involves_gpu(self):$/;"	m	class:NativeCompileInfo
+is_argument	core.py	/^    def is_argument(self):$/;"	m	class:Node
+is_data	core.py	/^    def is_data(self):$/;"	m	class:Node
+is_data_op	core.py	/^    is_data_op = False$/;"	v	class:Op
+is_data_op	core.py	/^    is_data_op=True$/;"	v	class:GetData
+is_input	core.py	/^    def is_input(self):$/;"	m	class:Node
+is_random_op	core.py	/^    is_random_op = False$/;"	v	class:Op
+is_random_op	core.py	/^    is_random_op = True$/;"	v	class:ScalarRng
+is_scalar	core.py	/^    def is_scalar(self):$/;"	m	class:Node
+is_tensor	core.py	/^    def is_tensor(self):$/;"	m	class:Node
+is_tuple	core.py	/^    def is_tuple(self):$/;"	m	class:Node
+kind	core.py	/^    def kind(self):$/;"	m	class:NativeCallable
+kind	core.py	/^    def kind(self):$/;"	m	class:PyCallable
+make_argument	core.py	/^def make_argument(typ):$/;"	f
+max	core.py	/^    def max(self, axis=None, keepdims=False):$/;"	m	class:Node
+maybe_replace	core.py	/^def maybe_replace(node, analysis, repl):$/;"	f
+mean	core.py	/^    def mean(self, axis=None, keepdims=False):$/;"	m	class:Node
+n_in	core.py	/^    def n_in(self):$/;"	m	class:Callable
+n_in	core.py	/^    def n_in(self):$/;"	m	class:NativeCallable
+n_in	core.py	/^    def n_in(self):$/;"	m	class:PyCallable
+n_out	core.py	/^    def n_out(self):$/;"	m	class:Composition
+ndim	core.py	/^    def ndim(self):$/;"	m	class:Node
+np2c	core.py	/^np2c = {"i1":"int8_t","i2":"int16_t","i4":"int32_t","i8":"int64_t",$/;"	v
+num_components	core.py	/^def num_components(node):$/;"	f
+op_str	core.py	/^    def op_str(self):$/;"	m	class:Callable
+op_str	core.py	/^    def op_str(self):$/;"	m	class:NativeCallable
+op_str	core.py	/^    def op_str(self):$/;"	m	class:PyCallable
+process_top_stack_item_and_maybe_get_replacement	core.py	/^def process_top_stack_item_and_maybe_get_replacement(stack, analysis, repl): #pylint: disable=W0621$/;"	f
+prod	core.py	/^    def prod(self, axis=None, keepdims=False):$/;"	m	class:Node
+pullback	core.py	/^    def pullback(self, (x, y), z, gz): #pylint: disable=W0613$/;"	m	class:ElwiseBinary
+pullback	core.py	/^    def pullback(self, (x,), y, gy): #pylint: disable=W0613$/;"	m	class:ElwiseUnary
+pullback	core.py	/^    def pullback(self, _inps, _out, _gout):$/;"	m	class:ConstantTensor
+pullback	core.py	/^    def pullback(self, inputs, _out, gout):$/;"	m	class:Reshape
+pullback	core.py	/^    def pullback(self, inputs, _output, gout):$/;"	m	class:Concatenate
+pullback	core.py	/^    def pullback(self, inputs, _output, goutput):$/;"	m	class:Dot
+pullback	core.py	/^    def pullback(self, inputs, _output, goutput):$/;"	m	class:Mul21
+pullback	core.py	/^    def pullback(self, inputs, _output, goutput):$/;"	m	class:Outer
+pullback	core.py	/^    def pullback(self, inputs, _outputs, goutput):$/;"	m	class:IRFFT
+pullback	core.py	/^    def pullback(self, inputs, _outputs, goutput):$/;"	m	class:RFFT
+pullback	core.py	/^    def pullback(self, inputs, output, goutput): #pylint: disable=W0613$/;"	m	class:Op
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:Arange
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:BatchedMul22
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:Composition
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:Fill
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:Flip
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:GetFancySli
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:GetFlatIndices
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:GetSli
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:IncFancySli
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:IncFlatIndices
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:IncSli
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:Max
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:Mul22
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:Repeat
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:ScalarRng
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:Size
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:Sum
+pullback	core.py	/^    def pullback(self, inputs, output, goutput):$/;"	m	class:Transpose
+pullback	core.py	/^def pullback(outputs, goutputs, wrt):$/;"	f
+pushforward	core.py	/^    def pushforward(self, inputs, output, goutput):$/;"	m	class:Op
+py_impl	core.py	/^        def py_impl(num_inputs):$/;"	f	function:Composition.get_py_func
+py_numeric_apply	core.py	/^def py_numeric_apply(node, vals):$/;"	f
+reset_config	core.py	/^def reset_config():$/;"	f
+reshape	core.py	/^    def reshape(self, shp):$/;"	m	class:Node
+return_type	core.py	/^    def return_type(self):$/;"	m	class:Callable
+return_type	core.py	/^    def return_type(self):$/;"	m	class:NativeCallable
+return_type	core.py	/^    def return_type(self):$/;"	m	class:PyCallable
+return_type	core.py	/^    return_type = "byref" # or "byval"$/;"	v	class:Op
+return_type	core.py	/^    return_type = "byref"$/;"	v	class:ConstantTensor
+return_type	core.py	/^    return_type = "byref"$/;"	v	class:Dot
+return_type	core.py	/^    return_type = "byval"$/;"	v	class:Composition
+return_type	core.py	/^    return_type = "byval"$/;"	v	class:ConstantTuple
+return_type	core.py	/^    return_type = "byval"$/;"	v	class:Reshape
+return_type	core.py	/^    return_type = "byval"$/;"	v	class:Size
+return_type	core.py	/^    return_type="byval"$/;"	v	class:Arange
+return_type	core.py	/^    return_type="byval"$/;"	v	class:GetData
+return_type	core.py	/^    return_type="byval"$/;"	v	class:MakeTuple
+return_type	core.py	/^    return_type="byval"$/;"	v	class:TupleIndex
+scoped_update_config	core.py	/^class scoped_update_config(object):$/;"	c
+set_value	core.py	/^    def set_value(self, value):$/;"	m	class:InMemoryData
+shape	core.py	/^    def shape(self):$/;"	m	class:Node
+shapes	core.py	/^    def shapes(self):$/;"	m	class:Composition
+shp_apply	core.py	/^    def shp_apply(self, _):$/;"	m	class:Assertion
+shp_apply	core.py	/^    def shp_apply(self, _):$/;"	m	class:DebugFunc
+shp_apply	core.py	/^    def shp_apply(self, _):$/;"	m	class:Dot
+shp_apply	core.py	/^    def shp_apply(self, _inputs):$/;"	m	class:ConstantTensor
+shp_apply	core.py	/^    def shp_apply(self, _inputs):$/;"	m	class:ConstantTuple
+shp_apply	core.py	/^    def shp_apply(self, _inputs):$/;"	m	class:Size
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:Arange
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:Argmax
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:BatchedMul22
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:Composition
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:Concatenate
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:ElwiseBinary
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:ElwiseUnary
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:Fill
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:Flip
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:GetFancySli
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:GetFlatIndices
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:GetSli
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:IRFFT
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:IncFancySli
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:IncFlatIndices
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:IncSli
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:MakeTuple
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:Max
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:Mul21
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:Mul22
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:Outer
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:RFFT
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:Repeat
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:Reshape
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:ScalarRng
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:Sum
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:Transport
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:Transpose
+shp_apply	core.py	/^    def shp_apply(self, inputs):$/;"	m	class:TupleIndex
+shp_apply	core.py	/^    def shp_apply(self, parents):$/;"	m	class:Op
+simplify	core.py	/^    def simplify(self, xs):$/;"	m	class:AnalysisCacher
+simplify	core.py	/^def simplify(xs):$/;"	f
+simplify1	core.py	/^    def simplify1(self, x):$/;"	m	class:AnalysisCacher
+simplify1	core.py	/^def simplify1(x):$/;"	f
+simplify_and_analyze	core.py	/^def simplify_and_analyze(outputs):$/;"	f
+spliting	core.py	/^    def spliting(self, inputs):$/;"	m	class:Op
+sum	core.py	/^    def sum(self, axis=None, keepdims=False):$/;"	m	class:Node
+topsorted	core.py	/^def topsorted(outputs):$/;"	f
+transpose	core.py	/^    def transpose(self, axes=None):$/;"	m	class:Node
+typ_apply	core.py	/^    def typ_apply(self, _):$/;"	m	class:DebugFunc
+typ_apply	core.py	/^    def typ_apply(self, _):$/;"	m	class:GetData
+typ_apply	core.py	/^    def typ_apply(self, _):$/;"	m	class:Size
+typ_apply	core.py	/^    def typ_apply(self, input_types):        $/;"	m	class:GetSli
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:Arange
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:Assertion
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:BatchedMul22
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:Composition
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:Concatenate
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:ConstantTensor
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:ConstantTuple
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:Dot
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:ElwiseBinary
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:ElwiseUnary
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:Fill
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:Flip
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:GetFancySli
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:IncFancySli
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:IncFlatIndices
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:IncSli
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:MakeTuple
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:Max
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:Mul21
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:Mul22
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:Outer
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:RFFT
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:Repeat
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:Reshape
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:ScalarRng
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:Sum
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:Transport
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:Transpose
+typ_apply	core.py	/^    def typ_apply(self, input_types):$/;"	m	class:TupleIndex
+typ_apply	core.py	/^    def typ_apply(self, inputs):$/;"	m	class:Argmax
+typ_apply	core.py	/^    def typ_apply(self, inputs):$/;"	m	class:GetFlatIndices
+typ_apply	core.py	/^    def typ_apply(self, inputs):$/;"	m	class:IRFFT
+typ_apply	core.py	/^    def typ_apply(self, parent_types):$/;"	m	class:Op
+unpack	core.py	/^def unpack(tup):$/;"	f
+update_config	core.py	/^def update_config(**kws):$/;"	f
+update_simplify_map	core.py	/^def update_simplify_map(node, analysis, repl):$/;"	f
+writes_to_input	core.py	/^    writes_to_input = -1 # whether output is allowed to have same underlying data as input$/;"	v	class:Op
+writes_to_input	core.py	/^    writes_to_input = 0$/;"	v	class:IncFancySli
+writes_to_input	core.py	/^    writes_to_input = 0$/;"	v	class:IncFlatIndices
+writes_to_input	core.py	/^    writes_to_input = 0$/;"	v	class:IncSli
