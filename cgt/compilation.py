@@ -573,6 +573,7 @@ def nci2callable(nci):
     callobj = core.NativeCallable(nci.n_in, nci.return_type, nci.op_str, fptr, cldata=cldata, setup_fptr=setup_fptr, teardown_fptr=teardown_fptr,
         store_objects=nci.store_objects)
     callobj.clstr = nci.clstr
+    callobj.clstr += prefix
     return callobj
 
 def _funcname(prefix):

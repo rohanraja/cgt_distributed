@@ -29,6 +29,7 @@ public:
     void* filedata;
     int filesize;
     string filed ;
+    string prefix ;
 
     ByRefCallable(cgtByRefFun fptr, void* data, const string & clstr) : fptr(fptr), data(data) {
       filed = clstr ;
@@ -39,6 +40,8 @@ public:
     ByRefCallable(ifstream &f){
       trace("Loading callable!!");
       data = loadCldata(f);
+      getline(f,prefix, '\0');
+      trace(prefix);
 
       // tmp* t = (tmp*) data ;
       // trace(t->ndim);
@@ -51,8 +54,9 @@ public:
       trace(filesize);
       if(filesize == 0)
         writef(f, filesize);
-
       f.write((char*)filedata , filesize);
+      char nullchar = '\0';
+      writef(f, nullchar);
     }
     void operator()(cgtObject ** reads, cgtObject * write) {
         printf("Byref Called!!\n\n");

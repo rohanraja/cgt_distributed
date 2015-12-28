@@ -487,8 +487,9 @@ class Op(object):
         return type(self).__name__
 
     def get_closure_filestring(self):
-        return ''
-
+        clsize = 0
+        out = ctypes.string_at(ctypes.pointer(ctypes.c_int(clsize)), ctypes.sizeof(ctypes.c_int))
+        return out
 
 def as_node(val_or_node):
     """    
