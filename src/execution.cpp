@@ -492,4 +492,56 @@ ExecutionGraph * loadExecutionGraph(ifstream &f){
 }
 
 
+typedef unsigned char byte ;
+
+typedef int size_data;
+
+void * loadCldata(ifstream &f){
+
+  size_data structBytes ;
+  readf(f, structBytes);
+  trace(structBytes);
+
+  if(structBytes == 0)
+    return NULL ;
+
+  byte* stdata = new byte[structBytes] ;
+
+  readfs(f, stdata, structBytes);
+
+  int numptrs;
+  readf(f, numptrs);
+
+  trace(numptrs);
+
+  int sizeBlock;
+  int st_offset;
+  byte* block;
+
+  byte* blockAddr;
+
+  rep(i,numptrs){
+
+    readf(f, sizeBlock);
+    block = new byte[sizeBlock] ;
+    readfs(f, block, sizeBlock);
+    readf(f, st_offset);
+
+    blockAddr = stdata + st_offset ;
+    *((void **)(blockAddr)) = (void*) block ;
+
+    trace(sizeBlock);
+    trace(st_offset);
+
+    int tst = * ( ((int*)block) + 1 ) ;
+    trace(tst);
+
+  }
+
+  return (void*) stdata ;
+
+}
+
+
+
 }

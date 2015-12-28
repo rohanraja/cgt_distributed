@@ -13,17 +13,46 @@ using std::vector;
 
 // note: no-args initializers are only here because they're required by cython
 
+void * loadCldata(ifstream &f);
+
+// struct tmp{
+// int ndim;
+// void* shape;
+// uint8_t dtype;
+// void* data;
+// };
+
 class ByRefCallable {
 public:
     cgtByRefFun fptr;
     void* data;
-    ByRefCallable(cgtByRefFun fptr, void* data) : fptr(fptr), data(data) {}
+    void* filedata;
+    int filesize;
+    string filed ;
+
+    ByRefCallable(cgtByRefFun fptr, void* data, const string & clstr) : fptr(fptr), data(data) {
+      filed = clstr ;
+      filesize = filed.size();
+      filedata = (void *)filed.c_str() ;
+    }
     ByRefCallable() : fptr(NULL), data(NULL) {}
     ByRefCallable(ifstream &f){
       trace("Loading callable!!");
+      data = loadCldata(f);
+
+      // tmp* t = (tmp*) data ;
+      // trace(t->ndim);
+      // trace(t->dtype);
+      // long *nm = (long *) t->data ;
+      // trace(*nm);
     }
     void save(ofstream &f){
       trace("Saving callable!!");
+      trace(filesize);
+      if(filesize == 0)
+        writef(f, filesize);
+
+      f.write((char*)filedata , filesize);
     }
     void operator()(cgtObject ** reads, cgtObject * write) {
         printf("Byref Called!!\n\n");

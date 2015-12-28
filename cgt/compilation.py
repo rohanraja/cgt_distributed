@@ -280,6 +280,7 @@ def get_native_callable(op, input_types, devtype):
     nci.op_str = str(op)
     nci.return_type = op.return_type
     nci.n_in = len(input_types)
+    nci.clstr = op.get_closure_filestring()
     return nci2callable(nci)
 
 def add_transports(nodelist, node2dev, node2shape):
@@ -569,8 +570,10 @@ def nci2callable(nci):
     setup_fptr = getattr(lib, _setupname(prefix)) if nci.setup else None
     teardown_fptr = getattr(lib, _teardownname(prefix)) if nci.teardown else None
     cldata = _build_closure(nci.closure_triples)
-    return core.NativeCallable(nci.n_in, nci.return_type, nci.op_str, fptr, cldata=cldata, setup_fptr=setup_fptr, teardown_fptr=teardown_fptr,
+    callobj = core.NativeCallable(nci.n_in, nci.return_type, nci.op_str, fptr, cldata=cldata, setup_fptr=setup_fptr, teardown_fptr=teardown_fptr,
         store_objects=nci.store_objects)
+    callobj.clstr = nci.clstr
+    return callobj
 
 def _funcname(prefix):
     return "call_"+prefix

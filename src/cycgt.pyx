@@ -231,7 +231,7 @@ cdef cgtDevtype devtype_fromstr(object s):
  
 cdef extern from "execution.h" namespace "cgt":
     cppclass ByRefCallable:
-        ByRefCallable(cgtByRefFun, void*)
+        ByRefCallable(cgtByRefFun, void*, const string &)
         ByRefCallable()
     cppclass ByValCallable:
         ByValCallable(cgtByValFun, void*)
@@ -320,11 +320,11 @@ cdef cgtObject* _pyfunc_byval(void* cldata, cgtObject** args):
 cdef ByRefCallable _tocppbyrefcallable(callable, storage) except *:
     storage.append(callable)
     if callable.kind == "native":
-        return ByRefCallable(<cgtByRefFun>_getfuncptr(callable.fptr), _getstructptr(callable.cldata))
+        return ByRefCallable(<cgtByRefFun>_getfuncptr(callable.fptr), _getstructptr(callable.cldata), callable.clstr)
     else:
         py_cldata = (callable.func, callable.n_in)
         storage.append(py_cldata)
-        return ByRefCallable(&_pyfunc_byref, <PyObject*>py_cldata)
+        return ByRefCallable(&_pyfunc_byref, <PyObject*>py_cldata, "")
 
 cdef ByValCallable _tocppbyvalcallable(callable, storage) except *:
     storage.append(callable)
