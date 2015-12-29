@@ -339,14 +339,18 @@ Instruction * Alloc_load(ifstream &f){
 
   cgtDtype dtype;
   readf(f,dtype);
-  trace(dtype);
-  trace(sizeof(dtype));
   MemLocation wloc(f);
   vector<MemLocation> readlocs = loadMemVector(f);
 
   return new Alloc("Alloc", dtype, readlocs, wloc);
 }
 
+Instruction * BuildTup_load(ifstream &f){
+  MemLocation wloc(f);
+  vector<MemLocation> readlocs = loadMemVector(f);
+
+  return new BuildTup("BuildTup", readlocs, wloc);
+}
 
 Instruction * Byref_load(ifstream &f){
 
@@ -472,8 +476,14 @@ vector<Instruction *> loadInstVector(ifstream &f){
       case 1:
         instrs[i] = Alloc_load(f);
         break;
+      case 2:
+        instrs[i] = BuildTup_load(f);
+        break;
       case 3:
         instrs[i] = Byref_load(f);
+        break;
+      case 4:
+        instrs[i] = Byval_load(f);
         break;
 
     };

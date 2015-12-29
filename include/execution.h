@@ -230,6 +230,12 @@ public:
     void fire(Interpreter*);
     const vector<MemLocation>& get_readlocs() const { return readlocs; }
     const MemLocation& get_writeloc() const { return writeloc; }
+    void save(ofstream &f){
+      int type = 2;
+      writef(f, type);
+      writeloc.save(f);
+      saveMemVector(readlocs, f);
+    }
 private:
     vector<MemLocation> readlocs;
     MemLocation writeloc;
@@ -277,6 +283,7 @@ private:
 
 Instruction * LoadArgument_load(ifstream &f);
 Instruction * Alloc_load(ifstream &f);
+Instruction * BuildTup_load(ifstream &f);
 Instruction * Byref_load(ifstream &f);
 Instruction * Byval_load(ifstream &f);
 
