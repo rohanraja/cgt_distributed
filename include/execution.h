@@ -40,14 +40,14 @@ public:
     }
     ByRefCallable() : fptr(NULL), data(NULL) {}
     ByRefCallable(ifstream &f){
-      trace("Loading callable!!");
+      // trace("Loading callable!!");
       data = loadCldata(f);
       getline(f,prefix, '\0');
       trace(prefix);
       fptr = (cgtByRefFun) loadByrefFunc(prefix);
     }
     void save(ofstream &f){
-      trace("Saving ByRef callable!!");
+      // trace("Saving ByRef callable!!");
       // trace(filesize);
       if(filesize == 0)
         writef(f, filesize);

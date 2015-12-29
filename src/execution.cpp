@@ -37,10 +37,14 @@ public:
         args_ = newargs;
         cgt_assert(newargs != NULL);
         cgt_assert(newargs->len == eg_->n_args());
+        int icnt = 1 ;
+        cout << "\nTotal Instructions = " << eg_->instrs().size() << endl ;
         for (Instruction* instr : eg_->instrs()) {
-          trace("Fire");
+            cout << "\nFiring Instruction #" << icnt ; 
+            icnt++;
             instr->fire(this);
         }
+        cout << "\n\n";
         args_ = NULL;
         long n_outputs = output_locs_.size();
         cgtTuple * out = new cgtTuple(n_outputs);

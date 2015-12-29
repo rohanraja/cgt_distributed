@@ -1030,7 +1030,6 @@ class ConstantTensor(Constant):
             raise MethodNotDefined
         return r"""
             CGT_EXPORT_C void $function($closure* cldata, cgtArray** reads, cgtArray* write) {
-                printf("\n Size of closure = %d\n", sizeof($closure) );
                 cgt_memcpy(cgtCPU, cgtCPU, write->data(), cldata->data, write->nbytes());
             }
             """
