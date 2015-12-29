@@ -38,7 +38,7 @@ public:
         cgt_assert(newargs != NULL);
         cgt_assert(newargs->len == eg_->n_args());
         for (Instruction* instr : eg_->instrs()) {
-            trace("Firing");
+          trace("Fire");
             instr->fire(this);
         }
         args_ = NULL;

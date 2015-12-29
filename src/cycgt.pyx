@@ -408,6 +408,12 @@ cdef class CppArrayWrapper:
     @property
     def data(self):
         return <long>self.arr.get().data()
+    @property
+    def shapePtr(self):
+        return <long>self.arr.get().shape()
+    @property
+    def dtypeInt(self):
+        return <int>(self.arr.get().dtype())
 
 
 cdef class CppInterpreterWrapper:

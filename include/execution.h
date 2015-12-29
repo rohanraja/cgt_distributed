@@ -56,7 +56,6 @@ public:
       writef(f, nullchar);
     }
     void operator()(cgtObject ** reads, cgtObject * write) {
-        printf("Byref Called!!\n\n");
         (*fptr)(data, reads, write);
     }
 };
