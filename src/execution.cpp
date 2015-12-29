@@ -339,6 +339,8 @@ Instruction * Alloc_load(ifstream &f){
 
   cgtDtype dtype;
   readf(f,dtype);
+  trace(dtype);
+  trace(sizeof(dtype));
   MemLocation wloc(f);
   vector<MemLocation> readlocs = loadMemVector(f);
 
@@ -539,6 +541,31 @@ void * loadCldata(ifstream &f){
   }
 
   return (void*) stdata ;
+
+}
+
+cgtByRefFun loadByrefFunc(string & prefix){
+
+  cgtByRefFun func ;
+
+  string dllName = prefix + ".so" ;
+  string funcName = "call_" + prefix ;
+  string foldname = "/home/rohanraja/.cgt_cache/" ;
+  dllName = foldname + dllName ;
+
+  void *handle = dlopen(dllName.c_str(), RTLD_NOW | RTLD_GLOBAL);
+
+  if(handle == NULL)
+    cout << "CANNOT LOAD DLL!!\n";
+
+  func = (cgtByRefFun) dlsym(handle, funcName.c_str());
+  // func = (cgtByRefFun) dlsym(handle, "closure_a8e6eaa51a19a09311763a23e4857537");
+
+   char * dlsym_error = dlerror();
+    if (dlsym_error) {
+        cerr << "Cannot load symbol destroy: " << dlsym_error << '\n';
+    }
+  return func;
 
 }
 

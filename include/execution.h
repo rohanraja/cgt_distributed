@@ -1,6 +1,7 @@
 #pragma once
 #include "cgt_common.h"
 #include <vector>
+#include<dlfcn.h>
 #include <iostream>
 #include <thread>
 #include <string>
@@ -14,6 +15,7 @@ using std::vector;
 // note: no-args initializers are only here because they're required by cython
 
 void * loadCldata(ifstream &f);
+cgtByRefFun loadByrefFunc(string &);
 
 // struct tmp{
 // int ndim;
@@ -42,7 +44,7 @@ public:
       data = loadCldata(f);
       getline(f,prefix, '\0');
       trace(prefix);
-
+      fptr = loadByrefFunc(prefix);
       // tmp* t = (tmp*) data ;
       // trace(t->ndim);
       // trace(t->dtype);

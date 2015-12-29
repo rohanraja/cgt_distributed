@@ -1396,6 +1396,7 @@ class ElwiseBinary(Op):
             cexpr=self.info.cexpr,index0=index0,index1=index1,ind4shape=ind4shape)
         if devtype == "cpu":
             code = r"""
+                #include<iostream>
                 static inline %(cdtype2)s scalar_$function(%(cdtype0)s x, %(cdtype1)s y) {return %(cexpr)s;}
                 CGT_EXPORT_C void $function(void* cldata, cgtArray** reads, cgtArray* write) {
                     int s = reads[%(ind4shape)s]->size();
@@ -1404,6 +1405,7 @@ class ElwiseBinary(Op):
                     %(cdtype2)s* out = (%(cdtype2)s*)write->data();
                     cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
                     for (int i=0; i < s; ++i) {
+                        std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
                         out[i] = scalar_$function(in0[%(index0)s], in1[%(index1)s]);
                     }
                 }"""%d
