@@ -367,7 +367,7 @@ def run_compilation_pipeline(inputs, outputs, updates, givens):
     if isinp:
         # print "WRITING"
         inps_intep = inputs, outputs_simple, eg, node2memloc
-        dill.dump(inps_intep, open("eg.bin", 'w'))
+        dill.dump(inps_intep, open("inptps", 'w'))
         #
         # for i in eg.instrs:
         #     try:

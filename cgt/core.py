@@ -486,9 +486,47 @@ class Op(object):
         """
         return type(self).__name__
 
+    def get_closure_strings(self):
+        return []
+    def get_closure(self):
+        return None
+    def get_closure_wrapper(self):
+        return self.get_closure()
+
     def get_closure_filestring(self):
-        clsize = 0
+        triples = self.get_closure_wrapper()
+        if triples is None:
+            clsize = 0
+            out = ctypes.string_at(ctypes.pointer(ctypes.c_int(clsize)), ctypes.sizeof(ctypes.c_int))
+            return out
+
+        vals = []
+        fields = []
+        for (fieldname,fieldtype,val) in triples:
+            vals.append(val)
+            fields.append((fieldname,fieldtype))
+
+        class S(ctypes.Structure):
+            _fields_ = fields
+        closure = S(*vals)
+
+        clsize = ctypes.sizeof(closure)
         out = ctypes.string_at(ctypes.pointer(ctypes.c_int(clsize)), ctypes.sizeof(ctypes.c_int))
+        out += ctypes.string_at(ctypes.pointer(closure), clsize)
+
+        clstrs = self.get_closure_strings()
+
+        numptrs = len(clstrs)
+        out += ctypes.string_at(ctypes.pointer(ctypes.c_int(numptrs)), ctypes.sizeof(ctypes.c_int))
+
+        for idx, clstr in clstrs:
+            if clstr == None:
+                continue
+            out += ctypes.string_at(ctypes.pointer(ctypes.c_int(len(clstr))), ctypes.sizeof(ctypes.c_int))
+            out += clstr
+            offset = getattr(S, fields[idx][0]).offset
+            out += ctypes.string_at(ctypes.pointer(ctypes.c_int(offset)), ctypes.sizeof(ctypes.c_int))
+
         return out
 
 def as_node(val_or_node):
@@ -921,41 +959,6 @@ class ConstantTensor(Constant):
         ("shape",ctypes.c_void_p,shapeptr),
         ("dtype",ctypes.c_byte,self.value.dtype.num),
         ("data",ctypes.c_void_p,self.value.ctypes.data)]
-
-    def get_closure_filestring(self):
-        triples = self.get_closure()
-        if triples is None:
-            return ""
-
-        vals = []
-        fields = []
-        for (fieldname,fieldtype,val) in triples:
-            vals.append(val)
-            fields.append((fieldname,fieldtype))
-
-        class S(ctypes.Structure):
-            _fields_ = fields
-        closure = S(*vals)
-
-        clsize = ctypes.sizeof(closure)
-        out = ctypes.string_at(ctypes.pointer(ctypes.c_int(clsize)), ctypes.sizeof(ctypes.c_int))
-        out += ctypes.string_at(ctypes.pointer(closure), clsize)
-
-        clstrs = self.get_closure_strings()
-
-        numptrs = len(clstrs)
-        out += ctypes.string_at(ctypes.pointer(ctypes.c_int(numptrs)), ctypes.sizeof(ctypes.c_int))
-
-        for idx, clstr in clstrs:
-            if clstr == None:
-                continue
-            out += ctypes.string_at(ctypes.pointer(ctypes.c_int(len(clstr))), ctypes.sizeof(ctypes.c_int))
-            out += clstr
-            offset = getattr(S, fields[idx][0]).offset
-            out += ctypes.string_at(ctypes.pointer(ctypes.c_int(offset)), ctypes.sizeof(ctypes.c_int))
-
-        return out
-
 
     def get_closure_strings(self):
         out = []
@@ -1405,7 +1408,7 @@ class ElwiseBinary(Op):
                     %(cdtype2)s* out = (%(cdtype2)s*)write->data();
                     cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
                     for (int i=0; i < s; ++i) {
-                        std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
+                        //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
                         out[i] = scalar_$function(in0[%(index0)s], in1[%(index1)s]);
                     }
                 }"""%d
@@ -1476,6 +1479,7 @@ class Size(Op):
                 return cgt.constant(fixed_shape[self.axis])
     def get_closure(self):
         return [("ax",ctypes.c_int,self.axis)]
+
     def get_native_compile_info(self, input_types, devtype):
         code = r"""
             CGT_EXPORT_C cgtArray* $function(void* cl0, cgtArray** reads) {
@@ -1506,6 +1510,8 @@ class Reshape(Op):
         return TensorType(input_types[0].dtype, len(input_types)-1)
     def get_closure(self, n_parents):
         return [("ndim", ctypes.c_int,n_parents-1)]
+    def get_closure_wrapper(self):
+        return self.clobj
     def get_native_compile_info(self, input_types, devtype):
         code = r"""
             CGT_EXPORT_C cgtArray* $function($closure* cldata, cgtArray** reads) {
@@ -1520,7 +1526,8 @@ class Reshape(Op):
                 return out;
             }
             """
-        return NativeCompileInfo(code, closure_triples=self.get_closure(len(input_types)))
+        self.clobj = self.get_closure(len(input_types))
+        return NativeCompileInfo(code, closure_triples=self.clobj)
 
 class Concatenate(Op):
     available_impls = ("python","native_cpu")
@@ -2492,12 +2499,16 @@ class TupleIndex(Op):
         return intype[self.idx]
     def get_closure(self, _inputs):
         return [("idx",ctypes.c_int, self.idx)]
+    def get_closure_wrapper(self):
+        return self.clobj
+
     def get_native_compile_info(self, input_types, devtype):
         code=r"""
             CGT_EXPORT_C cgtObject* $function($closure* cldata, cgtTuple** reads) {
                 return reads[0]->getitem(cldata->idx);
             }"""
-        return NativeCompileInfo(code, closure_triples=self.get_closure(input_types))
+        self.clobj = self.get_closure(input_types)
+        return NativeCompileInfo(code, closure_triples=self.clobj)
 
 
 
