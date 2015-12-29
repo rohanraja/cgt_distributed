@@ -598,7 +598,8 @@ class InMemoryData(GetData):
         pptr = self.get_pptr()
         dtype = self._value.dtypeInt
 
-        return [("pptr", ctypes.c_void_p, pptr),
+        return [
+                # ("pptr", ctypes.c_void_p, pptr),
                 ("ndim", ctypes.c_int, self._value.ndim),
                 ("shape", ctypes.c_void_p, self._value.shapePtr),
                 ("dtype", ctypes.c_int, dtype),
@@ -606,6 +607,29 @@ class InMemoryData(GetData):
                 # ("fromdata", ctypes.c_void_p, 0),
                 ("fromdata", ctypes.c_void_p, self._value.data),
                ]
+
+    def get_closure_strings(self):
+        out = []
+        # try:
+        #     shapestr = ctypes.string_at(self.value.ctypes.shape, ctypes.sizeof(self.value.ctypes.shape))
+        #     out.append((1, shapestr))
+        # except:
+        #     pass
+
+        try:
+            nbytes = self._value.ndim * ctypes.sizeof(ctypes.c_long)
+            dtypestr = ctypes.string_at(self._value.shapePtr, nbytes)
+            out.append((1, dtypestr))
+        except:
+            pass
+        try:
+            nbytes = self._value.nbytes
+            dtypestr = ctypes.string_at(self._value.data, nbytes)
+            out.append((4, dtypestr))
+        except:
+            pass
+
+        return out
 
     def get_native_compile_info(self, _input_types, _devtype):
         code=r"""
@@ -615,7 +639,7 @@ class InMemoryData(GetData):
                 cgtDevtype devtype = (cgtDevtype) cldata->devtype ;
                 cgtArray *out = new cgtArray(cldata->ndim, (long*)cldata->shape, dtype, devtype, cldata->fromdata, false);
                 return out ;
-                return *(cgtArray**)cldata->pptr;
+                //return *(cgtArray**)cldata->pptr;
             }"""
         return NativeCompileInfo(code, closure_triples=self.get_closure(),
             store_objects=self._value)
@@ -642,21 +666,6 @@ class InMemoryData(GetData):
     def get_fixed_shape(self):
         return self.fixed_shape
 
-    def get_closure_strings(self):
-        out = []
-        # try:
-        #     shapestr = ctypes.string_at(self.value.ctypes.shape, ctypes.sizeof(self.value.ctypes.shape))
-        #     out.append((1, shapestr))
-        # except:
-        #     pass
-
-        try:
-            dtypestr = ctypes.string_at(self.value.ctypes.data, self.value.nbytes)
-            out.append((0, dtypestr))
-        except:
-            pass
-
-        return out
 
 def _singleton_ones(dtype, ndim):
     return cgt.constant(np.ones((1,)*ndim, dtype))

@@ -400,6 +400,9 @@ cdef class CppArrayWrapper:
     def size(self):
         return self.arr.get().size()
     @property
+    def nbytes(self):
+        return self.arr.get().nbytes()
+    @property
     def dtype(self):
         return dtype_tostr(self.arr.get().dtype())
     @property
