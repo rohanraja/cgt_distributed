@@ -15,7 +15,7 @@ using std::vector;
 // note: no-args initializers are only here because they're required by cython
 
 void * loadCldata(ifstream &f);
-cgtByRefFun loadByrefFunc(string &);
+void * loadByrefFunc(string &);
 
 // struct tmp{
 // int ndim;
@@ -44,16 +44,11 @@ public:
       data = loadCldata(f);
       getline(f,prefix, '\0');
       trace(prefix);
-      fptr = loadByrefFunc(prefix);
-      // tmp* t = (tmp*) data ;
-      // trace(t->ndim);
-      // trace(t->dtype);
-      // long *nm = (long *) t->data ;
-      // trace(*nm);
+      fptr = (cgtByRefFun) loadByrefFunc(prefix);
     }
     void save(ofstream &f){
-      trace("Saving callable!!");
-      trace(filesize);
+      trace("Saving ByRef callable!!");
+      // trace(filesize);
       if(filesize == 0)
         writef(f, filesize);
       f.write((char*)filedata , filesize);
@@ -70,8 +65,36 @@ struct ByValCallable {
 public:
     cgtByValFun fptr;
     void* data;
-    ByValCallable(cgtByValFun fptr, void* data) : fptr(fptr), data(data) {}
+    void* filedata;
+    int filesize;
+    string filed ;
+    string prefix ;
+
+    ByValCallable(cgtByValFun fptr, void* data, const string & clstr) : fptr(fptr), data(data) {
+      filed = clstr ;
+      filesize = filed.size();
+      filedata = (void *)filed.c_str() ;
+    }
     ByValCallable() : fptr(NULL), data(NULL) {}
+
+    ByValCallable(ifstream &f){
+      trace("Loading callable!!");
+      data = loadCldata(f);
+      getline(f,prefix, '\0');
+      trace(prefix);
+      fptr = (cgtByValFun) loadByrefFunc(prefix);
+    }
+
+    void save(ofstream &f){
+      trace("Saving ByVal callable!!");
+      // trace(filesize);
+      if(filesize == 0)
+        writef(f, filesize);
+      f.write((char*)filedata , filesize);
+      char nullchar = '\0';
+      writef(f, nullchar);
+    }
+
     cgtObject * operator()(cgtObject ** args) {
         return (*fptr)(data, args);
     }
@@ -239,6 +262,13 @@ public:
     void fire(Interpreter*);
     const vector<MemLocation>& get_readlocs() const { return readlocs; }
     const MemLocation& get_writeloc() const { return writeloc; }
+    void save(ofstream &f){
+      int type = 4;
+      writef(f, type);
+      writeloc.save(f);
+      saveMemVector(readlocs, f);
+      callable.save(f);
+    }
 private:
     vector<MemLocation> readlocs;
     MemLocation writeloc;
@@ -248,6 +278,7 @@ private:
 Instruction * LoadArgument_load(ifstream &f);
 Instruction * Alloc_load(ifstream &f);
 Instruction * Byref_load(ifstream &f);
+Instruction * Byval_load(ifstream &f);
 
 vector<MemLocation> loadMemVector(ifstream &f);
 

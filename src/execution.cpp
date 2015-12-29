@@ -357,6 +357,17 @@ Instruction * Byref_load(ifstream &f){
   return new ReturnByRef("Return By Ref", readlocs, wloc, callable, false);
 
 }
+
+Instruction * Byval_load(ifstream &f){
+
+  MemLocation wloc(f);
+  vector<MemLocation> readlocs = loadMemVector(f);
+  ByValCallable callable(f) ;
+
+  return new ReturnByVal("Return By Val", readlocs, wloc, callable, false);
+
+}
+
 Interpreter* interpreter_from_file(char * fname){
 
   printf("\nLoading Interpreter from file: %s\n\n", fname);
@@ -544,9 +555,9 @@ void * loadCldata(ifstream &f){
 
 }
 
-cgtByRefFun loadByrefFunc(string & prefix){
+void* loadByrefFunc(string & prefix){
 
-  cgtByRefFun func ;
+  void * func ;
 
   string dllName = prefix + ".so" ;
   string funcName = "call_" + prefix ;
@@ -558,7 +569,7 @@ cgtByRefFun loadByrefFunc(string & prefix){
   if(handle == NULL)
     cout << "CANNOT LOAD DLL!!\n";
 
-  func = (cgtByRefFun) dlsym(handle, funcName.c_str());
+  func = dlsym(handle, funcName.c_str());
   // func = (cgtByRefFun) dlsym(handle, "closure_a8e6eaa51a19a09311763a23e4857537");
 
    char * dlsym_error = dlerror();

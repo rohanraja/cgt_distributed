@@ -234,7 +234,7 @@ cdef extern from "execution.h" namespace "cgt":
         ByRefCallable(cgtByRefFun, void*, const string &)
         ByRefCallable()
     cppclass ByValCallable:
-        ByValCallable(cgtByValFun, void*)
+        ByValCallable(cgtByValFun, void*, const string &)
         ByValCallable()
     cppclass MemLocation:
         MemLocation()
@@ -329,11 +329,11 @@ cdef ByRefCallable _tocppbyrefcallable(callable, storage) except *:
 cdef ByValCallable _tocppbyvalcallable(callable, storage) except *:
     storage.append(callable)
     if callable.kind == "native":
-        return ByValCallable(<cgtByValFun>_getfuncptr(callable.fptr), _getstructptr(callable.cldata))
+        return ByValCallable(<cgtByValFun>_getfuncptr(callable.fptr), _getstructptr(callable.cldata), callable.clstr)
     else:
         py_cldata = (callable.func, callable.n_in)
         storage.append(py_cldata)
-        return ByValCallable(&_pyfunc_byval, <PyObject*>py_cldata)
+        return ByValCallable(&_pyfunc_byval, <PyObject*>py_cldata, "")
 
 cdef MemLocation _tocppmem(object pymem):
     return MemLocation(<long>pymem.index, devtype_fromstr(pymem.devtype))
