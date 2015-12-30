@@ -43,7 +43,7 @@ public:
       // trace("Loading callable!!");
       data = loadCldata(f);
       getline(f,prefix, '\0');
-      trace(prefix);
+      // trace(prefix);
       fptr = (cgtByRefFun) loadByrefFunc(prefix);
     }
     void save(ofstream &f){
@@ -77,10 +77,10 @@ public:
     ByValCallable() : fptr(NULL), data(NULL) {}
 
     ByValCallable(ifstream &f){
-      trace("Loading callable!!");
+      // trace("Loading callable!!");
       data = loadCldata(f);
       getline(f,prefix, '\0');
-      trace(prefix);
+      // trace(prefix);
       fptr = (cgtByValFun) loadByrefFunc(prefix);
     }
 

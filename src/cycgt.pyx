@@ -208,6 +208,7 @@ cdef object dtype_tostr(cgtDtype d):
     else:
         raise ValueError("invalid cgtDtype")
 
+
 cdef object devtype_tostr(cgtDevtype d):
     if d == cgtCPU:
         return "cpu"
@@ -461,11 +462,11 @@ cdef class CppInterpreterWrapper:
         return list(cgt2py_object(ret.get(), False)) # TODO maybe allow returning view?
 
     def loadfromFile(self, fname):
-        fname = "/home/rohanraja/code/compgraphlob/executor/eg.bin"
+        fname = "eg.bin"
         self.interp = interpreter_from_file(fname)
 
     def saveToFile(self, fname):
-        fname = "/home/rohanraja/code/compgraphlob/executor/eg.bin"
+        fname = "eg.bin"
         interpreter_to_file(self.interp, fname)
 
 def cgt_build_root():

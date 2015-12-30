@@ -6,6 +6,10 @@
 #include "util/ThreadPool.h"
 #include "unistd.h"
 
+#ifdef EXECU 
+#include "../executor/all.cpp"
+#endif
+
 using namespace std ;
 
 namespace cgt {
@@ -381,6 +385,11 @@ Instruction * Byval_load(ifstream &f){
 Interpreter* interpreter_from_file(char * fname){
 
   printf("\nLoading Interpreter from file: %s\n\n", fname);
+
+#ifdef EXECU 
+  create_functions_map(); // For loading DL
+#endif
+
   ifstream f;
   f.open(fname, ios::binary | ios::in);
 
@@ -472,7 +481,7 @@ vector<Instruction *> loadInstVector(ifstream &f){
   rep(i,num_instrs){
 
     readf(f, type);
-    trace(type);
+    // trace(type);
 
     switch(type)
     {
@@ -493,7 +502,7 @@ vector<Instruction *> loadInstVector(ifstream &f){
         break;
 
     };
-    trace(instrs[i]->repr());
+    // trace(instrs[i]->repr());
 
   }
 
@@ -529,7 +538,7 @@ void * loadCldata(ifstream &f){
 
   size_data structBytes ;
   readf(f, structBytes);
-  trace(structBytes);
+  // trace(structBytes);
 
   if(structBytes == 0)
     return NULL ;
@@ -541,7 +550,7 @@ void * loadCldata(ifstream &f){
   int numptrs;
   readf(f, numptrs);
 
-  trace(numptrs);
+  // trace(numptrs);
 
   int sizeBlock;
   int st_offset;
@@ -559,11 +568,9 @@ void * loadCldata(ifstream &f){
     blockAddr = stdata + st_offset ;
     *((void **)(blockAddr)) = (void*) block ;
 
-    trace(sizeBlock);
-    trace(st_offset);
+    // trace(sizeBlock);
+    // trace(st_offset);
 
-    int tst = * ( ((int*)block) + 1 ) ;
-    trace(tst);
 
   }
 
@@ -571,7 +578,20 @@ void * loadCldata(ifstream &f){
 
 }
 
+
+#ifdef EXECU 
 void* loadByrefFunc(string & prefix){
+
+  void * func ;
+
+  string funcName = "call_" + prefix ;
+
+  func = fmap[funcName];
+  return func;
+
+}
+#else
+void* loadByrefFunc(string & prefix){ // PREVIOUS VERSION, Using DLL
 
   void * func ;
 
@@ -595,6 +615,7 @@ void* loadByrefFunc(string & prefix){
   return func;
 
 }
+#endif
 
 
 

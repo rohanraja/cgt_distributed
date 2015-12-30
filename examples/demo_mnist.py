@@ -143,7 +143,7 @@ def main():
 
     dummy = cgt.scalar(name='a')
     giv = [(X,Xtest), (y,ytest)]
-    f2 = cgt.function(inputs=[dummy], outputs=[cost_nodrop], givens=giv)
+    f2 = cgt.function(inputs=[dummy], outputs=[cost_nodrop], givens=giv, updates=updates)
     print "\n*****" , f2(5)
 
 
