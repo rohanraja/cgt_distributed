@@ -100,6 +100,7 @@ def main():
     Xtest = Xdata[60000:70000]
     ytest = ydata[60000:70000]
 
+
     sortinds = np.random.permutation(60000)
     Xtrain = Xtrain[sortinds]
     ytrain = ytrain[sortinds]
@@ -135,10 +136,15 @@ def main():
     cost_nodrop = -cgt.mean(categorical.loglik(y, pofy_nodrop))
     err_nodrop = cgt.cast(cgt.not_equal(y_nodrop, y), cgt.floatX).mean()
 
-    train = cgt.function(inputs=[X, y], outputs=[], updates=updates)
-    computeloss = cgt.function(inputs=[X, y], outputs=[err_nodrop,cost_nodrop])
+    # train = cgt.function(inputs=[X, y], outputs=[], updates=updates)
+    # computeloss = cgt.function(inputs=[X, y], outputs=[err_nodrop,cost_nodrop])
 
     batch_size=128
+
+    dummy = cgt.scalar(name='a')
+    giv = [(X,Xtest), (y,ytest)]
+    f2 = cgt.function(inputs=[dummy], outputs=[cost_nodrop], givens=giv)
+    print "\n*****" , f2(5)
 
 
     from cgt.tests import gradcheck_model

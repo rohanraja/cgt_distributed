@@ -85,7 +85,7 @@ public:
     }
 
     void save(ofstream &f){
-      trace("Saving ByVal callable!!");
+      // trace("Saving ByVal callable!!");
       // trace(filesize);
       if(filesize == 0)
         writef(f, filesize);

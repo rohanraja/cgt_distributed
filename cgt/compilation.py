@@ -245,7 +245,21 @@ def create_execution_graph(inputs, nodes_sorted, node2shape, node2memowner, node
                 write_loc = counter.new_memloc(node2dev[node].devtype)
                 instrs.append(ReturnByVal(node.op, [par.typ for par in node.parents], read_locs, write_loc, node_props=node.props))
         node2memloc[node] = write_loc
-    return ExecutionGraph(instrs, len(inputs), counter.count), node2memloc
+
+        extraInst = []
+        numLoops = 0
+
+        for numL in range(numLoops):
+            for inst in instrs:
+                if "Alloc" in repr(inst):
+                    continue
+                if "LoadArg" in repr(inst):
+                    continue
+                if inst.op.is_data_op:
+                    continue
+                extraInst.append(inst)
+
+    return ExecutionGraph(instrs + extraInst, len(inputs), counter.count), node2memloc
 
 
 def get_callable(op, input_types, devtype, prefer_python=False):

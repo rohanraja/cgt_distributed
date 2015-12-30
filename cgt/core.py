@@ -1778,6 +1778,7 @@ def gen_reduction_code(dtype, axes, ndim, reduction_expr, initval):
     d["reduction_expr"] = reduction_expr
     d["initval"] = initval
     return r"""
+        using namespace std ;
         static inline %(cdtype)s reduction_$function(%(cdtype)s x, %(cdtype)s y) {return %(reduction_expr)s;}
         CGT_EXPORT_C void $function(void* cldata, cgtArray** reads, cgtArray* write) {
             cgtArray *read=reads[0];
@@ -1785,6 +1786,7 @@ def gen_reduction_code(dtype, axes, ndim, reduction_expr, initval):
             %(openloops)s
                 %(cdtype)s x = write->at<%(cdtype)s>(%(outidxexpr)s);
                 %(cdtype)s y = read->at<%(cdtype)s>(%(inidxexpr)s) ;
+                //cout << "\n" << x << ", " << y ;
                 write->at<%(cdtype)s>(%(outidxexpr)s) = reduction_$function(x, y);
             %(closeloops)s
         }
@@ -1843,8 +1845,47 @@ class Max(Op):
         code = gen_reduction_code(input_types[0].dtype, self.axes, input_types[0].ndim, "fmax(x,y)", "-std::numeric_limits<%(cdtype)s>::max()")
         return NativeCompileInfo(code, includes=["string.h","limits","math.h"])
 
+def argmax_code(dtype, axes, ndim, reduction_expr, initval):
+    if 1 in axes:
+        openloops = " ".join(["for (int i%(ax)s=0; i%(ax)s < read->shape()[%(ax)s]; ++i%(ax)s) {"%dict(ax=ax) for ax in xrange(ndim)])
+        inidxexpr = ",".join(["i"+str(i) for i in xrange(ndim)])
+    else:
+        openloops = " ".join(["for (int i%(ax)s=0; i%(ax)s < read->shape()[%(bx)s]; ++i%(ax)s) {"%dict(ax=ax, bx = 1-ax) for ax in xrange(ndim)])
+        inidxexpr = ",".join(["i"+str(i) for i in reversed(xrange(ndim)) ])
+
+    closeloops = "}"*ndim
+    outidxexpr = ",".join(["0" if i in axes else  "i"+str(i) for i in xrange(ndim)])
+    d = dict(openloops=openloops, outidxexpr=outidxexpr, inidxexpr=inidxexpr, closeloops=closeloops,
+            cdtype=np2c[dtype])
+    reduction_expr %= d
+    initval %= d
+    d["reduction_expr"] = reduction_expr
+    d["initval"] = initval
+    return r"""
+        using namespace std ;
+        #define otype long
+        #define itype %(cdtype)s
+
+        static inline otype reduction_$function(otype x, itype y) {return %(reduction_expr)s;}
+        
+        CGT_EXPORT_C void $function(void* cldata, cgtArray** reads, cgtArray* write) {
+            cgtArray *read=reads[0];
+            otype arg_max = -1 ;
+            itype max_val = %(initval)s ;
+            %(openloops)s
+                itype y = read->at<itype>(%(inidxexpr)s) ;
+                if(i1 == 0)
+                    max_val = %(initval)s ;
+
+                if(y > max_val){
+                    max_val = y;
+                    write->at<otype>(0,i0) = i1;
+                }
+            %(closeloops)s
+        }
+        """%d
 class Argmax(Op):
-    available_impls = ("python",)
+    available_impls = ("python", "native_cpu")
     def __init__(self, axis):
         self.axis = axis
     def get_diff(self, _):
@@ -1860,9 +1901,13 @@ class Argmax(Op):
         s = cgt.shape(x)
         return [(cgt.constant(1) if i == self.axis else s[i]) for i in xrange(x.ndim)]
     def typ_apply(self, inputs):
+        # return inputs[0]
         return TensorType('i8', inputs[0].ndim)
     # re: native impl, this is a tricky one, since it requires some scratch space
     # to store the max values. probably just do a alloc/dealloc
+    def get_native_compile_info(self, input_types, devtype):
+        code = argmax_code(input_types[0].dtype, tuple([self.axis]), input_types[0].ndim, "fmax(x,y)","-std::numeric_limits<%(cdtype)s>::min()")
+        return NativeCompileInfo(code, includes=["string.h", "iostream", "limits", "math.h"])
 
 
 # Slicing

@@ -40,11 +40,11 @@ public:
         int icnt = 1 ;
         cout << "\nTotal Instructions = " << eg_->instrs().size() << endl ;
         for (Instruction* instr : eg_->instrs()) {
-            cout << "\nFiring Instruction #" << icnt ; 
+            // cout << "\nFiring Instruction #" << icnt ; 
             icnt++;
             instr->fire(this);
         }
-        cout << "\n\n";
+        // cout << "\n\n";
         args_ = NULL;
         long n_outputs = output_locs_.size();
         cgtTuple * out = new cgtTuple(n_outputs);
@@ -279,6 +279,7 @@ void Alloc::fire(Interpreter* interp) {
     cgtArray* cur = static_cast<cgtArray*>(interp->get(writeloc));
     if (!(cur && cur->ndim() == ndim && std::equal(shape.begin(), shape.end(), cur->shape()))) {
         interp->set(writeloc, new cgtArray(ndim, shape.data(), dtype, writeloc.devtype()));
+        // printf("wn Allocated - %d dims\n", ndim);
     }
 }
 
@@ -462,7 +463,7 @@ vector<Instruction *> loadInstVector(ifstream &f){
   long num_instrs ;
 
   readf(f, num_instrs);
-  trace(num_instrs);
+  // trace(num_instrs);
 
   vector<Instruction *> instrs(num_instrs);
 
