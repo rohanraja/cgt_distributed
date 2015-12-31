@@ -42,7 +42,7 @@ public:
         cgt_assert(newargs != NULL);
         cgt_assert(newargs->len == eg_->n_args());
         int icnt = 1 ;
-        cout << "\nTotal Instructions = " << eg_->instrs().size() << endl ;
+        // cout << "\nTotal Instructions = " << eg_->instrs().size() << endl ;
         for (Instruction* instr : eg_->instrs()) {
             // cout << "\nFiring Instruction #" << icnt ; 
             icnt++;
@@ -154,6 +154,7 @@ ParallelInterpreter::ParallelInterpreter(ExecutionGraph* eg, const vector<MemLoc
     // loc2mutex_(new mutex[eg->n_locs()]),
     instr2mutex_(new mutex[eg->n_instrs()])
 {
+  cout << "\nInitialzing Parallel Int\n" ;
     vector<InstrInd> loc2lastwriter(eg->n_locs()); // for each location, last instruction to write to it
     InstrInd instr_ind=0; // will loop over instr index
     for (auto& instr : eg_->instrs()) {
@@ -396,6 +397,7 @@ Interpreter* interpreter_from_file(char * fname){
   vector<MemLocation> outps = loadMemVector(f);
   ExecutionGraph *eg = loadExecutionGraph(f) ;
 
+  printf("\nFINISHED LOADING Execution Graph\n\n");
   Interpreter * inp = create_interpreter(eg,outps,0);
 
   printf("\nFINISHED LOADING INTERPRETER\n\n");
@@ -558,6 +560,8 @@ void * loadCldata(ifstream &f){
 
   byte* blockAddr;
 
+  std::map<long, long*> inMemoryArrays ;
+
   rep(i,numptrs){
 
     readf(f, sizeBlock);
@@ -566,7 +570,21 @@ void * loadCldata(ifstream &f){
     readf(f, st_offset);
 
     blockAddr = stdata + st_offset ;
-    *((void **)(blockAddr)) = (void*) block ;
+
+    if(i==2){
+      // InMemory Data CPP Array Pointer
+      long ptrr = *((long*)(block));
+      if(inMemoryArrays.find(ptrr) == inMemoryArrays.end())
+      {
+        inMemoryArrays[ptrr] = new long ;
+        *inMemoryArrays[ptrr] = 0 ;
+      }
+
+      *((void **)(blockAddr)) = (void*) inMemoryArrays[ptrr] ;
+     
+    }else{
+      *((void **)(blockAddr)) = (void*) block ;
+    }
 
     // trace(sizeBlock);
     // trace(st_offset);

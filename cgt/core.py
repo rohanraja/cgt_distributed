@@ -603,13 +603,12 @@ class InMemoryData(GetData):
         dtype = self._value.dtypeInt
 
         return [
-                # ("pptr", ctypes.c_void_p, pptr),
                 ("ndim", ctypes.c_int, self._value.ndim),
                 ("shape", ctypes.c_void_p, self._value.shapePtr),
                 ("dtype", ctypes.c_int, dtype),
                 ("devtype", ctypes.c_int, 0),
-                # ("fromdata", ctypes.c_void_p, 0),
                 ("fromdata", ctypes.c_void_p, self._value.data),
+                ("pptr", ctypes.c_void_p, pptr),
                ]
 
     def get_closure_strings(self):
@@ -633,17 +632,31 @@ class InMemoryData(GetData):
         except:
             pass
 
+        try:
+            pptr = self.get_pptr()
+            dtypestr = ctypes.string_at(ctypes.pointer(ctypes.c_long(pptr)), ctypes.sizeof(ctypes.c_long))
+            out.append((5, dtypestr))
+        except:
+            pass
+
         return out
 
     def get_native_compile_info(self, _input_types, _devtype):
         code=r"""
+            #include<iostream>
+
             CGT_EXPORT_C cgtArray* $function($closure* cldata, cgtArray** reads) {
                 
-                cgtDtype dtype = (cgtDtype) cldata->dtype ;
-                cgtDevtype devtype = (cgtDevtype) cldata->devtype ;
-                cgtArray *out = new cgtArray(cldata->ndim, (long*)cldata->shape, dtype, devtype, cldata->fromdata, false);
-                return out ;
-                //return *(cgtArray**)cldata->pptr;
+                if( *((long*)cldata->pptr) == 0)
+                {
+                    std::cout << "\n***\nALLOCATING NEW MEMORY FOR INMEMORY DATA\n***\n" ;
+                    cgtDtype dtype = (cgtDtype) cldata->dtype ;
+                    cgtDevtype devtype = (cgtDevtype) cldata->devtype ;
+                    cgtArray *out = new cgtArray(cldata->ndim, (long*)cldata->shape, dtype, devtype, cldata->fromdata, false);
+                    *(cgtArray**)cldata->pptr = out;
+                    return out ;
+                }else
+                    return *(cgtArray**)cldata->pptr;
             }"""
         return NativeCompileInfo(code, closure_triples=self.get_closure(),
             store_objects=self._value)
@@ -1889,6 +1902,7 @@ def argmax_code(dtype, axes, ndim, reduction_expr, initval):
         }
         """%d
 class Argmax(Op):
+    # available_impls = ("python")
     available_impls = ("python", "native_cpu")
     def __init__(self, axis):
         self.axis = axis

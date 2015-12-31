@@ -368,7 +368,8 @@ def run_compilation_pipeline(inputs, outputs, updates, givens):
         inputs, nodes_sorted, analysis["node2shape"], node2memowner, node2dev)
 
     # print execution graph
-    if config["verbose"] or True:
+    if config["verbose"]:
+    # if config["verbose"] or True:
         print 'begin'
         print '\n'.join(str(i)+'.) \t'+repr(instr) for (i,instr) in enumerate(eg.instrs))
         print 'end'
