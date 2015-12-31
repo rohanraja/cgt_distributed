@@ -19,4 +19,5 @@ dll:
 		-Wl,-rpath,../build/OpenBLAS \
 		-Wl,-rpath,'$$ORIGIN' \
 	 	-lopenblas -lpthread
+	install_name_tool -change "/Users/rraja/code/cgt_distributed/build/OpenBLAS/exports/../libopenblas_sandybridgep-r0.2.14.dylib" "./libopenblas_sandybridgep-r0.2.14.dylib" a.out
 	./a.out
