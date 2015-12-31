@@ -42,7 +42,7 @@ cgtArray::cgtArray(int ndim, const long* shape, cgtDtype dtype, cgtDevtype devty
 }
 
 void cgtArray::print() {
-  printf("Array{shape=(");
+  printf("\nArray{shape=(");
   if (ndim_ > 0) printf("%zu",shape_[0]);
   for (int i=1; i < ndim_; ++i) {
     printf(", %zu", shape_[i]);
@@ -50,6 +50,23 @@ void cgtArray::print() {
   printf("), dtype=%i}", dtype_);
 }
 
+void cgtArray::print_data() {
+  printf("\nPrinting Array:\n");
+
+  float *it = (float*) data_ ;
+
+  rep(i,size()){
+    
+    if(ndim_ == 2)
+      if(i%shape_[1] == 0)
+        printf("\n");
+    printf("%f\t", *it);
+    it++;
+    
+  }
+
+  printf("\n");
+}
 cgtArray::~cgtArray() {
   delete[] shape_;
   if (ownsdata_) cgt_free(devtype_, data_);

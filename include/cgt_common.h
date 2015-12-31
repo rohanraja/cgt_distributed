@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IRC.h"
+#include "helpers.h"
 #include <cassert>
 #include <cstdio>
 #include <cstdlib>
@@ -120,7 +121,6 @@ public:
   bool ownsdata() const { return ownsdata_; }
   void* data() { return data_; }
   
-
   template <typename T>  
   T& at() {return static_cast<T*>(data_)[0];}
   template <typename T>
@@ -132,6 +132,7 @@ public:
   template <typename T>
   T& at(long i, long j, long k, long l) {return static_cast<T*>(data_)[((i*shape_[1]+j)*shape_[2]+k)*shape_[3]+l];}
   void print();
+  void print_data();
 
 private:
   const int ndim_;

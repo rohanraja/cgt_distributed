@@ -1,4 +1,5 @@
 #include "egreader.h"
+#include "helpers.h"
 #include<iostream>
 #include<vector>
 #include<sstream>
@@ -38,9 +39,18 @@ int main(int argc, char *args[] ){
     cgtTuple *res = ret.get();
     // cgtTuple *res = inp->run(inptup);
 
-    float *resData = (float *) get_0_int(res);
+    // float *resData = (float *) get_0_int(res);
 
-    std::cout << "\nResult = " <<  *resData  ;
+    // std::cout << "\nResult = " <<  *resData  ;
+
+    for(int j=0; j< ret->size(); j++){
+
+      cgtArray *ar = (cgtArray*) ret->getitem(j) ;
+      ar->print();
+      ar->print_data();
+
+    }
+
   }
 
   return 0;
