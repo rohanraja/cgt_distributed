@@ -49,4 +49,24 @@ f = open("all.cpp", 'w')
 f.write(out)
 f.close()
 
+outnew = ""
+incls = []
 
+f = open("all.cpp", 'r')
+
+while True:
+    line = f.readline()
+    if not line:
+        break
+    if "#include" in line:
+        if line not in incls:
+            incls.append(line)
+        continue
+    outnew += line
+
+f.close()
+
+f = open("all.cpp", 'w')
+heads = '\n'.join(incls)
+f.write(heads + outnew)
+f.close()
