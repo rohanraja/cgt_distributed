@@ -42,6 +42,8 @@ class Im2Col(core.Op):
     def typ_apply(self, inputs):
         assert inputs[0].ndim == 4
         return core.TensorType(inputs[0].dtype, 4)
+    def get_closure_wrapper(self):
+        return self.clobj
     def get_native_compile_info(self, input_types, devtype):
         assert devtype == "cpu"
         d = dict(cdtype=core.np2c[input_types[0].dtype])
@@ -59,6 +61,7 @@ class Im2Col(core.Op):
                     ((%(cdtype)s*)im->data() + im->stride(0)*i, channels, height, width, (%(cdtype)s*)write->data() + write->stride(0)*i);
                 }
             }"""%d
+        self.clobj = info2closure(self.info)
         return core.NativeCompileInfo(code, includes=["im2col.h"], closure_triples=info2closure(self.info))
 
 class Col2Im(core.Op):
@@ -73,6 +76,8 @@ class Col2Im(core.Op):
         return inputs[1:]
     def typ_apply(self, inputs):
         return core.TensorType(inputs[0].dtype, 4)
+    def get_closure_wrapper(self):
+        return self.clobj
     def get_closure(self, _inputs):
         return info2closure(self.info)
     def get_native_compile_info(self, input_types, devtype):
@@ -90,5 +95,6 @@ class Col2Im(core.Op):
                     ((%(cdtype)s*)col->data() + col->stride(0)*i, channels, height, width,(%(cdtype)s*)write->data() + write->stride(0)*i);
                 }
             }"""%d
-        return core.NativeCompileInfo(code, includes=["im2col.h"], closure_triples=info2closure(self.info))
+        self.clobj = info2closure(self.info)
+        return core.NativeCompileInfo(code, includes=["im2col.h"], closure_triples=self.clobj)
 

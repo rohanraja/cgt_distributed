@@ -491,7 +491,11 @@ class Op(object):
     def get_closure(self):
         return None
     def get_closure_wrapper(self):
-        return self.get_closure()
+        try:
+            return self.get_closure()
+        except:
+            import pdb;
+            pdb.set_trace()
 
     def get_closure_filestring(self):
         triples = self.get_closure_wrapper()
@@ -2585,7 +2589,9 @@ class TupleIndex(Op):
         return intype[self.idx]
     def get_closure(self, _inputs):
         return [("idx",ctypes.c_int, self.idx)]
+
     def get_closure_wrapper(self):
+        print "CALLEDD WRAPPER"
         return self.clobj
 
     def get_native_compile_info(self, input_types, devtype):
