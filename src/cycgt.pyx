@@ -41,8 +41,8 @@ cdef extern from "cgt_common.h":
         cgtGPU
 
     cppclass cgtArray(cgtObject):
-        cgtArray(int, const long*, cgtDtype, cgtDevtype)
-        cgtArray(int, const long*, cgtDtype, cgtDevtype, void* fromdata, bint copy)
+        cgtArray(int,  long*, cgtDtype, cgtDevtype)
+        cgtArray(int,   long*, cgtDtype, cgtDevtype, void* fromdata, bint copy)
         int ndim() const
         const long* shape() const
         long size()
@@ -60,6 +60,7 @@ cdef extern from "cgt_common.h":
         int size()
         int len
         cgtObject** members        
+        void save(const string &)
 
 
     cdef enum cgtDtype:
@@ -457,6 +458,7 @@ cdef class CppInterpreterWrapper:
         cdef cgtTuple* cargs = new cgtTuple(len(pyargs))
         for (i,pyarg) in enumerate(pyargs):
             cargs.setitem(i, py2cgt_object(pyarg, True))
+        cargs.save("run_sched.bin");
         cdef IRC[cgtTuple] ret = IRC[cgtTuple](self.interp.run(cargs))
         del cargs
         return list(cgt2py_object(ret.get(), False)) # TODO maybe allow returning view?

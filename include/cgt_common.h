@@ -3,6 +3,8 @@
 #include "IRC.h"
 #include "helpers.h"
 #include <cassert>
+#include <fstream>
+#include <iostream>
 #include <cstdio>
 #include <cstdlib>
 #include <cstddef>
@@ -19,6 +21,7 @@
 // Basic structs and enums
 // ================================================================
 
+using namespace std ;
 typedef enum cgtDtype {
   cgt_i1 = 1,
   cgt_i2 = 3,
@@ -91,8 +94,8 @@ private:
 
 class cgtArray : public cgtObject {
 public:
-  cgtArray(int ndim, const long* shape, cgtDtype dtype, cgtDevtype devtype);
-  cgtArray(int ndim, const long* shape, cgtDtype dtype, cgtDevtype devtype, void* fromdata, bool copy);
+  cgtArray(int ndim, long* shape, cgtDtype dtype, cgtDevtype devtype);
+  cgtArray(int ndim, long* shape, cgtDtype dtype, cgtDevtype devtype, void* fromdata, bool copy);
   ~cgtArray();
 
   int ndim() const { return ndim_; }
@@ -132,13 +135,16 @@ public:
   template <typename T>
   T& at(long i, long j, long k, long l) {return static_cast<T*>(data_)[((i*shape_[1]+j)*shape_[2]+k)*shape_[3]+l];}
   void print();
+  void save(ofstream &f);
+  cgtArray(ifstream &f);
   void print_data();
 
 private:
-  const int ndim_;
-  const long* shape_;
-  const cgtDtype dtype_;
-  const cgtDevtype devtype_;
+  // TODO: Check if removal of const has any side-effects
+  int ndim_;
+  long* shape_;
+  cgtDtype dtype_;
+  cgtDevtype devtype_;
   const bool ownsdata_;
   void* data_;
 };
@@ -156,6 +162,11 @@ public:
   ~cgtTuple();
   int len;
   IRC<cgtObject> *members;
+  void save(ofstream &f);
+  void save(const string &);
+  cgtTuple(ifstream &f);
+  void load(const string &);
+  void print();
 };
 
 void cgtObject::Release() const {

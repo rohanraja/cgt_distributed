@@ -12,7 +12,7 @@
 // Object alloc/dealloc 
 // ================================================================
 
-cgtArray::cgtArray(int ndim, const long* shape, cgtDtype dtype, cgtDevtype devtype)
+cgtArray::cgtArray(int ndim,  long* shape, cgtDtype dtype, cgtDevtype devtype)
     : cgtObject(ObjectKind::ArrayKind),
       ndim_(ndim),
       dtype_(dtype),
@@ -23,7 +23,7 @@ cgtArray::cgtArray(int ndim, const long* shape, cgtDtype dtype, cgtDevtype devty
   data_ = cgt_alloc(devtype_, nbytes());
 }
 
-cgtArray::cgtArray(int ndim, const long* shape, cgtDtype dtype, cgtDevtype devtype, void* fromdata, bool copy)
+cgtArray::cgtArray(int ndim,  long* shape, cgtDtype dtype, cgtDevtype devtype, void* fromdata, bool copy)
     : cgtObject(ObjectKind::ArrayKind),
       ndim_(ndim),
       shape_(shape),
@@ -72,6 +72,32 @@ cgtArray::~cgtArray() {
   if (ownsdata_) cgt_free(devtype_, data_);
 }
 
+void cgtArray::save(ofstream &f) {
+
+  writef(f, ndim_);
+  writef(f, dtype_);
+  writef(f, devtype_);
+
+  f.write((char*)shape_, sizeof(long)*ndim_);
+
+  long ndata = nbytes();
+  f.write((char*)data_, ndata);
+
+}
+
+cgtArray::cgtArray(ifstream &f)
+    : cgtObject(ObjectKind::ArrayKind),ownsdata_(false) 
+{
+  readf(f, ndim_);
+  readf(f, dtype_);
+  readf(f, devtype_);
+  shape_ = new long[ndim_];
+  f.read((char*)shape_, sizeof(long)*ndim_);
+  long ndata = nbytes();
+  data_ = cgt_alloc(devtype_, ndata);
+  f.read((char*)data_, ndata);
+}
+
 cgtTuple::cgtTuple(int len)
     : cgtObject(ObjectKind::TupleKind), len(len) {
   members = new IRC<cgtObject>[len];
@@ -81,7 +107,52 @@ cgtTuple::~cgtTuple() {
   delete[] members;
 }
 
+void cgtTuple::print() {
 
+    for(int j=0; j<size(); j++){
+
+      cgtArray *ar = (cgtArray*)getitem(j) ;
+      ar->print();
+      ar->print_data();
+
+    }
+}
+
+void cgtTuple::save(ofstream &f) {
+    int ln = size();
+    writef(f, ln);
+    for(int j=0; j<size(); j++){
+      cgtArray *ar = (cgtArray*)getitem(j) ;
+      ar->save(f);
+    }
+}
+
+void cgtTuple::save(const string &s) {
+  printf("\nSaving Running Schedule!!!\n");
+  ofstream f;
+  f.open(s.c_str(),ios::binary | ios::out);
+  save(f);
+  f.close();
+}
+
+cgtTuple::cgtTuple(ifstream &f) : cgtObject(ObjectKind::TupleKind)
+{
+  readf(f, len);
+  trace(len);
+  members = new IRC<cgtObject>[len];
+  for(int j=0; j<len; j++){
+    cgtArray *ar = new cgtArray(f);
+    members[j] = ar;
+  }
+
+}
+
+void cgtTuple::load(const string &s) {
+  printf("\nLoading Running Schedule!!!\n");
+  ifstream f;
+  f.open(s.c_str(),ios::binary | ios::in);
+  f.close();
+}
 // ================================================================
 // Copying
 // ================================================================

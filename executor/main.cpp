@@ -1,18 +1,16 @@
 #include "egreader.h"
 #include "helpers.h"
 #include<iostream>
+#include<fstream>
 #include<vector>
 #include<sstream>
 #include<dlfcn.h>
 
 using namespace cgt ;
 
+int nloops = 1;
 
-
-
-int main(int argc, char *args[] ){
-
-  Interpreter * inp = interpreter_from_file((char*)"eg.bin");
+void run_dummy(Interpreter * inp){
 
   cgtTuple *inptup = new cgtTuple(1);
   
@@ -25,11 +23,6 @@ int main(int argc, char *args[] ){
 
   *ardata = 5 ;
 
-  int nloops = 1;
-  if(argc > 1){
-    std::stringstream convert(args[1]);
-    convert >> nloops ;
-  }
   
 
   std::cout << "\nInput = " <<  *ardata << "" ;
@@ -37,21 +30,39 @@ int main(int argc, char *args[] ){
 
     IRC<cgtTuple> ret = IRC<cgtTuple> (inp->run(inptup)) ;
     cgtTuple *res = ret.get();
-    // cgtTuple *res = inp->run(inptup);
-
-    // float *resData = (float *) get_0_int(res);
-
-    // std::cout << "\nResult = " <<  *resData  ;
-
-    for(int j=0; j< ret->size(); j++){
-
-      cgtArray *ar = (cgtArray*) ret->getitem(j) ;
-      ar->print();
-      ar->print_data();
-
-    }
+    res->print();
 
   }
+
+}
+
+void run_print(Interpreter * inp, cgtTuple * inptup){
+
+    IRC<cgtTuple> ret = IRC<cgtTuple> (inp->run(inptup)) ;
+    cgtTuple *res = ret.get();
+    res->print();
+}
+
+void run_scheduled(Interpreter * inp){
+
+  ifstream f ;
+  f.open("run_sched.bin", ios::binary | ios::in);
+
+  cgtTuple *args = new cgtTuple(f);
+  args->print();
+  f.close();
+}
+
+int main(int argc, char *args[] ){
+
+  if(argc > 1){
+    std::stringstream convert(args[1]);
+    convert >> nloops ;
+  }
+  Interpreter * inp = interpreter_from_file((char*)"eg.bin");
+
+  run_scheduled(inp);
+  // run_dummy(inp);
 
   return 0;
 
