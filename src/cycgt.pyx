@@ -431,14 +431,15 @@ cdef class CppInterpreterWrapper:
     cdef Interpreter* interp # owned
     cdef object isRecording # owned
     cdef object recName # owned
+    cdef object fname # owned
     cdef object input_types
     cdef object storage
     def __init__(self, pyeg, input_types, output_locs, parallel, fname=None):
 
-        if fname != None:
-            self.input_types = input_types
-            self.loadfromFile(fname)
-            return
+        # if fname != None:
+        #     self.input_types = input_types
+        #     self.loadfromFile(fname)
+        #     return
 
         self.storage = []
         self.eg = make_cpp_execution_graph(pyeg, self.storage)
@@ -448,7 +449,7 @@ cdef class CppInterpreterWrapper:
 
         self.isRecording = False
         self.recName = "run_sched.bin"
-        self.saveToFile(fname)
+        # self.saveToFile(fname)
 
     def __dealloc__(self):
         if self.interp != NULL: del self.interp
@@ -463,7 +464,6 @@ cdef class CppInterpreterWrapper:
         for (i,pyarg) in enumerate(pyargs):
             cargs.setitem(i, py2cgt_object(pyarg, True))
         if self.isRecording :
-            print "Recording cgtTuple"
             cargs.save(self.recName);
             return
 
@@ -484,6 +484,10 @@ cdef class CppInterpreterWrapper:
         f.close()
         self.isRecording = True
         self.recName = fname
+
+    def save(self, fname):
+        interpreter_to_file(self.interp, fname)
+
 
 def cgt_build_root():
     return osp.dirname(osp.dirname(osp.abspath(__file__)))

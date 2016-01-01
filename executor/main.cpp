@@ -54,7 +54,7 @@ void run_scheduled(Interpreter * inp){
     try{
       cgtTuple *args = new cgtTuple(f);
       cout << "\n##################################################\nArguments:\n" ;
-      args->print();
+      // args->print();
       run_print(inp, args);
     }
     catch(int){

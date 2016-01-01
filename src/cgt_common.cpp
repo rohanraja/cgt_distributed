@@ -128,7 +128,7 @@ void cgtTuple::save(ofstream &f) {
 }
 
 void cgtTuple::save(const string &s) {
-  printf("\nSaving Running Schedule!!!\n");
+  // printf("\nSaving Running Schedule!!!\n");
   ofstream f;
   f.open(s.c_str(),ios::binary | ios::app);
   save(f);
