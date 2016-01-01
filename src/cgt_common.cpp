@@ -130,7 +130,7 @@ void cgtTuple::save(ofstream &f) {
 void cgtTuple::save(const string &s) {
   printf("\nSaving Running Schedule!!!\n");
   ofstream f;
-  f.open(s.c_str(),ios::binary | ios::out);
+  f.open(s.c_str(),ios::binary | ios::app);
   save(f);
   f.close();
 }
@@ -138,7 +138,9 @@ void cgtTuple::save(const string &s) {
 cgtTuple::cgtTuple(ifstream &f) : cgtObject(ObjectKind::TupleKind)
 {
   readf(f, len);
-  trace(len);
+  if(f.eof())
+    throw int() ;
+
   members = new IRC<cgtObject>[len];
   for(int j=0; j<len; j++){
     cgtArray *ar = new cgtArray(f);

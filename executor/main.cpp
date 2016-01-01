@@ -38,6 +38,7 @@ void run_dummy(Interpreter * inp){
 
 void run_print(Interpreter * inp, cgtTuple * inptup){
 
+    cout << "\n*************************************************\nResults:\n" ;
     IRC<cgtTuple> ret = IRC<cgtTuple> (inp->run(inptup)) ;
     cgtTuple *res = ret.get();
     res->print();
@@ -48,8 +49,19 @@ void run_scheduled(Interpreter * inp){
   ifstream f ;
   f.open("run_sched.bin", ios::binary | ios::in);
 
-  cgtTuple *args = new cgtTuple(f);
-  args->print();
+  bool running = true ;
+  while(running){
+    try{
+      cgtTuple *args = new cgtTuple(f);
+      cout << "\n##################################################\nArguments:\n" ;
+      args->print();
+      run_print(inp, args);
+    }
+    catch(int){
+      running = false ;
+    }
+  }
+
   f.close();
 }
 

@@ -649,7 +649,7 @@ class InMemoryData(GetData):
                 
                 if( *((long*)cldata->pptr) == 0)
                 {
-                    std::cout << "\n***\nALLOCATING NEW MEMORY FOR INMEMORY DATA\n***\n" ;
+                    //std::cout << "\n***\nALLOCATING NEW MEMORY FOR INMEMORY DATA\n***\n" ;
                     cgtDtype dtype = (cgtDtype) cldata->dtype ;
                     cgtDevtype devtype = (cgtDevtype) cldata->devtype ;
                     cgtArray *out = new cgtArray(cldata->ndim, (long*)cldata->shape, dtype, devtype, cldata->fromdata, false);
