@@ -36,14 +36,25 @@ void run_dummy(Interpreter * inp){
 
 }
 
-void run_print(Interpreter * inp, cgtTuple * inptup){
+void run_print(Interpreter * inp, cgtTuple * inptup, bool isPrint = true){
 
-    cout << "\n*************************************************\nResults:\n" ;
+    if(isPrint)
+      cout << "\n*************************************************\nResults:\n" ;
     IRC<cgtTuple> ret = IRC<cgtTuple> (inp->run(inptup)) ;
     cgtTuple *res = ret.get();
-    res->print();
+    if(isPrint)
+      res->print();
 }
 
+void run_other_print(Interpreter * inp, cgtTuple * inptup, Interpreter *other, bool isPrint = true){
+
+    if(isPrint)
+      cout << "\n*************************************************\nResults:\n" ;
+    IRC<cgtTuple> ret = IRC<cgtTuple> (inp->runOther(inptup, other)) ;
+    cgtTuple *res = ret.get();
+    if(isPrint)
+      res->print();
+}
 void run_scheduled(Interpreter * inp){
 
   ifstream f ;
@@ -65,16 +76,63 @@ void run_scheduled(Interpreter * inp){
   f.close();
 }
 
+#define ARGVEC vector<cgtTuple*>
+ARGVEC get_schedule(const string &fname){
+  
+  ARGVEC outp ;
+  ifstream f ;
+  f.open(fname.c_str(), ios::binary | ios::in);
+  bool running = true ;
+  while(running){
+    try{
+      cgtTuple *args = new cgtTuple(f);
+      outp.push_back(args);
+    }
+    catch(int){
+      running = false ;
+    }
+  }
+  f.close();
+
+  return outp ;
+}
+void masterInterpreter_Run(){
+
+  Interpreter * mainInt;
+  mainInt = create_main_interpreter(100); // TODO: Make Dynamic
+
+  Interpreter * trinp = interpreter_from_file((char*)"train.inp");
+  Interpreter * valinp = interpreter_from_file((char*)"valid.inp");
+
+
+  ARGVEC trainSched = get_schedule("train_sched.bin");
+  ARGVEC validSched = get_schedule("valid_sched.bin");
+
+  rep(j, trainSched.size()){
+    run_print(trinp, trainSched[j], false);
+  }
+
+  rep(j, validSched.size()){
+    run_print(valinp, validSched[j]);
+  }
+  // rep(j, validSched.size()){
+  //   run_other_print(valinp, validSched[j], trinp);
+  // }
+
+}
+
 int main(int argc, char *args[] ){
 
   if(argc > 1){
     std::stringstream convert(args[1]);
     convert >> nloops ;
   }
-  Interpreter * inp = interpreter_from_file((char*)"eg.bin");
+  // Interpreter * inp = interpreter_from_file((char*)"eg.bin");
 
-  run_scheduled(inp);
+  // run_scheduled(inp);
   // run_dummy(inp);
+
+  masterInterpreter_Run();
 
   return 0;
 

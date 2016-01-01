@@ -173,12 +173,16 @@ class Interpreter {
 public:
     // called by external code
     virtual cgtTuple * run(cgtTuple *)=0;
+    virtual cgtTuple * runOther(cgtTuple *, Interpreter *){ 
+      printf("\nRUnning OTHER INTERPRETER DUMMY FUNCTION\n");
+      return NULL;}
     // called by instructions:
     virtual cgtObject * get(const MemLocation&)=0;
     virtual void set(const MemLocation&, cgtObject *)=0;
     virtual cgtObject * getarg(int)=0;
     virtual ~Interpreter() {}
     virtual void saveToFile(char *){}
+    virtual void setArgs(cgtTuple *){}
 };
 
 // pass by value because of cython
@@ -299,5 +303,7 @@ Interpreter* interpreter_from_file(char *) ;
 
 // save interpreter to file
 void interpreter_to_file(Interpreter *, const string &) ;
+
+Interpreter * create_main_interpreter(long );
 
 }

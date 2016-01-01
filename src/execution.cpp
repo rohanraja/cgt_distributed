@@ -27,7 +27,13 @@ public:
     SequentialInterpreter(ExecutionGraph* eg, const vector<MemLocation>& output_locs) 
     : eg_(eg), output_locs_(output_locs), storage_(eg->n_locs()), args_(NULL) { }
 
+    SequentialInterpreter(long nlocs) 
+    : storage_(nlocs), args_(NULL) { }
+
     cgtObject * get(const MemLocation& m) {
+        if(m.index() >= storage_.size())
+          storage_.resize(m.index()+1);
+
         return storage_[m.index()].get();
     }
     void set(const MemLocation& m, cgtObject * val) {
@@ -59,6 +65,28 @@ public:
         return out;
         // todo actually do something with outputs
     }
+    cgtTuple * runOther(cgtTuple * newargs, Interpreter *otherInp) {
+        otherInp->setArgs(newargs);
+        cgt_assert(newargs != NULL);
+        cgt_assert(newargs->len == eg_->n_args());
+        int icnt = 1 ;
+        // cout << "\nTotal Instructions = " << eg_->instrs().size() << endl ;
+        for (Instruction* instr : eg_->instrs()) {
+            // cout << "\nFiring Instruction #" << icnt << "\n" ; 
+            icnt++;
+            instr->fire(otherInp);
+        }
+        // cout << "\n\n";
+        args_ = NULL;
+        long n_outputs = output_locs_.size();
+        cgtTuple * out = new cgtTuple(n_outputs);
+        for (int i=0; i < n_outputs; ++i) {
+            int index = output_locs_[i].index(); // XXX what is this used for?
+            out->setitem(i, otherInp->get(output_locs_[i]));
+        }
+        return out;
+        // todo actually do something with outputs
+    }
     ~SequentialInterpreter() {
     }
 
@@ -73,11 +101,15 @@ public:
       eg_->save(f);
 
     }
+
+    void setArgs(cgtTuple *args){
+      args_ = args;
+    }
 private:
+    cgtTuple * args_;
     ExecutionGraph* eg_;
     vector<MemLocation> output_locs_;
     vector<IRC<cgtObject>> storage_;
-    cgtTuple * args_;
 };
 
 
@@ -536,6 +568,8 @@ typedef unsigned char byte ;
 
 typedef int size_data;
 
+std::map<long, long*> inMemoryArrays ;
+
 void * loadCldata(ifstream &f){
 
   size_data structBytes ;
@@ -560,7 +594,6 @@ void * loadCldata(ifstream &f){
 
   byte* blockAddr;
 
-  std::map<long, long*> inMemoryArrays ;
 
   rep(i,numptrs){
 
@@ -636,5 +669,10 @@ void* loadByrefFunc(string & prefix){ // PREVIOUS VERSION, Using DLL
 #endif
 
 
+Interpreter * create_main_interpreter(long len){
+
+  return new SequentialInterpreter(len);
+
+}
 
 }
