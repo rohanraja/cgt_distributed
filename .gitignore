@@ -19,6 +19,8 @@ executor/Build
 npn-debug.log
 a.out
 .DS_Store
+4dev
+4build
 
 # Build generated stuff
 doc/build
