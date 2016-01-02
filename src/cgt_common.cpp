@@ -113,6 +113,7 @@ void cgtTuple::print() {
 
       cgtArray *ar = (cgtArray*)getitem(j) ;
       ar->print();
+      cout << endl ;
       ar->print_data();
 
     }

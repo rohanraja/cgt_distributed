@@ -246,20 +246,20 @@ def create_execution_graph(inputs, nodes_sorted, node2shape, node2memowner, node
                 instrs.append(ReturnByVal(node.op, [par.typ for par in node.parents], read_locs, write_loc, node_props=node.props))
         node2memloc[node] = write_loc
 
-        extraInst = []
-        numLoops = 0
+        # extraInst = []
+        # numLoops = 0
+        #
+        # for numL in range(numLoops):
+        #     for inst in instrs:
+        #         if "Alloc" in repr(inst):
+        #             continue
+        #         if "LoadArg" in repr(inst):
+        #             continue
+        #         if inst.op.is_data_op:
+        #             continue
+        #         extraInst.append(inst)
 
-        for numL in range(numLoops):
-            for inst in instrs:
-                if "Alloc" in repr(inst):
-                    continue
-                if "LoadArg" in repr(inst):
-                    continue
-                if inst.op.is_data_op:
-                    continue
-                extraInst.append(inst)
-
-    return ExecutionGraph(instrs + extraInst, len(inputs), counter.count), node2memloc
+    return ExecutionGraph(instrs , len(inputs), counter.count), node2memloc
 
 
 def get_callable(op, input_types, devtype, prefer_python=False):
@@ -368,7 +368,7 @@ def run_compilation_pipeline(inputs, outputs, updates, givens):
         inputs, nodes_sorted, analysis["node2shape"], node2memowner, node2dev)
 
     # print execution graph
-    if config["verbose"]:
+    if config["verbose"] :
     # if config["verbose"] or True:
         print 'begin'
         print '\n'.join(str(i)+'.) \t'+repr(instr) for (i,instr) in enumerate(eg.instrs))

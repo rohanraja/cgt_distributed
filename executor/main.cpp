@@ -46,15 +46,6 @@ void run_print(Interpreter * inp, cgtTuple * inptup, bool isPrint = true){
       res->print();
 }
 
-void run_other_print(Interpreter * inp, cgtTuple * inptup, Interpreter *other, bool isPrint = true){
-
-    if(isPrint)
-      cout << "\n*************************************************\nResults:\n" ;
-    IRC<cgtTuple> ret = IRC<cgtTuple> (inp->runOther(inptup, other)) ;
-    cgtTuple *res = ret.get();
-    if(isPrint)
-      res->print();
-}
 void run_scheduled(Interpreter * inp){
 
   ifstream f ;
@@ -82,6 +73,9 @@ ARGVEC get_schedule(const string &fname){
   ARGVEC outp ;
   ifstream f ;
   f.open(fname.c_str(), ios::binary | ios::in);
+  if(!f.good())
+    return outp;
+
   bool running = true ;
   while(running){
     try{
@@ -96,28 +90,51 @@ ARGVEC get_schedule(const string &fname){
 
   return outp ;
 }
+
+void save_outp(Interpreter * inp, cgtTuple * inptup, ofstream &f){
+
+    IRC<cgtTuple> ret = IRC<cgtTuple> (inp->run(inptup)) ;
+    cgtTuple *res = ret.get();
+    res->save(f);
+
+}
 void masterInterpreter_Run(){
 
   Interpreter * mainInt;
   mainInt = create_main_interpreter(100); // TODO: Make Dynamic
 
+  Interpreter * paraminp = interpreter_from_file((char*)"param.inp");
+  Interpreter * paramRes = interpreter_from_file((char*)"paramResume.inp");
   Interpreter * trinp = interpreter_from_file((char*)"train.inp");
   Interpreter * valinp = interpreter_from_file((char*)"valid.inp");
 
 
+
   ARGVEC trainSched = get_schedule("train_sched.bin");
   ARGVEC validSched = get_schedule("valid_sched.bin");
+  ARGVEC paramResumeSched = get_schedule("params_out");
 
-  rep(j, trainSched.size()){
-    run_print(trinp, trainSched[j], false);
+  rep(j, paramResumeSched.size()){
+    run_print(paramRes, paramResumeSched[j], false);
+    }
+
+  ofstream f;
+
+  rep(i, nloops){
+    rep(j, trainSched.size()){
+      run_print(trinp, trainSched[j], false);
+    }
+
+    rep(j, validSched.size()){
+      run_print(valinp, validSched[j]);
+    }
+
+    f.open("params_out", ios::binary | ios::out);
+    cgtTuple *blankInp = new cgtTuple(0);
+    save_outp(paraminp, blankInp, f);
+    f.close();
   }
 
-  rep(j, validSched.size()){
-    run_print(valinp, validSched[j]);
-  }
-  // rep(j, validSched.size()){
-  //   run_other_print(valinp, validSched[j], trinp);
-  // }
 
 }
 

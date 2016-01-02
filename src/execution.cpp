@@ -50,7 +50,7 @@ public:
         int icnt = 1 ;
         // cout << "\nTotal Instructions = " << eg_->instrs().size() << endl ;
         for (Instruction* instr : eg_->instrs()) {
-            // cout << "\nFiring Instruction #" << icnt ; 
+            // cout << "\nFiring Instruction #" << instr->repr() << "\n" ; 
             icnt++;
             instr->fire(this);
         }
@@ -61,28 +61,6 @@ public:
         for (int i=0; i < n_outputs; ++i) {
             int index = output_locs_[i].index(); // XXX what is this used for?
             out->setitem(i, get(output_locs_[i]));
-        }
-        return out;
-        // todo actually do something with outputs
-    }
-    cgtTuple * runOther(cgtTuple * newargs, Interpreter *otherInp) {
-        otherInp->setArgs(newargs);
-        cgt_assert(newargs != NULL);
-        cgt_assert(newargs->len == eg_->n_args());
-        int icnt = 1 ;
-        // cout << "\nTotal Instructions = " << eg_->instrs().size() << endl ;
-        for (Instruction* instr : eg_->instrs()) {
-            // cout << "\nFiring Instruction #" << icnt << "\n" ; 
-            icnt++;
-            instr->fire(otherInp);
-        }
-        // cout << "\n\n";
-        args_ = NULL;
-        long n_outputs = output_locs_.size();
-        cgtTuple * out = new cgtTuple(n_outputs);
-        for (int i=0; i < n_outputs; ++i) {
-            int index = output_locs_[i].index(); // XXX what is this used for?
-            out->setitem(i, otherInp->get(output_locs_[i]));
         }
         return out;
         // todo actually do something with outputs
@@ -102,9 +80,6 @@ public:
 
     }
 
-    void setArgs(cgtTuple *args){
-      args_ = args;
-    }
 private:
     cgtTuple * args_;
     ExecutionGraph* eg_;
@@ -607,11 +582,20 @@ void * loadCldata(ifstream &f){
     if(i==2){
       // InMemory Data CPP Array Pointer
       long ptrr = *((long*)(block));
+      // trace(ptrr);
       if(inMemoryArrays.find(ptrr) == inMemoryArrays.end())
       {
         inMemoryArrays[ptrr] = new long ;
         *inMemoryArrays[ptrr] = 0 ;
       }
+      else{
+      
+        //cerr << "\nREUSING = " << ptrr << endl ;
+        // cgtArray **tmp = (cgtArray**) inMemoryArrays[ptrr] ;
+        // (*tmp)->print();
+      }
+
+      // trace(inMemoryArrays[ptrr]);
 
       *((void **)(blockAddr)) = (void*) inMemoryArrays[ptrr] ;
      
