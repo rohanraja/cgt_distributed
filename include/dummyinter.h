@@ -15,6 +15,7 @@ class DummyInterpreter : public Interpreter{
     cgtTuple * run(cgtTuple * newargs) {
 
       printf("\nRunning Function from file %s !!\n", fname);
+        return NULL;
 
     }
 

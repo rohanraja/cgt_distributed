@@ -35,6 +35,17 @@
 		B742F38F1C38343100BA61DD /* libopenblas_sandybridgep-r0.2.14.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libopenblas_sandybridgep-r0.2.14.dylib"; path = "../build/OpenBLAS/libopenblas_sandybridgep-r0.2.14.dylib"; sourceTree = "<group>"; };
 		B742F3931C38353F00BA61DD /* cgt_common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cgt_common.cpp; path = ../src/cgt_common.cpp; sourceTree = "<group>"; };
 		B742F3941C38353F00BA61DD /* execution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = execution.cpp; path = ../src/execution.cpp; sourceTree = "<group>"; };
+		B747C0841C3857EC00B0E0BC /* cgt_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cgt_common.h; sourceTree = "<group>"; };
+		B747C0851C3857EC00B0E0BC /* cgt_cuda.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cgt_cuda.h; sourceTree = "<group>"; };
+		B747C0861C3857EC00B0E0BC /* cudnn_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cudnn_support.h; sourceTree = "<group>"; };
+		B747C0871C3857EC00B0E0BC /* dummyinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dummyinter.h; sourceTree = "<group>"; };
+		B747C08F1C3857EC00B0E0BC /* execution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = execution.h; sourceTree = "<group>"; };
+		B747C0901C3857EC00B0E0BC /* helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helpers.h; sourceTree = "<group>"; };
+		B747C0911C3857EC00B0E0BC /* im2col.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = im2col.h; sourceTree = "<group>"; };
+		B747C0921C3857EC00B0E0BC /* IRC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRC.h; sourceTree = "<group>"; };
+		B747C0931C3857EC00B0E0BC /* lrn.cuh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lrn.cuh; sourceTree = "<group>"; };
+		B747C0941C3857EC00B0E0BC /* npm-debug.log */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "npm-debug.log"; sourceTree = "<group>"; };
+		B747C0951C3857EC00B0E0BC /* pooling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pooling.h; sourceTree = "<group>"; };
 		B7A8AFCD1C382E48005459C0 /* distX */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = distX; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -51,9 +62,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B747C0831C3857EC00B0E0BC /* include */ = {
+			isa = PBXGroup;
+			children = (
+				B747C0841C3857EC00B0E0BC /* cgt_common.h */,
+				B747C0851C3857EC00B0E0BC /* cgt_cuda.h */,
+				B747C0861C3857EC00B0E0BC /* cudnn_support.h */,
+				B747C0871C3857EC00B0E0BC /* dummyinter.h */,
+				B747C08F1C3857EC00B0E0BC /* execution.h */,
+				B747C0901C3857EC00B0E0BC /* helpers.h */,
+				B747C0911C3857EC00B0E0BC /* im2col.h */,
+				B747C0921C3857EC00B0E0BC /* IRC.h */,
+				B747C0931C3857EC00B0E0BC /* lrn.cuh */,
+				B747C0941C3857EC00B0E0BC /* npm-debug.log */,
+				B747C0951C3857EC00B0E0BC /* pooling.h */,
+			);
+			name = include;
+			path = ../include;
+			sourceTree = "<group>";
+		};
 		B7A8AFC41C382E48005459C0 = {
 			isa = PBXGroup;
 			children = (
+				B747C0831C3857EC00B0E0BC /* include */,
 				B742F3931C38353F00BA61DD /* cgt_common.cpp */,
 				B742F3941C38353F00BA61DD /* execution.cpp */,
 				B742F38F1C38343100BA61DD /* libopenblas_sandybridgep-r0.2.14.dylib */,
@@ -217,6 +248,7 @@
 		B7A8AFD51C382E48005459C0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -229,6 +261,7 @@
 					/Users/rraja/code/xcode/cgt_distributed/build/OpenBLAS,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SYMROOT = "";
 			};
 			name = Debug;
 		};
