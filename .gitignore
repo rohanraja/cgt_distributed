@@ -12,6 +12,13 @@
 *.orig
 *~
 
+*.inp
+*.bin
+params_out
+executor/Build
+npn-debug.log
+a.out
+.DS_Store
 
 # Build generated stuff
 doc/build
