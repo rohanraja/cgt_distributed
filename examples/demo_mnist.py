@@ -9,7 +9,9 @@ from example_utils import fmt_row, fetch_dataset
 import time, sys
 
 def init_weights(*shape):
-    return cgt.shared(np.random.randn(*shape) * 0.01, fixed_shape_mask='all')
+    wval = np.random.randn(*shape) * 0.01
+    ww = cgt.shared(wval, fixed_shape_mask='all')
+    return ww
 
 def rmsprop_updates(cost, params, stepsize=0.001, rho=0.9, epsilon=1e-6):
     grads = cgt.grad(cost, params)
@@ -18,10 +20,11 @@ def rmsprop_updates(cost, params, stepsize=0.001, rho=0.9, epsilon=1e-6):
         acc = cgt.shared(p.op.get_value() * 0.)
         acc_new = rho * acc + (1 - rho) * cgt.square(g)
         gradient_scaling = cgt.sqrt(acc_new + epsilon)
-        g = g / gradient_scaling
+        # g = g / gradient_scaling
+        # g = g / gradient_scaling
         updates.append((acc, acc_new))
         updates.append((p, p - stepsize * g))
-    return updates
+    return updates, grads
 
 def dense_model(X, w_h, w_h2, w_o, p_drop_input, p_drop_hidden):
     X = nn.dropout(X, p_drop_input)
@@ -68,7 +71,7 @@ def tinyconv_model(X, w, w2, p_drop):
 def main():
     import argparse
     parser=argparse.ArgumentParser()
-    parser.add_argument("--epochs",type=int,default=10)
+    parser.add_argument("--epochs",type=int,default=1)
     parser.add_argument("--profile",action="store_true")
     parser.add_argument("--dropout",action="store_true")
     parser.add_argument("--stepsize",type=float, default=.001)
@@ -129,22 +132,41 @@ def main():
     else:
         raise RuntimeError("Unreachable")
 
+    import ipdb; ipdb.set_trace()
     cost_drop = -cgt.mean(categorical.loglik(y, pofy_drop))
-    updates = rmsprop_updates(cost_drop, params, stepsize=args.stepsize)
+    updates, gradss= rmsprop_updates(cost_drop, params, stepsize=args.stepsize)
 
     y_nodrop = cgt.argmax(pofy_nodrop, axis=1)
     cost_nodrop = -cgt.mean(categorical.loglik(y, pofy_nodrop))
-    err_nodrop = cgt.cast(cgt.not_equal(y_nodrop, y), cgt.floatX).mean()
+    err_nodrop = cgt.cast(cgt.equal(y_nodrop, y), cgt.floatX).mean() * 100
 
-    # train = cgt.function(inputs=[X, y], outputs=[], updates=updates)
-    # computeloss = cgt.function(inputs=[X, y], outputs=[err_nodrop,cost_nodrop])
+    computeloss = cgt.function(inputs=[X, y], outputs=[err_nodrop,cost_nodrop])
+    newfunc = cgt.function(inputs=[newin ,newout], outputs=[newout, newin])
+    train = cgt.function(inputs=[X, y], outputs=[cost_nodrop], updates=updates)
+    pnew = map(lambda p: (3*p)/3, params)
+    paramOut = cgt.function(inputs=[], outputs=params)
+    
+    paramInp = [ cgt.matrix() for i in range(len(params))] 
+    pUpdates = []
+    for pinp, prm in zip(paramInp, params):
+        pUpdates.append((prm, prm - prm + pinp))
+    # paramResume = cgt.function(inputs=paramInp, outputs=[])
+    paramResume = cgt.function(inputs=paramInp, outputs=[], updates = pUpdates)
+
+    train.save("train.inp")
+    paramOut.save("param.inp")
+    paramResume.save("paramResume.inp")
+    computeloss.save("valid.inp")
+
+    # train.record("train_sched.bin")
+    # computeloss.record("valid_sched.bin")
 
     batch_size=128
 
-    dummy = cgt.scalar(name='a')
-    giv = [(X,Xtest), (y,ytest)]
-    f2 = cgt.function(inputs=[dummy], outputs=[cost_nodrop], givens=giv, updates=updates)
-    print "\n*****" , f2(5)
+    # dummy = cgt.scalar(name='a')
+    # giv = [(X,Xtest[:128]), (y,ytest[:128])]
+    # f2 = cgt.function(inputs=[dummy], outputs=[cost_nodrop], givens=giv, updates=updates)
+    # print "\n*****" , f2(5)
 
 
     from cgt.tests import gradcheck_model
@@ -154,7 +176,7 @@ def main():
         print "------------------------------------"
         gradcheck_model(cost_nodrop, params[0:1])
         print "success!"
-        return
+        # return
 
     if args.profile: cgt.profiler.start()
 
@@ -164,11 +186,13 @@ def main():
         for start in xrange(0, Xtrain.shape[0], batch_size):
             end = start+batch_size
             train(Xtrain[start:end], ytrain[start:end])
+            # print paramOut(Xtrain[start:end], ytrain[start:end])
             if args.unittest: return
         elapsed = time.time() - tstart
+        # computeloss(Xtest, ytest)
         trainerr, trainloss = computeloss(Xtrain[:len(Xtest)], ytrain[:len(Xtest)])
         testerr, testloss = computeloss(Xtest, ytest)
-        print fmt_row(10, [i_epoch, trainloss, trainerr, testloss, testerr, elapsed])
+        print fmt_row(10, [i_epoch, trainloss, trainerr, testloss, "%.2f%%"%(testerr), elapsed])
     if args.profile: cgt.execution.profiler.print_stats()
 
 if __name__ == "__main__":

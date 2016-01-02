@@ -15,26 +15,7 @@ from param_collection import ParamCollection
 
 # via https://github.com/karpathy/char-rnn/blob/master/model/GRU.lua
 # via http://arxiv.org/pdf/1412.3555v1.pdf
-def make_simple_rnn(size_input, size_mem, n_layers, size_output, size_batch):
-    inputs = [cgt.matrix() for i_layer in xrange(n_layers+1)]
-    outputs = []
-    for i_layer in xrange(n_layers):
-        prev_h = inputs[i_layer+1] # note that inputs[0] is the external input, so we add 1
-        x = inputs[0] if i_layer==0 else outputs[i_layer-1]
-        size_x = size_input if i_layer==0 else size_mem
-
-        next_h = cgt.sigmoid(
-            nn.Affine(size_x, size_mem,name="i2u")(x)
-            + nn.Affine(size_mem, size_mem, name="h2u")(prev_h))
-        outputs.append(next_h)
-
-    category_activations = nn.Affine(size_mem, size_output,name="pred")(outputs[-1])
-    logprobs = nn.logsoftmax(category_activations)
-    outputs.append(logprobs)
-
-    return nn.Module(inputs, outputs)
 def make_deep_gru(size_input, size_mem, n_layers, size_output, size_batch):
-    # import ipdb; ipdb.set_trace()
     inputs = [cgt.matrix() for i_layer in xrange(n_layers+1)]
     outputs = []
     for i_layer in xrange(n_layers):
@@ -123,7 +104,6 @@ def rmsprop_update(grad, state):
     np.divide(grad, state.scratch, out=state.scratch) # scratch = grad/rms
     np.multiply(state.scratch, state.step_size, out=state.scratch)
     state.theta[:] -= state.scratch
-    # state.theta[:] -= grad * 0.1
 
 def make_loss_and_grad_and_step(arch, size_input, size_output, size_mem, size_batch, n_layers, n_unroll):
     # symbolic variables
@@ -131,7 +111,6 @@ def make_loss_and_grad_and_step(arch, size_input, size_output, size_mem, size_ba
     x_tnk = cgt.tensor3()
     targ_tnk = cgt.tensor3()
     make_network = make_deep_lstm if arch=="lstm" else make_deep_gru
-    make_network = make_simple_rnn
     network = make_network(size_input, size_mem, n_layers, size_output, size_batch)
     init_hiddens = [cgt.matrix() for _ in xrange(get_num_hiddens(arch, n_layers))]
     # TODO fixed sizes
@@ -153,14 +132,9 @@ def make_loss_and_grad_and_step(arch, size_input, size_output, size_mem, size_ba
     gradloss = cgt.grad(loss, params)
 
     flatgrad = flatcat(gradloss)
-    updates = []
-
-    for (parm, grd) in zip(params, gradloss):
-      up = (parm, parm - 0.1*grd)
-      updates.append(up)
 
     with utils.Message("compiling loss+grad"):
-        f_loss_and_grad = cgt.function([x_tnk, targ_tnk] + init_hiddens, [loss, flatgrad] + final_hiddens, updates = updates)
+        f_loss_and_grad = cgt.function([x_tnk, targ_tnk] + init_hiddens, [loss, flatgrad] + final_hiddens)
     f_loss = cgt.function([x_tnk, targ_tnk] + init_hiddens, loss)
 
     assert len(init_hiddens) == len(final_hiddens)
@@ -278,12 +252,12 @@ def main():
     parser.add_argument("--data_dir", type=str, default="alice")
     parser.add_argument("--size_mem", type=int,default=64)
     parser.add_argument("--size_batch", type=int,default=64)
-    parser.add_argument("--n_layers",type=int,default=1)
-    parser.add_argument("--n_unroll",type=int,default=6)
+    parser.add_argument("--n_layers",type=int,default=2)
+    parser.add_argument("--n_unroll",type=int,default=16)
     parser.add_argument("--step_size",type=float,default=.01)
     parser.add_argument("--decay_rate",type=float,default=0.95)
-    parser.add_argument("--n_epochs",type=int,default=100)
-    parser.add_argument("--arch",choices=["lstm","gru"],default="gru")
+    parser.add_argument("--n_epochs",type=int,default=20)
+    parser.add_argument("--arch",choices=["lstm","gru"],default="lstm")
     parser.add_argument("--grad_check",action="store_true")
     parser.add_argument("--profile",action="store_true")
     parser.add_argument("--unittest",action="store_true")
@@ -307,9 +281,9 @@ def main():
     pc.set_value_flat(nr.uniform(-.1, .1, size=(pc.get_total_size(),)))
 
     def initialize_hiddens(n):
-        return [np.ones((n, args.size_mem), cgt.floatX) for _ in xrange(get_num_hiddens(args.arch, args.n_layers))]
+        return [np.zeros((n, args.size_mem), cgt.floatX) for _ in xrange(get_num_hiddens(args.arch, args.n_layers))]
 
-    if args.grad_check:
+    if args.grad_check :
         x,y = loader.train_batches_iter().next()
         prev_hiddens = initialize_hiddens(args.size_batch)
         def f(thnew):
@@ -319,7 +293,7 @@ def main():
             pc.set_value_flat(thold)
             return loss
         from cgt.numeric_diff import numeric_grad
-        g_num = numeric_grad(f, pc.get_value_flat(),eps=1e-10)
+        # g_num = numeric_grad(f, pc.get_value_flat(),eps=1e-10)
         result = f_loss_and_grad(x,y,*prev_hiddens)
         g_anal = result[1]
         assert np.allclose(g_num, g_anal, atol=1e-4)
@@ -338,11 +312,9 @@ def main():
             out = f_loss_and_grad(x,y, *cur_hiddens)
             loss = out[0]
             grad = out[1]
-            # import ipdb; ipdb.set_trace()
-            # print loss
             cur_hiddens = out[2:]
-            # rmsprop_update(grad, optim_state)
-            # pc.set_value_flat(optim_state.theta)
+            rmsprop_update(grad, optim_state)
+            pc.set_value_flat(optim_state.theta)
             losses.append(loss)
             if args.unittest: return
         print "%.3f s/batch. avg loss = %.3f"%((time()-tstart)/len(losses), np.mean(losses))
@@ -354,3 +326,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

@@ -159,11 +159,45 @@ def make_loss_and_grad_and_step(arch, size_input, size_output, size_mem, size_ba
       up = (parm, parm - 0.1*grd)
       updates.append(up)
 
+
     with utils.Message("compiling loss+grad"):
         f_loss_and_grad = cgt.function([x_tnk, targ_tnk] + init_hiddens, [loss, flatgrad] + final_hiddens, updates = updates)
     f_loss = cgt.function([x_tnk, targ_tnk] + init_hiddens, loss)
 
+    dummy = cgt.scalar(name='a')
+    giv = [(X,Xtest[:128]), (y,ytest[:128])]
+    f2 = cgt.function(
+            inputs=[dummy], 
+            outputs=[loss], 
+            givens=giv, 
+            updates=updates)
+
     assert len(init_hiddens) == len(final_hiddens)
+    # Xs = []
+    # ys = []
+    #
+    # cur_hiddens = init_hiddens
+    # for i in range(10):
+    #     curX = cgt.tensor3()
+    #     cury = cgt.tensor3()
+    #     Xs.append(curX)
+    #     ys.append(cury)
+    #
+    #     loss = 0
+    #     for t in xrange(n_unroll):
+    #         outputs = network([curX[t]] + cur_hiddens)
+    #         cur_hiddens, prediction_logprobs = outputs[:-1], outputs[-1]
+    #         loss = loss - (prediction_logprobs*cury[t]).sum()
+    #         cur_hiddens = outputs[:-1]
+    #
+    #     final_hiddens = cur_hiddens
+    #
+    #     loss = loss / (n_unroll * size_batch)
+    #
+    #     gradloss = cgt.grad(loss, params)
+    #     newGrads = []
+    #     for (parm, grd) in zip(params, gradloss):
+
 
     x_nk = cgt.matrix('x')
     outputs = network([x_nk] + init_hiddens)
