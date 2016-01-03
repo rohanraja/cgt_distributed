@@ -37,21 +37,17 @@ public:
     ByRefCallable(cgtByRefFun fptr, void* data, const string & clstr) : fptr(fptr), data(data) {
       filed = clstr ;
       filesize = filed.size();
-      filedata = (void *)filed.c_str() ;
     }
     ByRefCallable() : fptr(NULL), data(NULL) {}
     ByRefCallable(ifstream &f){
-      // trace("Loading callable!!");
       data = loadCldata(f);
       getline(f,prefix, '\0');
-      // trace(prefix);
       fptr = (cgtByRefFun) loadByrefFunc(prefix);
     }
     void save(ofstream &f){
-      // trace("Saving ByRef callable!!");
-      // trace(filesize);
       if(filesize == 0)
         writef(f, filesize);
+      filedata = (void *)filed.c_str() ;
       f.write((char*)filedata , filesize);
       char nullchar = '\0';
       writef(f, nullchar);
@@ -72,24 +68,21 @@ public:
 
     ByValCallable(cgtByValFun fptr, void* data, const string & clstr) : fptr(fptr), data(data) {
       filed = clstr ;
-      filesize = filed.size();
+      filesize = (int) filed.size();
       filedata = (void *)filed.c_str() ;
     }
     ByValCallable() : fptr(NULL), data(NULL) {}
 
     ByValCallable(ifstream &f){
-      // trace("Loading callable!!");
       data = loadCldata(f);
       getline(f,prefix, '\0');
-      // trace(prefix);
       fptr = (cgtByValFun) loadByrefFunc(prefix);
     }
 
     void save(ofstream &f){
-      // trace("Saving ByVal callable!!");
-      // trace(filesize);
       if(filesize == 0)
         writef(f, filesize);
+      filedata = (void *)filed.c_str() ;
       f.write((char*)filedata , filesize);
       char nullchar = '\0';
       writef(f, nullchar);

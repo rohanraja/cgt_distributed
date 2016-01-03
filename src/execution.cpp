@@ -6,7 +6,7 @@
 #include "util/ThreadPool.h"
 #include "unistd.h"
 
-#define EXECU
+//#define EXECU
 
 #ifdef EXECU 
 #include "../executor/all.cpp"
@@ -386,7 +386,7 @@ Instruction * Byval_load(ifstream &f){
 
   MemLocation wloc(f);
   vector<MemLocation> readlocs = loadMemVector(f);
-  ByValCallable callable(f) ;
+  ByValCallable callable = * new ByValCallable(f) ;
 
   return new ReturnByVal("Return By Val", readlocs, wloc, callable, false);
 
@@ -406,10 +406,9 @@ Interpreter* interpreter_from_file(char * fname){
   vector<MemLocation> outps = loadMemVector(f);
   ExecutionGraph *eg = loadExecutionGraph(f) ;
 
-  printf("\nFINISHED LOADING Execution Graph\n\n");
   Interpreter * inp = create_interpreter(eg,outps,0);
 
-  printf("\nFINISHED LOADING INTERPRETER\n\n");
+  printf("\n** Finished Loading Interpreter **\n\n");
   return inp;
   return new DummyInterpreter(fname) ;
 
@@ -492,7 +491,6 @@ vector<Instruction *> loadInstVector(ifstream &f){
   rep(i,num_instrs){
 
     readf(f, type);
-    // trace(type);
 
     switch(type)
     {
@@ -513,7 +511,6 @@ vector<Instruction *> loadInstVector(ifstream &f){
         break;
 
     };
-    // trace(instrs[i]->repr());
 
   }
 
@@ -533,9 +530,8 @@ ExecutionGraph * loadExecutionGraph(ifstream &f){
   trace(nargs);
   trace(nlocs);
   
-  cout << "\n**** Loaded Instructions ****\n\n" ;
   vector<Instruction *> instrs = loadInstVector(f);
-  cout << "\n**** Loaded Instructions ****\n" ;
+  trace(instrs.size());
 
   return new ExecutionGraph(instrs, nargs, nlocs) ;
 }
@@ -563,8 +559,6 @@ void * loadCldata(ifstream &f){
   int numptrs;
   readf(f, numptrs);
 
-  // trace(numptrs);
-
   int sizeBlock;
   int st_offset;
   byte* block;
@@ -584,29 +578,17 @@ void * loadCldata(ifstream &f){
     if(i==2){
       // InMemory Data CPP Array Pointer
       long ptrr = *((long*)(block));
-      // trace(ptrr);
       if(inMemoryArrays.find(ptrr) == inMemoryArrays.end())
       {
         inMemoryArrays[ptrr] = new long ;
         *inMemoryArrays[ptrr] = 0 ;
       }
-      else{
-      
-        //cerr << "\nREUSING = " << ptrr << endl ;
-        // cgtArray **tmp = (cgtArray**) inMemoryArrays[ptrr] ;
-        // (*tmp)->print();
-      }
-
-      // trace(inMemoryArrays[ptrr]);
 
       *((void **)(blockAddr)) = (void*) inMemoryArrays[ptrr] ;
      
     }else{
       *((void **)(blockAddr)) = (void*) block ;
     }
-
-    // trace(sizeBlock);
-    // trace(st_offset);
 
 
   }

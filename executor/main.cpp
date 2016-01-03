@@ -5,6 +5,7 @@
 #include<vector>
 #include<sstream>
 #include<dlfcn.h>
+#include <unistd.h>
 
 using namespace cgt ;
 
@@ -22,7 +23,6 @@ void run_dummy(Interpreter * inp){
   float *ardata = (float*) get_0_int(inptup) ;
 
   *ardata = 5 ;
-
   
 
   std::cout << "\nInput = " <<  *ardata << "" ;
@@ -103,10 +103,11 @@ void masterInterpreter_Run(){
   Interpreter * mainInt;
   mainInt = create_main_interpreter(100); // TODO: Make Dynamic
 
-  Interpreter * paraminp = interpreter_from_file((char*)"param.inp");
   Interpreter * paramRes = interpreter_from_file((char*)"paramResume.inp");
   Interpreter * trinp = interpreter_from_file((char*)"train.inp");
   Interpreter * valinp = interpreter_from_file((char*)"valid.inp");
+  Interpreter * paraminp = interpreter_from_file((char*)"param.inp");
+
 
 
 
@@ -122,6 +123,7 @@ void masterInterpreter_Run(){
 
   rep(i, nloops){
     rep(j, trainSched.size()){
+
       run_print(trinp, trainSched[j], false);
     }
 
@@ -139,16 +141,13 @@ void masterInterpreter_Run(){
 }
 
 int main(int argc, char *args[] ){
+    
+    chdir("../examples/");
 
   if(argc > 1){
     std::stringstream convert(args[1]);
     convert >> nloops ;
   }
-  // Interpreter * inp = interpreter_from_file((char*)"eg.bin");
-
-  // run_scheduled(inp);
-  // run_dummy(inp);
-
   masterInterpreter_Run();
 
   return 0;

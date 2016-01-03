@@ -14,10 +14,11 @@
 
 *.inp
 *.bin
+inptps
 params_out
 executor/Build
 npn-debug.log
-a.out
+*a.out*
 .DS_Store
 4dev
 4build
@@ -28,6 +29,7 @@ doc/tex-images
 build
 *.swp
 openblas.tar.gz
+executor/distX
 
 # Tmp stuff
 junk
