@@ -1,6 +1,6 @@
 all:
 	c++ -D EXECU -static -rdynamic -std=c++11 -o a.out \
-		../src/cgt_common.cpp ../src/execution.cpp main.cpp	egreader.cpp\
+		../src/cgt_common.cpp ../src/execution.cpp main.cpp	egreader.cpp trainingJob.cpp \
 		-I../include \
 		-I../build/OpenBLAS \
 		-L../build/lib \
@@ -10,7 +10,7 @@ all:
 
 dll:
 	c++ -D EXECU -rdynamic -std=c++11 -g -o a.out \
-		../src/cgt_common.cpp ../src/execution.cpp main.cpp	egreader.cpp\
+		../src/cgt_common.cpp ../src/execution.cpp main.cpp	egreader.cpp trainingJob.cpp \
 		-I../include \
 		-I../build/OpenBLAS \
 		-L../build/lib \
@@ -22,7 +22,7 @@ dll:
 	./a.out
 dist:
 	c++ -D EXECU -rdynamic -std=c++11 -o a.out \
-		../src/cgt_common.cpp ../src/execution.cpp main.cpp	egreader.cpp\
+		../src/cgt_common.cpp ../src/execution.cpp main.cpp	egreader.cpp trainingJob.cpp \
 		-I../include \
 		-I../build/OpenBLAS \
 		-L../build/lib \
@@ -37,7 +37,7 @@ dist:
 rpi:
 	/home/rohanraja/code/rpi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-c++ \
 	 	-D EXECU -rdynamic -std=c++11 -o a.out \
-		../src/cgt_common.cpp ../src/execution.cpp main.cpp	egreader.cpp\
+		../src/cgt_common.cpp ../src/execution.cpp main.cpp	egreader.cpp trainingJob.cpp \
 		-I../include \
 		-I../build/OpenBLAS \
 		-L../build/lib \
