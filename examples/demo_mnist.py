@@ -132,7 +132,6 @@ def main():
     else:
         raise RuntimeError("Unreachable")
 
-    import ipdb; ipdb.set_trace()
     cost_drop = -cgt.mean(categorical.loglik(y, pofy_drop))
     updates, gradss= rmsprop_updates(cost_drop, params, stepsize=args.stepsize)
 
@@ -140,22 +139,20 @@ def main():
     cost_nodrop = -cgt.mean(categorical.loglik(y, pofy_nodrop))
     err_nodrop = cgt.cast(cgt.equal(y_nodrop, y), cgt.floatX).mean() * 100
 
-    computeloss = cgt.function(inputs=[X, y], outputs=[err_nodrop,cost_nodrop])
-    newfunc = cgt.function(inputs=[newin ,newout], outputs=[newout, newin])
-    train = cgt.function(inputs=[X, y], outputs=[cost_nodrop], updates=updates)
-    pnew = map(lambda p: (3*p)/3, params)
-    paramOut = cgt.function(inputs=[], outputs=params)
-    
     paramInp = [ cgt.matrix() for i in range(len(params))] 
     pUpdates = []
     for pinp, prm in zip(paramInp, params):
         pUpdates.append((prm, prm - prm + pinp))
-    # paramResume = cgt.function(inputs=paramInp, outputs=[])
     paramResume = cgt.function(inputs=paramInp, outputs=[], updates = pUpdates)
+    paramResume.save("paramResume.inp")
 
+    computeloss = cgt.function(inputs=[X, y], outputs=[err_nodrop,cost_nodrop])
+    train = cgt.function(inputs=[X, y], outputs=[cost_nodrop], updates=updates)
+    pnew = map(lambda p: (3*p)/3, params)
+    paramOut = cgt.function(inputs=[], outputs=params)
+    
     train.save("train.inp")
     paramOut.save("param.inp")
-    paramResume.save("paramResume.inp")
     computeloss.save("valid.inp")
 
     # train.record("train_sched.bin")

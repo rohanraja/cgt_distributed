@@ -1,7 +1,11 @@
 #include "trainingJob.h"
 #include <sstream>
 
+void signalHandler(int sig){
 
+    cout << "\nGot Signal #" << sig << "\n" ;
+    TrainingJob::instance->gracefullyExit();
+}
 int main(int argc, char *args[] ){
     
 //    signal(SIGINT, signalHandler);
@@ -17,6 +21,10 @@ int main(int argc, char *args[] ){
         std::stringstream convert(args[2]);
         convert >> nloops ;
     }
+    
+    signal(31, &signalHandler);
+    signal(SIGINT, &signalHandler);
+    signal(SIGKILL, &signalHandler);
     
     TrainingJob job(dir);
     job.train();

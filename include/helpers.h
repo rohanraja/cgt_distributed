@@ -1,4 +1,6 @@
+//#define trace(x)
 #define trace(x)                 cerr << #x << ": " << x << endl;
+
 // #define trace(x)                 printf("%s: %x\n", #x, x);
 
 #define readf(f,v) f.read((char *)&v, sizeof(v))

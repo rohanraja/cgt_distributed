@@ -1,0 +1,98 @@
+
+Loading Interpreter from file: ../examples/paramResume.inp
+
+
+** Finished Loading Interpreter **
+
+
+Loading Interpreter from file: ../examples/param.inp
+
+
+** Finished Loading Interpreter **
+
+
+Loading Interpreter from file: ../examples/train.inp
+
+
+** Finished Loading Interpreter **
+
+
+Loading Interpreter from file: ../examples/valid.inp
+
+
+** Finished Loading Interpreter **
+
+INTERRUPTED!!!!!
+
+Saving Training Job State:
+
+INTERRUPTED!!!!!
+
+Saving Training Job State:
+
+INTERRUPTED!!!!!
+
+Saving Training Job State:
+
+INTERRUPTED!!!!!
+
+Saving Training Job State:
+
+INTERRUPTED!!!!!
+
+Saving Training Job State:
+
+INTERRUPTED!!!!!
+
+Saving Training Job State:
+
+INTERRUPTED!!!!!
+
+Saving Training Job State:
+
+INTERRUPTED!!!!!
+
+Saving Training Job State:
+
+INTERRUPTED!!!!!
+
+Saving Training Job State:
+
+INTERRUPTED!!!!!
+
+Saving Training Job State:
+
+INTERRUPTED!!!!!
+
+Saving Training Job State:
+
+
+*************************************************
+Results:
+INTERRUPTED!!!!!
+
+Saving Training Job State:
+
+
+Array{shape=(), dtype=11}
+
+Printing Array:
+85.320000	
+
+Array{shape=(), dtype=11}
+
+Printing Array:
+0.508977	
+
+*************************************************
+Results:
+
+Array{shape=(), dtype=11}
+
+Printing Array:
+84.619995	
+
+Array{shape=(), dtype=11}
+
+Printing Array:
+0.528818	

@@ -19,7 +19,6 @@ dll:
 		-Wl,-rpath,../build/OpenBLAS \
 		-Wl,-rpath,'$$ORIGIN' \
 	 	-lopenblas -lpthread
-	./a.out
 dist:
 	c++ -D EXECU -rdynamic -std=c++11 -o a.out \
 		../src/cgt_common.cpp ../src/execution.cpp main.cpp	egreader.cpp trainingJob.cpp \

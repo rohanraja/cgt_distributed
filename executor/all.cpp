@@ -267,6 +267,19 @@ void* pptr;
                     }
                 }
 
+                static inline float scalar_call_8f3da4a32a10b03ef8278341ba6f586e(float x, float y) {return (x+0.0)/y;}
+                CGT_EXPORT_C void call_8f3da4a32a10b03ef8278341ba6f586e(void* cldata, cgtArray** reads, cgtArray* write) {
+                    int s = reads[0]->size();
+                    float* in0 = (float*)reads[0]->data();
+                    float* in1 = (float*)reads[1]->data();
+                    float* out = (float*)write->data();
+                    cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+                    for (int i=0; i < s; ++i) {
+                        //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
+                        out[i] = scalar_call_8f3da4a32a10b03ef8278341ba6f586e(in0[i], in1[0]);
+                    }
+                }
+
         using namespace std ;
         static inline float reduction_call_98ab48d6ea6663d494105ded831e534a(float x, float y) {return x+y;}
         CGT_EXPORT_C void call_98ab48d6ea6663d494105ded831e534a(void* cldata, cgtArray** reads, cgtArray* write) {
@@ -351,6 +364,19 @@ void* data;
                     for (int i=0; i < s; ++i) {
                         //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
                         out[i] = scalar_call_c630d03c28159edfd6b41e32b6133d0b(in0[0], in1[0]);
+                    }
+                }
+
+                static inline int8_t scalar_call_c7aa8f1e9e36c4a3fc7ba2a83867d8e6(float x, float y) {return x>y;}
+                CGT_EXPORT_C void call_c7aa8f1e9e36c4a3fc7ba2a83867d8e6(void* cldata, cgtArray** reads, cgtArray* write) {
+                    int s = reads[0]->size();
+                    float* in0 = (float*)reads[0]->data();
+                    float* in1 = (float*)reads[1]->data();
+                    int8_t* out = (int8_t*)write->data();
+                    cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+                    for (int i=0; i < s; ++i) {
+                        //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
+                        out[i] = scalar_call_c7aa8f1e9e36c4a3fc7ba2a83867d8e6(in0[i], in1[0]);
                     }
                 }
 
@@ -487,12 +513,14 @@ void create_functions_map(){
 	fmap["call_654893363f89562cd042919f7d1efc24"] = (void *) &call_654893363f89562cd042919f7d1efc24 ; 
 	fmap["call_6942516ef96064da1e2901a047a92859"] = (void *) &call_6942516ef96064da1e2901a047a92859 ; 
 	fmap["call_6cf598e930fe44f238860b9128685441"] = (void *) &call_6cf598e930fe44f238860b9128685441 ; 
+	fmap["call_8f3da4a32a10b03ef8278341ba6f586e"] = (void *) &call_8f3da4a32a10b03ef8278341ba6f586e ; 
 	fmap["call_98ab48d6ea6663d494105ded831e534a"] = (void *) &call_98ab48d6ea6663d494105ded831e534a ; 
 	fmap["call_a51b30884986af971213422277600489"] = (void *) &call_a51b30884986af971213422277600489 ; 
 	fmap["call_a8df3af7cb5fe6faf9a0219ea6ca48cb"] = (void *) &call_a8df3af7cb5fe6faf9a0219ea6ca48cb ; 
 	fmap["call_b380ee0c312278649c5ffda6803d8d26"] = (void *) &call_b380ee0c312278649c5ffda6803d8d26 ; 
 	fmap["call_b965185d7179dad78ca8b04360615f33"] = (void *) &call_b965185d7179dad78ca8b04360615f33 ; 
 	fmap["call_c630d03c28159edfd6b41e32b6133d0b"] = (void *) &call_c630d03c28159edfd6b41e32b6133d0b ; 
+	fmap["call_c7aa8f1e9e36c4a3fc7ba2a83867d8e6"] = (void *) &call_c7aa8f1e9e36c4a3fc7ba2a83867d8e6 ; 
 	fmap["call_cdb74c65b31c8c9c808e6241378c9391"] = (void *) &call_cdb74c65b31c8c9c808e6241378c9391 ; 
 	fmap["call_d315f97464ca63ecc5c6f08af8957f1b"] = (void *) &call_d315f97464ca63ecc5c6f08af8957f1b ; 
 	fmap["call_d31c90b62cf90ba21fda300ed65b3115"] = (void *) &call_d31c90b62cf90ba21fda300ed65b3115 ; 

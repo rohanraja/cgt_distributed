@@ -24,6 +24,10 @@ void run_print(Interpreter * inp, cgtTuple * inptup, bool isPrint = true);
 
 ARGVEC get_schedule(const string &fname);
 
+struct TrainingStatus{
+    
+};
+
 class TrainingJob{
     
     Interpreter * paramLoader ;
@@ -36,22 +40,93 @@ class TrainingJob{
     
     string folderPath;
     
+    
+    static int tst ;
+    
     int currentEpoch = 0;
     int currentBatch = 0;
-    int numEpochs = 4;
+    bool isExiting = false;
+    int numEpochs = 15;
+    float last_accuracy = 0;
     
 public:
+    static TrainingJob *instance ;
     
     TrainingJob(string pFolderName){
         
         folderPath = pFolderName + "/" ;
         chdir(folderPath.c_str());
         
+        instance = this ;
+//        signal(SIGINT, signalHandler) ;
+//        signal(SIGINFO, signalHandler) ;
+//        signal(30, signalHandler) ;
+//        signal(31, signalHandler) ;
+        
         loadInterpreters();
         loadSchedule();
         
+        
     }
     
+    static void signalHandler(int sig){
+        
+        switch (sig) {
+            case SIGINT:
+                instance->gracefullyExit();
+                break;
+            case 30:
+                instance->sendStatus();
+                break;
+            case 31:
+                instance->gracefullyExit();
+                break;
+        }
+    }
+    
+    void sendStatus(){
+        
+        cerr << "Current Batch:" << currentBatch << "\n" ;
+        
+    }
+    
+    void gracefullyExit(){
+        
+        cout << "\nGracefully Exiting CGT\n";
+        isExiting = true;
+    }
+    void saveState(){
+        
+        saveParams();
+        ofstream f ;
+        f.open(folderPath + "state.bin", ios::binary | ios::out);
+        writef(f, currentEpoch);
+        writef(f, currentBatch);
+        cout << "\nSaving State:\n";
+        trace(currentBatch);
+        trace(currentEpoch);
+        f.close();
+        
+    }
+    
+    void loadState(){
+        
+        loadParams();
+        ifstream f ;
+        f.open(folderPath + "state.bin", ios::binary | ios::in);
+        
+        if( !f.good() )
+            return;
+        
+        readf(f, currentEpoch);
+        readf(f, currentBatch);
+        
+        cout << "\nResuming State:\n";
+        trace(currentBatch);
+        trace(currentEpoch);
+        f.close();
+        
+    }
     void loadInterpreters(){
         paramLoader = loadInt("paramResume.inp");
         paramSaver = loadInt("param.inp");
@@ -71,7 +146,7 @@ public:
     void saveParams(){
         
         ofstream f ;
-        f.open("params_out", ios::binary | ios::out);
+        f.open(folderPath + "params_out", ios::binary | ios::out);
         cgtTuple *blankInp = new cgtTuple(0);
         IRC<cgtTuple> ret = IRC<cgtTuple> (paramSaver->run(blankInp)) ;
         cgtTuple *res = ret.get();
@@ -80,9 +155,25 @@ public:
         
     }
     
+    void saveStatus(){
+        
+        ofstream f ;
+        f.open(folderPath + "log", ios::binary | ios::app);
+        f << currentEpoch << endl;
+        f << last_accuracy << endl;
+        f.close();
+        
+    }
     void validate(){
-        rep(j, validSched.size()){
-            run_print(validator, validSched[j]);
+//        rep(j, validSched.size()){
+        rep(j, 1){
+//            run_print(validator, validSched[j]);
+            
+            IRC<cgtTuple> ret = IRC<cgtTuple> (validator->run(validSched[j])) ;
+            cgtTuple *res = ret.get();
+            float * fdata = (float *) (((cgtArray*)(res->getitem(0)))->data()) ;
+            last_accuracy = *fdata ;
+            cout << "Accuracy: " << last_accuracy << "\n";
         }
     }
     void loadSchedule(){
@@ -97,25 +188,43 @@ public:
     
     void trainLoop(){
         
-            for(int j=currentBatch; j<trainSched.size(); j++){
-                run_print(trainer, trainSched[j], false);
-            }
+        int j = currentBatch;
+//        for(; j<1; j++){
+        for(; j<trainSched.size(); j++){
+            currentBatch = j;
+            if(isExiting)
+                return;
+            run_print(trainer, trainSched[j], false);
+        }
+        currentBatch = 0;
     }
     
     void train(){
         
+        loadState();
+        
         for(int i=currentEpoch; i<numEpochs; i++){
+            
+            currentEpoch = i;
             
             trainLoop();
             
             validate();
             
-            saveParams();
+            if(currentBatch == 0)
+                currentEpoch ++ ;
+            
+            saveState();
+            saveStatus();
+            
+            if(isExiting)
+                return;
             
         }
     }
     
     
 };
+
 
 #endif /* defined(__distX__trainingJob__) */

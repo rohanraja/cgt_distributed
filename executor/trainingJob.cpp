@@ -40,3 +40,8 @@ ARGVEC get_schedule(const string &fname){
     
     return outp ;
 }
+
+int TrainingJob::tst = 0;
+TrainingJob* TrainingJob::instance = NULL;
+
+

@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>416737E2-1724-47AC-ABAA-8A36BD5E8430</string>
 	<key>IDESourceControlProjectName</key>
-	<string>distX</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>D346488BF1ABF99B468B90DDDC804AF0794B3319</key>
 		<string>https://github.com/rohanraja/cgt_distributed</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>executor/distX.xcodeproj</string>
+	<string>executor/distX.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>D346488BF1ABF99B468B90DDDC804AF0794B3319</key>
