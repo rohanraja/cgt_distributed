@@ -106,6 +106,19 @@ void* handle;
                     }
                 }
 
+                static inline float scalar_call_18982b4b7da20b5956d4ddd29ce87758(int64_t x, float y) {return x-y;}
+                CGT_EXPORT_C void call_18982b4b7da20b5956d4ddd29ce87758(void* cldata, cgtArray** reads, cgtArray* write) {
+                    int s = reads[1]->size();
+                    int64_t* in0 = (int64_t*)reads[0]->data();
+                    float* in1 = (float*)reads[1]->data();
+                    float* out = (float*)write->data();
+                    cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+                    for (int i=0; i < s; ++i) {
+                        //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
+                        out[i] = scalar_call_18982b4b7da20b5956d4ddd29ce87758(in0[0], in1[i]);
+                    }
+                }
+
             CGT_EXPORT_C void call_2a8b57ddc17094fa96c60ef7ad664593(void* cldata, cgtArray** reads, cgtArray* write) {
                 cgtArray *read=reads[0];
                 for (int i0=0; i0 < write->shape()[0]; ++i0) {
@@ -192,6 +205,19 @@ void* pptr;
                     }
                 }
 
+                static inline float scalar_call_4894654a0f8c779625611cf68a5928a6(float x, float y) {return x-y;}
+                CGT_EXPORT_C void call_4894654a0f8c779625611cf68a5928a6(void* cldata, cgtArray** reads, cgtArray* write) {
+                    int s = reads[1]->size();
+                    float* in0 = (float*)reads[0]->data();
+                    float* in1 = (float*)reads[1]->data();
+                    float* out = (float*)write->data();
+                    cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+                    for (int i=0; i < s; ++i) {
+                        //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
+                        out[i] = scalar_call_4894654a0f8c779625611cf68a5928a6(in0[0], in1[i]);
+                    }
+                }
+
                 static inline float scalar_call_4cc1602fdb29f1c37ecb5d02fb599ca7(float x, int8_t y) {return x*y;}
                 CGT_EXPORT_C void call_4cc1602fdb29f1c37ecb5d02fb599ca7(void* cldata, cgtArray** reads, cgtArray* write) {
                     int s = reads[0]->size();
@@ -215,6 +241,19 @@ void* pptr;
                     for (int i=0; i < s; ++i) {
                         //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
                         out[i] = scalar_call_5276e4197cd56cac0d3a38c53298e890(in0[i], in1[i]);
+                    }
+                }
+
+                static inline float scalar_call_52b6a0c7ae37a49e0262978bc892eb1c(int64_t x, float y) {return x-y;}
+                CGT_EXPORT_C void call_52b6a0c7ae37a49e0262978bc892eb1c(void* cldata, cgtArray** reads, cgtArray* write) {
+                    int s = reads[1]->size();
+                    int64_t* in0 = (int64_t*)reads[0]->data();
+                    float* in1 = (float*)reads[1]->data();
+                    float* out = (float*)write->data();
+                    cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+                    for (int i=0; i < s; ++i) {
+                        //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
+                        out[i] = scalar_call_52b6a0c7ae37a49e0262978bc892eb1c(in0[0], in1[0]);
                     }
                 }
 
@@ -267,6 +306,16 @@ void* pptr;
                     }
                 }
 
+            CGT_EXPORT_C void call_71100cca4d39751ce99c83e507e84a25(void* cldata, cgtArray** reads, cgtArray* write) {
+                cgtArray *in=reads[0];
+                long start = reads[1]->at<long>(0);
+                long step = reads[3]->at<long>(0);
+                for (int i0=0; i0 < write->shape()[0]; ++i0) { for (int i1=0; i1 < write->shape()[1]; ++i1) { for (int i2=0; i2 < write->shape()[2]; ++i2) {
+                    write->at<float>(i0,i1,i2) = in->at<float>(start + step*i0,i1,i2);
+                }}}
+            }
+            
+
                 static inline float scalar_call_8f3da4a32a10b03ef8278341ba6f586e(float x, float y) {return (x+0.0)/y;}
                 CGT_EXPORT_C void call_8f3da4a32a10b03ef8278341ba6f586e(void* cldata, cgtArray** reads, cgtArray* write) {
                     int s = reads[0]->size();
@@ -277,6 +326,17 @@ void* pptr;
                     for (int i=0; i < s; ++i) {
                         //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
                         out[i] = scalar_call_8f3da4a32a10b03ef8278341ba6f586e(in0[i], in1[0]);
+                    }
+                }
+
+                static inline float scalar_call_922578de4678ac78d9f5989406c590ec(float x) {return tanh(x);}
+                CGT_EXPORT_C void call_922578de4678ac78d9f5989406c590ec(void* cldata, cgtArray** reads, cgtArray* write) {
+                    cgtArray* read = reads[0];
+                    int s = read->size();
+                    float* readdata = (float*)read->data();
+                    float* writedata = (float*)write->data();
+                    for (int i=0; i < s; ++i) {
+                        writedata[i] = scalar_call_922578de4678ac78d9f5989406c590ec(readdata[i]);
                     }
                 }
 
@@ -341,6 +401,17 @@ void* data;
             }
             
 
+                static inline int64_t scalar_call_b41731624f42047331b4137d032eb7f6(float x) {return (int)ceil(x);}
+                CGT_EXPORT_C void call_b41731624f42047331b4137d032eb7f6(void* cldata, cgtArray** reads, cgtArray* write) {
+                    cgtArray* read = reads[0];
+                    int s = read->size();
+                    float* readdata = (float*)read->data();
+                    int64_t* writedata = (int64_t*)write->data();
+                    for (int i=0; i < s; ++i) {
+                        writedata[i] = scalar_call_b41731624f42047331b4137d032eb7f6(readdata[i]);
+                    }
+                }
+
                 static inline int64_t scalar_call_b965185d7179dad78ca8b04360615f33(int64_t x, int64_t y) {return x*y;}
                 CGT_EXPORT_C void call_b965185d7179dad78ca8b04360615f33(void* cldata, cgtArray** reads, cgtArray* write) {
                     int s = reads[1]->size();
@@ -390,6 +461,20 @@ void* data;
                 return out;
             }
 
+        using namespace std ;
+        static inline float reduction_call_d0b714f20d3618a23f5c379d8aba7e20(float x, float y) {return x+y;}
+        CGT_EXPORT_C void call_d0b714f20d3618a23f5c379d8aba7e20(void* cldata, cgtArray** reads, cgtArray* write) {
+            cgtArray *read=reads[0];
+            for (int i=0; i < write->size(); ++i) write->at<float>(i) = 0;
+            for (int i0=0; i0 < read->shape()[0]; ++i0) { for (int i1=0; i1 < read->shape()[1]; ++i1) {
+                float x = write->at<float>(0,i1);
+                float y = read->at<float>(i0,i1) ;
+                //cout << "\n" << x << ", " << y ;
+                write->at<float>(0,i1) = reduction_call_d0b714f20d3618a23f5c379d8aba7e20(x, y);
+            }}
+        }
+        
+
                 static inline float scalar_call_d315f97464ca63ecc5c6f08af8957f1b(float x) {return (-x);}
                 CGT_EXPORT_C void call_d315f97464ca63ecc5c6f08af8957f1b(void* cldata, cgtArray** reads, cgtArray* write) {
                     cgtArray* read = reads[0];
@@ -426,6 +511,19 @@ void* data;
                         out[i] = scalar_call_d94650c9f181b5719a909169c77653dc(in0[i], in1[0]);
                     }
                 }
+
+                static inline float scalar_call_df50b9eb5067c0b36c5a6fbb9fd7b389(float x, float y) {return x-y;}
+                CGT_EXPORT_C void call_df50b9eb5067c0b36c5a6fbb9fd7b389(void* cldata, cgtArray** reads, cgtArray* write) {
+                    int s = reads[1]->size();
+                    float* in0 = (float*)reads[0]->data();
+                    float* in1 = (float*)reads[1]->data();
+                    float* out = (float*)write->data();
+                    cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+                    for (int i=0; i < s; ++i) {
+                        //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
+                        out[i] = scalar_call_df50b9eb5067c0b36c5a6fbb9fd7b389(in0[0], in1[0]);
+                    }
+                }
 typedef struct closure_df6ff67bdcd8961b3dc93e126e908cd4 {
 double value;
 } closure_df6ff67bdcd8961b3dc93e126e908cd4;
@@ -435,6 +533,25 @@ double value;
                 float value = cldata->value;
                 for (int i=0; i < s; ++i) write->at<float>(i) = value;
             }
+
+            CGT_EXPORT_C void call_e275d27556904ee35697caff0b637bbd(void* cldata, cgtArray** reads, cgtArray* write) {
+                cgtArray *read=reads[0];
+                for (int i0=0; i0 < write->shape()[0]; ++i0) { for (int i1=0; i1 < write->shape()[1]; ++i1) {
+                    write->at<float>(i0,i1) = read->at<float>(0,i1);
+                }}
+            }
+            
+
+                static inline float scalar_call_e534e35af6b9563a11f771bb8c7e3c96(float x) {return 1.0/(1.0+exp(-x));}
+                CGT_EXPORT_C void call_e534e35af6b9563a11f771bb8c7e3c96(void* cldata, cgtArray** reads, cgtArray* write) {
+                    cgtArray* read = reads[0];
+                    int s = read->size();
+                    float* readdata = (float*)read->data();
+                    float* writedata = (float*)write->data();
+                    for (int i=0; i < s; ++i) {
+                        writedata[i] = scalar_call_e534e35af6b9563a11f771bb8c7e3c96(readdata[i]);
+                    }
+                }
 
                 static inline float scalar_call_e561000695f157d5cbe9ce6a549a2efb(int64_t x, int64_t y) {return (x+0.0)/y;}
                 CGT_EXPORT_C void call_e561000695f157d5cbe9ce6a549a2efb(void* cldata, cgtArray** reads, cgtArray* write) {
@@ -464,6 +581,20 @@ int ndim;
                 return out;
             }
             
+
+        using namespace std ;
+        static inline float reduction_call_edecbd49e6ae28211a12d42213fd7e44(float x, float y) {return x+y;}
+        CGT_EXPORT_C void call_edecbd49e6ae28211a12d42213fd7e44(void* cldata, cgtArray** reads, cgtArray* write) {
+            cgtArray *read=reads[0];
+            for (int i=0; i < write->size(); ++i) write->at<float>(i) = 0;
+            for (int i0=0; i0 < read->shape()[0]; ++i0) { for (int i1=0; i1 < read->shape()[1]; ++i1) {
+                float x = write->at<float>(0,0);
+                float y = read->at<float>(i0,i1) ;
+                //cout << "\n" << x << ", " << y ;
+                write->at<float>(0,0) = reduction_call_edecbd49e6ae28211a12d42213fd7e44(x, y);
+            }}
+        }
+        
 
                 static inline float scalar_call_ef7ce0528df23ebd0d6b0b275eac2722(float x, float y) {return x*y;}
                 CGT_EXPORT_C void call_ef7ce0528df23ebd0d6b0b275eac2722(void* cldata, cgtArray** reads, cgtArray* write) {
@@ -500,6 +631,7 @@ void create_functions_map(){
 	fmap["call_0e757cd60b7235565b009c7f90c5ce62"] = (void *) &call_0e757cd60b7235565b009c7f90c5ce62 ; 
 	fmap["call_116c98fe90386fc618a04137cd19b63d"] = (void *) &call_116c98fe90386fc618a04137cd19b63d ; 
 	fmap["call_178591db5c7372022010d2a67a9b7657"] = (void *) &call_178591db5c7372022010d2a67a9b7657 ; 
+	fmap["call_18982b4b7da20b5956d4ddd29ce87758"] = (void *) &call_18982b4b7da20b5956d4ddd29ce87758 ; 
 	fmap["call_2a8b57ddc17094fa96c60ef7ad664593"] = (void *) &call_2a8b57ddc17094fa96c60ef7ad664593 ; 
 	fmap["call_2e5636f9ee548a895307078ff481642b"] = (void *) &call_2e5636f9ee548a895307078ff481642b ; 
 	fmap["call_3612a30b453dc657d8c1aac4ab6bffb8"] = (void *) &call_3612a30b453dc657d8c1aac4ab6bffb8 ; 
@@ -507,27 +639,37 @@ void create_functions_map(){
 	fmap["call_3c244bf4129a80c0a2e0b28d2c64827f"] = (void *) &call_3c244bf4129a80c0a2e0b28d2c64827f ; 
 	fmap["call_3f2152dbb82fc3bd6f125e49e35f7163"] = (void *) &call_3f2152dbb82fc3bd6f125e49e35f7163 ; 
 	fmap["call_41dec2fc4c17214cd47d4607fef1b7c3"] = (void *) &call_41dec2fc4c17214cd47d4607fef1b7c3 ; 
+	fmap["call_4894654a0f8c779625611cf68a5928a6"] = (void *) &call_4894654a0f8c779625611cf68a5928a6 ; 
 	fmap["call_4cc1602fdb29f1c37ecb5d02fb599ca7"] = (void *) &call_4cc1602fdb29f1c37ecb5d02fb599ca7 ; 
 	fmap["call_5276e4197cd56cac0d3a38c53298e890"] = (void *) &call_5276e4197cd56cac0d3a38c53298e890 ; 
+	fmap["call_52b6a0c7ae37a49e0262978bc892eb1c"] = (void *) &call_52b6a0c7ae37a49e0262978bc892eb1c ; 
 	fmap["call_5985a55ad132563945f92851e9b93973"] = (void *) &call_5985a55ad132563945f92851e9b93973 ; 
 	fmap["call_654893363f89562cd042919f7d1efc24"] = (void *) &call_654893363f89562cd042919f7d1efc24 ; 
 	fmap["call_6942516ef96064da1e2901a047a92859"] = (void *) &call_6942516ef96064da1e2901a047a92859 ; 
 	fmap["call_6cf598e930fe44f238860b9128685441"] = (void *) &call_6cf598e930fe44f238860b9128685441 ; 
+	fmap["call_71100cca4d39751ce99c83e507e84a25"] = (void *) &call_71100cca4d39751ce99c83e507e84a25 ; 
 	fmap["call_8f3da4a32a10b03ef8278341ba6f586e"] = (void *) &call_8f3da4a32a10b03ef8278341ba6f586e ; 
+	fmap["call_922578de4678ac78d9f5989406c590ec"] = (void *) &call_922578de4678ac78d9f5989406c590ec ; 
 	fmap["call_98ab48d6ea6663d494105ded831e534a"] = (void *) &call_98ab48d6ea6663d494105ded831e534a ; 
 	fmap["call_a51b30884986af971213422277600489"] = (void *) &call_a51b30884986af971213422277600489 ; 
 	fmap["call_a8df3af7cb5fe6faf9a0219ea6ca48cb"] = (void *) &call_a8df3af7cb5fe6faf9a0219ea6ca48cb ; 
 	fmap["call_b380ee0c312278649c5ffda6803d8d26"] = (void *) &call_b380ee0c312278649c5ffda6803d8d26 ; 
+	fmap["call_b41731624f42047331b4137d032eb7f6"] = (void *) &call_b41731624f42047331b4137d032eb7f6 ; 
 	fmap["call_b965185d7179dad78ca8b04360615f33"] = (void *) &call_b965185d7179dad78ca8b04360615f33 ; 
 	fmap["call_c630d03c28159edfd6b41e32b6133d0b"] = (void *) &call_c630d03c28159edfd6b41e32b6133d0b ; 
 	fmap["call_c7aa8f1e9e36c4a3fc7ba2a83867d8e6"] = (void *) &call_c7aa8f1e9e36c4a3fc7ba2a83867d8e6 ; 
 	fmap["call_cdb74c65b31c8c9c808e6241378c9391"] = (void *) &call_cdb74c65b31c8c9c808e6241378c9391 ; 
+	fmap["call_d0b714f20d3618a23f5c379d8aba7e20"] = (void *) &call_d0b714f20d3618a23f5c379d8aba7e20 ; 
 	fmap["call_d315f97464ca63ecc5c6f08af8957f1b"] = (void *) &call_d315f97464ca63ecc5c6f08af8957f1b ; 
 	fmap["call_d31c90b62cf90ba21fda300ed65b3115"] = (void *) &call_d31c90b62cf90ba21fda300ed65b3115 ; 
 	fmap["call_d94650c9f181b5719a909169c77653dc"] = (void *) &call_d94650c9f181b5719a909169c77653dc ; 
+	fmap["call_df50b9eb5067c0b36c5a6fbb9fd7b389"] = (void *) &call_df50b9eb5067c0b36c5a6fbb9fd7b389 ; 
 	fmap["call_df6ff67bdcd8961b3dc93e126e908cd4"] = (void *) &call_df6ff67bdcd8961b3dc93e126e908cd4 ; 
+	fmap["call_e275d27556904ee35697caff0b637bbd"] = (void *) &call_e275d27556904ee35697caff0b637bbd ; 
+	fmap["call_e534e35af6b9563a11f771bb8c7e3c96"] = (void *) &call_e534e35af6b9563a11f771bb8c7e3c96 ; 
 	fmap["call_e561000695f157d5cbe9ce6a549a2efb"] = (void *) &call_e561000695f157d5cbe9ce6a549a2efb ; 
 	fmap["call_edd318b850a586afb3c52877b989a956"] = (void *) &call_edd318b850a586afb3c52877b989a956 ; 
+	fmap["call_edecbd49e6ae28211a12d42213fd7e44"] = (void *) &call_edecbd49e6ae28211a12d42213fd7e44 ; 
 	fmap["call_ef7ce0528df23ebd0d6b0b275eac2722"] = (void *) &call_ef7ce0528df23ebd0d6b0b275eac2722 ; 
 	fmap["call_fef23e677f07f08a3802edcc480fa2b8"] = (void *) &call_fef23e677f07f08a3802edcc480fa2b8 ; 
 

@@ -16,13 +16,13 @@
 #include <unistd.h>
 #include<vector>
 #include<sstream>
+#include<signal.h>
 
 using namespace cgt ;
 
 
 void run_print(Interpreter * inp, cgtTuple * inptup, bool isPrint = true);
 
-ARGVEC get_schedule(const string &fname);
 
 struct TrainingStatus{
     
@@ -46,7 +46,7 @@ class TrainingJob{
     int currentEpoch = 0;
     int currentBatch = 0;
     bool isExiting = false;
-    int numEpochs = 15;
+    int numEpochs = 20 ;
     float last_accuracy = 0;
     
 public:

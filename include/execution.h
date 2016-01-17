@@ -172,6 +172,7 @@ public:
     virtual cgtObject * getarg(int)=0;
     virtual ~Interpreter() {}
     virtual void saveToFile(char *){}
+    virtual cgtTuple* runSched(const string&);
 };
 
 // pass by value because of cython
@@ -295,4 +296,6 @@ void interpreter_to_file(Interpreter *, const string &) ;
 
 Interpreter * create_main_interpreter(long );
 
+vector<cgtTuple *> get_schedule(const string &fname);
+    
 }

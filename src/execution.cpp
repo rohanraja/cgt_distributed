@@ -5,6 +5,7 @@
 #include <vector>
 #include "util/ThreadPool.h"
 #include "unistd.h"
+#include "signal.h"
 
 //#define EXECU
 
@@ -604,8 +605,15 @@ void* loadByrefFunc(string & prefix){
   void * func ;
 
   string funcName = "call_" + prefix ;
-
+    
   func = fmap[funcName];
+
+    if(func == NULL){
+        
+        cerr << "\nERROR: CGT Function not found! check All.cpp !\n";
+        trace(prefix);
+    }
+    
   return func;
 
 }
@@ -643,4 +651,37 @@ Interpreter * create_main_interpreter(long len){
 
 }
 
+vector<cgtTuple *> get_schedule(const string &fname){
+    
+    ARGVEC outp ;
+    ifstream f ;
+    f.open(fname.c_str(), ios::binary | ios::in);
+    if(!f.good())
+        return outp;
+    
+    bool running = true ;
+    while(running){
+        try{
+            cgtTuple *args = new cgtTuple(f);
+            outp.push_back(args);
+        }
+        catch(int){
+            running = false ;
+        }
+    }
+    f.close();
+    
+    return outp ;
+}
+cgtTuple* Interpreter::runSched(const string& fpath){
+    
+    ARGVEC sched = get_schedule(fpath);
+    
+    rep(i, sched.size()){
+        run(sched[i]);
+    }
+    
+    return NULL;
+}
+    
 }

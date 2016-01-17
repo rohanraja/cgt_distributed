@@ -18,28 +18,6 @@ void run_print(Interpreter * inp, cgtTuple * inptup, bool isPrint ){
         res->print();
 }
 
-ARGVEC get_schedule(const string &fname){
-    
-    ARGVEC outp ;
-    ifstream f ;
-    f.open(fname.c_str(), ios::binary | ios::in);
-    if(!f.good())
-        return outp;
-    
-    bool running = true ;
-    while(running){
-        try{
-            cgtTuple *args = new cgtTuple(f);
-            outp.push_back(args);
-        }
-        catch(int){
-            running = false ;
-        }
-    }
-    f.close();
-    
-    return outp ;
-}
 
 int TrainingJob::tst = 0;
 TrainingJob* TrainingJob::instance = NULL;

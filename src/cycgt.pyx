@@ -261,6 +261,7 @@ cdef extern from "execution.h" namespace "cgt":
 
     cppclass Interpreter:
         cgtTuple* run(cgtTuple*)
+        cgtTuple* runSched(const string &)
 
     Interpreter* create_interpreter(ExecutionGraph*, vector[MemLocation], int)
 
@@ -429,9 +430,9 @@ cdef class CppInterpreterWrapper:
     """
     cdef ExecutionGraph* eg # owned
     cdef Interpreter* interp # owned
-    cdef object isRecording # owned
-    cdef object recName # owned
-    cdef object fname # owned
+    cdef object isRecording
+    cdef object recName
+    cdef object fname
     cdef object input_types
     cdef object storage
     def __init__(self, pyeg, input_types, output_locs, parallel, fname=None):
@@ -487,6 +488,10 @@ cdef class CppInterpreterWrapper:
 
     def save(self, fname):
         interpreter_to_file(self.interp, fname)
+
+    def runSched(self, fname):
+        print "Running Schedule %s\n" % fname
+        self.interp.runSched(fname)
 
 
 def cgt_build_root():
