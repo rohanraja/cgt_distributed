@@ -600,6 +600,7 @@ class InMemoryData(GetData):
         return f
     def get_closure(self):
         pptr = self.get_pptr()
+        # print "\nRETURN PTR=", pptr
         dtype = self._value.dtypeInt
 
         return [
@@ -647,6 +648,11 @@ class InMemoryData(GetData):
 
             CGT_EXPORT_C cgtArray* $function($closure* cldata, cgtArray** reads) {
                 
+                //std::cout << "\nNdim = \n" ;
+                //std::cout << cldata->ndim << "\n";
+                //cgtArray *tmp = *(cgtArray**)cldata->pptr ;
+                //std::cout << (long)tmp << "\n^^^^^^^\n";
+                //tmp->print();
                 if( *((long*)cldata->pptr) == 0)
                 {
                     //std::cout << "\n***\nALLOCATING NEW MEMORY FOR INMEMORY DATA\n***\n" ;
@@ -1546,6 +1552,7 @@ class Size(Op):
                 $closure* cl = ($closure*)cl0;
                 cgtArray* in = reads[0];
                 cgtArray* out = new cgtArray(0, NULL, cgt_i8, cgtCPU);
+                //printf("\nShapePtr = %ld\n", (long)(in->ndim() ));
                 out->at<long>(0) = in->shape()[cl->ax];
                 return out;
             }"""

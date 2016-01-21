@@ -52,6 +52,7 @@ cdef extern from "cgt_common.h":
         cgtDevtype devtype() const
         bint ownsdata() const
         void* data()
+        void print_data()
 
     cppclass cgtTuple(cgtObject):
         cgtTuple(int)
@@ -137,14 +138,18 @@ cdef cgtObject* py2cgt_object(object o, bint view) except *:
             return py2cgt_array(o, cgtCPU)
 
 cdef cgtArray* py2cgt_array(cnp.ndarray arr, cgtDevtype devtype):
+    # print "PTRLOC = ", int( <long> arr.shape)
     cdef cgtArray* out = new cgtArray(arr.ndim, <long*>arr.shape, arr.dtype.num, devtype)
     if not arr.flags.c_contiguous: arr = np.ascontiguousarray(arr)
     cgt_memcpy(out.devtype(), cgtCPU, out.data(), cnp.PyArray_DATA(arr), out.nbytes())
+    # out.print_data()
     return out
 
 cdef cgtArray* py2cgt_arrayview(cnp.ndarray arr):
+    # print "PTRLOC = ", int( <long> arr.shape)
     cdef cgtArray* out = new cgtArray(arr.ndim, <long*>arr.shape, arr.dtype.num, cgtCPU, cnp.PyArray_DATA(arr), False)
     assert arr.flags.c_contiguous
+    # out.print_data()
     return out
 
 cdef cgtTuple* py2cgt_tuple(object o, bint view):

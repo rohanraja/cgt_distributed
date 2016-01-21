@@ -17,6 +17,7 @@
 #include<vector>
 #include<sstream>
 #include<signal.h>
+#include<ctime>
 
 using namespace cgt ;
 
@@ -46,7 +47,7 @@ class TrainingJob{
     int currentEpoch = 0;
     int currentBatch = 0;
     bool isExiting = false;
-    int numEpochs = 20 ;
+    int numEpochs = 10 ;
     float last_accuracy = 0;
     
 public:
@@ -207,7 +208,13 @@ public:
             
             currentEpoch = i;
             
+            clock_t st = clock();
+            
             trainLoop();
+            
+            clock_t end = clock();
+            double elapsed_secs = double(end - st) / CLOCKS_PER_SEC;
+            trace(elapsed_secs);
             
             validate();
             

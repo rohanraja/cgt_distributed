@@ -89,7 +89,8 @@ public:
     }
 
     cgtObject * operator()(cgtObject ** args) {
-        return (*fptr)(data, args);
+        cgtObject* outp = (*fptr)(data, args);
+        return outp ;
     }
 };
 

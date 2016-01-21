@@ -51,11 +51,17 @@ public:
         cgt_assert(newargs != NULL);
         cgt_assert(newargs->len == eg_->n_args());
         int icnt = 1 ;
-        // cout << "\nTotal Instructions = " << eg_->instrs().size() << endl ;
+//         cout << "\nTotal Instructions = " << eg_->instrs().size() << endl ;
         for (Instruction* instr : eg_->instrs()) {
-            // cout << "\nFiring Instruction #" << instr->repr() << "\n" ; 
+//             cout << "\nFiring Instruction #" << instr->repr() << "\n" ;
+//            trace(icnt);
+            
             icnt++;
-            instr->fire(this);
+            try {
+                instr->fire(this);
+            } catch (exception e) {
+                trace(e.what());
+            }
         }
         // cout << "\n\n";
         args_ = NULL;
@@ -322,7 +328,7 @@ void ReturnByVal::fire(Interpreter* interp) {
     vector<cgtObject *> args(n_inputs);
     for (int i = 0; i < n_inputs; ++i) {
         args[i] = interp->get(readlocs[i]);
-    }    
+    }
     interp->set(writeloc, callable(args.data())); // XXX
 }
 
