@@ -52,7 +52,7 @@ void cgtArray::print() {
 
 void cgtArray::print_data() {
     print();
-    return; 
+    return;
   printf("\nPrinting Array:\n");
 
   float *it = (float*) data_ ;
