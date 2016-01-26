@@ -47,8 +47,10 @@ class TrainingJob{
     int currentEpoch = 0;
     int currentBatch = 0;
     bool isExiting = false;
-    int numEpochs = 10 ;
-    float last_accuracy = 0;
+    int numEpochs = 200 ;
+    float last_accuracy = 9999999;
+    float alpha = 0.1;
+    int warnings = 4;
     
 public:
     static TrainingJob *instance ;
@@ -103,6 +105,9 @@ public:
         f.open(folderPath + "state.bin", ios::binary | ios::out);
         writef(f, currentEpoch);
         writef(f, currentBatch);
+        writef(f, alpha);
+        writef(f, warnings);
+        writef(f, last_accuracy);
         cout << "\nSaving State:\n";
         trace(currentBatch);
         trace(currentEpoch);
@@ -121,6 +126,9 @@ public:
         
         readf(f, currentEpoch);
         readf(f, currentBatch);
+        readf(f, alpha);
+        readf(f, warnings);
+        readf(f, last_accuracy);
         
         cout << "\nResuming State:\n";
         trace(currentBatch);
@@ -166,16 +174,20 @@ public:
         
     }
     void validate(){
-//        rep(j, validSched.size()){
-        rep(j, 1){
+        last_accuracy = 0.0 ;
+        rep(j, validSched.size()){
+//        rep(j, 1){
 //            run_print(validator, validSched[j]);
             
             IRC<cgtTuple> ret = IRC<cgtTuple> (validator->run(validSched[j])) ;
             cgtTuple *res = ret.get();
             float * fdata = (float *) (((cgtArray*)(res->getitem(0)))->data()) ;
-            last_accuracy = *fdata ;
-            cout << "Accuracy: " << last_accuracy << "\n";
+            last_accuracy += *fdata ;
         }
+        
+        last_accuracy /= validSched.size();
+        
+        cout << "Accuracy: " << last_accuracy << "\n";
     }
     void loadSchedule(){
         trainSched = get_schedule(folderPath + "train_sched.bin");
@@ -191,10 +203,17 @@ public:
         
         int j = currentBatch;
 //        for(; j<1; j++){
+        
+        float *fdata ;
+        
         for(; j<trainSched.size(); j++){
             currentBatch = j;
             if(isExiting)
                 return;
+            if(trainSched[j]->size() >= 3){ // (alpha, x, y)
+                fdata = (float *) (((cgtArray*)(trainSched[j]->getitem(0)))->data()) ;
+                *fdata = alpha ;
+            }
             run_print(trainer, trainSched[j], false);
         }
         currentBatch = 0;
@@ -204,11 +223,16 @@ public:
         
         loadState();
         
+        float prev_acc ;
+        
         for(int i=currentEpoch; i<numEpochs; i++){
             
             currentEpoch = i;
             
             clock_t st = clock();
+            
+            if(warnings <= 0)
+                return;
             
             trainLoop();
             
@@ -216,13 +240,22 @@ public:
             double elapsed_secs = double(end - st) / CLOCKS_PER_SEC;
             trace(elapsed_secs);
             
+            prev_acc = last_accuracy;
             validate();
+            if(prev_acc < last_accuracy){
+                alpha /= 2.0 ;
+                warnings--;
+                cout << endl << warnings << " tries left\n" ;
+            }
+            cout << "Alpha: " << alpha << endl ;
             
             if(currentBatch == 0)
                 currentEpoch ++ ;
             
             saveState();
             saveStatus();
+            
+            cout << endl << "*******************\n" ;
             
             if(isExiting)
                 return;

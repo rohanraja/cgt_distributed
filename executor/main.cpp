@@ -1,5 +1,7 @@
 #include "trainingJob.h"
 #include <sstream>
+#include <fenv.h>
+#include <math.h>
 
 void signalHandler(int sig){
 
@@ -9,6 +11,7 @@ void signalHandler(int sig){
 int main(int argc, char *args[] ){
     
 //    signal(SIGINT, signalHandler);
+ 
     
     string dir = "../examples" ;
     if(argc >= 2){

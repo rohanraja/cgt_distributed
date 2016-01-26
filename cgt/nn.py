@@ -199,7 +199,7 @@ class Affine(object):
     """
     Like torch's nn.Linear
     """
-    def __init__(self, input_size, output_size, name=None, weight_init=Constant(0), bias_init=Constant(0)):
+    def __init__(self, input_size, output_size, name=None, weight_init=XavierUniform(0.1), bias_init=Constant(0)):
     # def __init__(self, input_size, output_size, name=None, weight_init=XavierUniform(0.1), bias_init=Constant(0)):
         input_size = int(input_size)
         output_size = int(output_size)

@@ -205,6 +205,19 @@ void* handle;
                 }
                 
 
+                static inline float scalar_call_16687a8c7c6d6d130b381a881321a005(float x, float y) {return x*y;}
+                CGT_EXPORT_C void call_16687a8c7c6d6d130b381a881321a005(void* cldata, cgtArray** reads, cgtArray* write) {
+                    int s = reads[1]->size();
+                    float* in0 = (float*)reads[0]->data();
+                    float* in1 = (float*)reads[1]->data();
+                    float* out = (float*)write->data();
+                    cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+                    for (int i=0; i < s; ++i) {
+                        //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
+                        out[i] = scalar_call_16687a8c7c6d6d130b381a881321a005(in0[0], in1[i]);
+                    }
+                }
+
                 static inline int64_t scalar_call_178591db5c7372022010d2a67a9b7657(float x) {return (int)floor(x);}
                 CGT_EXPORT_C void call_178591db5c7372022010d2a67a9b7657(void* cldata, cgtArray** reads, cgtArray* write) {
                     cgtArray* read = reads[0];
@@ -484,6 +497,18 @@ int ax;
                 cgtArray *x=xk[0], *k=xk[1];
                 for (int i=0; i < z->size(); ++i) {
                     z->at<float>(i) = x->at<float>(k->at<long>(i));
+                }
+            }
+            
+
+            CGT_EXPORT_C void call_39593a6fe5c2c42533a877e51734430e(void* cldata, cgtArray** reads, cgtArray* write) {
+                long n=0; // value along concat axis
+                for (int i=0; i < 50; ++i) {
+                    cgtArray* in = reads[i];
+                    for (int i0=0; i0 < in->shape()[0]; ++i0) {
+                        write->at<float>(i0+n) = in->at<float>(i0);
+                    }
+                    n += in->shape()[0];
                 }
             }
             
@@ -1584,6 +1609,7 @@ void create_functions_map(){
 	fmap["call_0e757cd60b7235565b009c7f90c5ce62"] = (void *) &call_0e757cd60b7235565b009c7f90c5ce62 ; 
 	fmap["call_0f918d474b775f067714ee43559e5434"] = (void *) &call_0f918d474b775f067714ee43559e5434 ; 
 	fmap["call_116c98fe90386fc618a04137cd19b63d"] = (void *) &call_116c98fe90386fc618a04137cd19b63d ; 
+	fmap["call_16687a8c7c6d6d130b381a881321a005"] = (void *) &call_16687a8c7c6d6d130b381a881321a005 ; 
 	fmap["call_178591db5c7372022010d2a67a9b7657"] = (void *) &call_178591db5c7372022010d2a67a9b7657 ; 
 	fmap["call_17f1447d8d94b7387f8487dcd099260f"] = (void *) &call_17f1447d8d94b7387f8487dcd099260f ; 
 	fmap["call_18483579d8e099ed78369e9efdd9c39f"] = (void *) &call_18483579d8e099ed78369e9efdd9c39f ; 
@@ -1605,6 +1631,7 @@ void create_functions_map(){
 	fmap["call_34f595a3030cc883f5d0bcd308304338"] = (void *) &call_34f595a3030cc883f5d0bcd308304338 ; 
 	fmap["call_3612a30b453dc657d8c1aac4ab6bffb8"] = (void *) &call_3612a30b453dc657d8c1aac4ab6bffb8 ; 
 	fmap["call_36d491c15f6159cd25a33ad4d2262584"] = (void *) &call_36d491c15f6159cd25a33ad4d2262584 ; 
+	fmap["call_39593a6fe5c2c42533a877e51734430e"] = (void *) &call_39593a6fe5c2c42533a877e51734430e ; 
 	fmap["call_3c244bf4129a80c0a2e0b28d2c64827f"] = (void *) &call_3c244bf4129a80c0a2e0b28d2c64827f ; 
 	fmap["call_3c7a910b9d9d680c188c1123065df33b"] = (void *) &call_3c7a910b9d9d680c188c1123065df33b ; 
 	fmap["call_3d6fdc1ad6a7e829bc79be06a0e35942"] = (void *) &call_3d6fdc1ad6a7e829bc79be06a0e35942 ; 
