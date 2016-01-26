@@ -491,6 +491,9 @@ cdef class CppInterpreterWrapper:
         self.isRecording = True
         self.recName = fname
 
+    def finish_record(self):
+        self.isRecording = False
+
     def save(self, fname):
         interpreter_to_file(self.interp, fname)
 

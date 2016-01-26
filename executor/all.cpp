@@ -480,6 +480,16 @@ int ax;
                 return out;
             }
 
+            CGT_EXPORT_C void call_3551095f0502668d9309e879a74e2bb7(void* cldata, cgtArray** reads, cgtArray* write) {
+                cgtArray *in=reads[0];
+                long start = reads[1]->at<long>(0);
+                long step = reads[3]->at<long>(0);
+                for (int i0=0; i0 < write->shape()[0]; ++i0) {
+                    write->at<float>(i0) = in->at<float>(start + step*i0);
+                }
+            }
+            
+
                 static inline float scalar_call_3612a30b453dc657d8c1aac4ab6bffb8(int8_t x, float y) {return x*y;}
                 CGT_EXPORT_C void call_3612a30b453dc657d8c1aac4ab6bffb8(void* cldata, cgtArray** reads, cgtArray* write) {
                     int s = reads[0]->size();
@@ -729,6 +739,19 @@ long pptr;
                     float* writedata = (float*)write->data();
                     for (int i=0; i < s; ++i) {
                         writedata[i] = scalar_call_5985a55ad132563945f92851e9b93973(readdata[i]);
+                    }
+                }
+
+                static inline int64_t scalar_call_602ca48e0b0af2dd51e9fb9781fd3709(int64_t x, int32_t y) {return x+y;}
+                CGT_EXPORT_C void call_602ca48e0b0af2dd51e9fb9781fd3709(void* cldata, cgtArray** reads, cgtArray* write) {
+                    int s = reads[0]->size();
+                    int64_t* in0 = (int64_t*)reads[0]->data();
+                    int32_t* in1 = (int32_t*)reads[1]->data();
+                    int64_t* out = (int64_t*)write->data();
+                    cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+                    for (int i=0; i < s; ++i) {
+                        //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
+                        out[i] = scalar_call_602ca48e0b0af2dd51e9fb9781fd3709(in0[i], in1[i]);
                     }
                 }
 
@@ -1228,6 +1251,16 @@ int ax;
                         out[i] = scalar_call_b0e8f1d124c3efce72291b857931c13d(in0[i], in1[i]);
                     }
                 }
+
+            CGT_EXPORT_C void call_b3629c6e274682b652b8235b7e4333b4(void* cldata, cgtArray** reads, cgtArray* write) {
+                cgtArray *x=reads[0], *inds=reads[1], *inc = reads[2];
+                cgt_assert(x->size() == write->size());
+                if (write->data() != x->data()) cgt_copy_array(write, x);
+                for (int i0=0; i0 < inc->shape()[0]; ++i0) { for (int i1=0; i1 < inc->shape()[1]; ++i1) { for (int i2=0; i2 < inc->shape()[2]; ++i2) {
+                    write->at<float>(inds->at<long>(i0),i1,i2) += inc->at<float>(i0,i1,i2);
+                }}}
+            }
+            
 typedef struct closure_b380ee0c312278649c5ffda6803d8d26 {
 int ndim;
 void* shape;
@@ -1258,6 +1291,15 @@ void* data;
                 }}
             }
             
+typedef struct closure_b68b551ff9247e464844194a76503b54 {
+long value;
+} closure_b68b551ff9247e464844194a76503b54;
+
+            CGT_EXPORT_C void call_b68b551ff9247e464844194a76503b54(closure_b68b551ff9247e464844194a76503b54* cldata, cgtArray** reads, cgtArray* write) {
+                long s = write->size();
+                int64_t value = cldata->value;
+                for (int i=0; i < s; ++i) write->at<int64_t>(i) = value;
+            }
 
                 static inline int64_t scalar_call_b965185d7179dad78ca8b04360615f33(int64_t x, int64_t y) {return x*y;}
                 CGT_EXPORT_C void call_b965185d7179dad78ca8b04360615f33(void* cldata, cgtArray** reads, cgtArray* write) {
@@ -1429,6 +1471,19 @@ double value;
                 float value = cldata->value;
                 for (int i=0; i < s; ++i) write->at<float>(i) = value;
             }
+
+                static inline int64_t scalar_call_e1d13c1c4e8e03ed66fa40881414a9cb(int64_t x, int64_t y) {return x*y;}
+                CGT_EXPORT_C void call_e1d13c1c4e8e03ed66fa40881414a9cb(void* cldata, cgtArray** reads, cgtArray* write) {
+                    int s = reads[0]->size();
+                    int64_t* in0 = (int64_t*)reads[0]->data();
+                    int64_t* in1 = (int64_t*)reads[1]->data();
+                    int64_t* out = (int64_t*)write->data();
+                    cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+                    for (int i=0; i < s; ++i) {
+                        //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
+                        out[i] = scalar_call_e1d13c1c4e8e03ed66fa40881414a9cb(in0[i], in1[0]);
+                    }
+                }
 
             CGT_EXPORT_C void call_e275d27556904ee35697caff0b637bbd(void* cldata, cgtArray** reads, cgtArray* write) {
                 cgtArray *read=reads[0];
@@ -1629,6 +1684,7 @@ void create_functions_map(){
 	fmap["call_330ac74b27c3e8142f30f417a9dc3da2"] = (void *) &call_330ac74b27c3e8142f30f417a9dc3da2 ; 
 	fmap["call_340dc32f3e7ceeda734df9317566288b"] = (void *) &call_340dc32f3e7ceeda734df9317566288b ; 
 	fmap["call_34f595a3030cc883f5d0bcd308304338"] = (void *) &call_34f595a3030cc883f5d0bcd308304338 ; 
+	fmap["call_3551095f0502668d9309e879a74e2bb7"] = (void *) &call_3551095f0502668d9309e879a74e2bb7 ; 
 	fmap["call_3612a30b453dc657d8c1aac4ab6bffb8"] = (void *) &call_3612a30b453dc657d8c1aac4ab6bffb8 ; 
 	fmap["call_36d491c15f6159cd25a33ad4d2262584"] = (void *) &call_36d491c15f6159cd25a33ad4d2262584 ; 
 	fmap["call_39593a6fe5c2c42533a877e51734430e"] = (void *) &call_39593a6fe5c2c42533a877e51734430e ; 
@@ -1646,6 +1702,7 @@ void create_functions_map(){
 	fmap["call_5276e4197cd56cac0d3a38c53298e890"] = (void *) &call_5276e4197cd56cac0d3a38c53298e890 ; 
 	fmap["call_52b6a0c7ae37a49e0262978bc892eb1c"] = (void *) &call_52b6a0c7ae37a49e0262978bc892eb1c ; 
 	fmap["call_5985a55ad132563945f92851e9b93973"] = (void *) &call_5985a55ad132563945f92851e9b93973 ; 
+	fmap["call_602ca48e0b0af2dd51e9fb9781fd3709"] = (void *) &call_602ca48e0b0af2dd51e9fb9781fd3709 ; 
 	fmap["call_6308c0e977da679f337ec6492f040944"] = (void *) &call_6308c0e977da679f337ec6492f040944 ; 
 	fmap["call_654893363f89562cd042919f7d1efc24"] = (void *) &call_654893363f89562cd042919f7d1efc24 ; 
 	fmap["call_655d406f1a12aef7d487656f5fb26d4a"] = (void *) &call_655d406f1a12aef7d487656f5fb26d4a ; 
@@ -1679,9 +1736,11 @@ void create_functions_map(){
 	fmap["call_a8df3af7cb5fe6faf9a0219ea6ca48cb"] = (void *) &call_a8df3af7cb5fe6faf9a0219ea6ca48cb ; 
 	fmap["call_a8fc2beadd070d0fa1b440336c98cf62"] = (void *) &call_a8fc2beadd070d0fa1b440336c98cf62 ; 
 	fmap["call_b0e8f1d124c3efce72291b857931c13d"] = (void *) &call_b0e8f1d124c3efce72291b857931c13d ; 
+	fmap["call_b3629c6e274682b652b8235b7e4333b4"] = (void *) &call_b3629c6e274682b652b8235b7e4333b4 ; 
 	fmap["call_b380ee0c312278649c5ffda6803d8d26"] = (void *) &call_b380ee0c312278649c5ffda6803d8d26 ; 
 	fmap["call_b41731624f42047331b4137d032eb7f6"] = (void *) &call_b41731624f42047331b4137d032eb7f6 ; 
 	fmap["call_b4d4a7c958d00599327cd46ab0d33562"] = (void *) &call_b4d4a7c958d00599327cd46ab0d33562 ; 
+	fmap["call_b68b551ff9247e464844194a76503b54"] = (void *) &call_b68b551ff9247e464844194a76503b54 ; 
 	fmap["call_b965185d7179dad78ca8b04360615f33"] = (void *) &call_b965185d7179dad78ca8b04360615f33 ; 
 	fmap["call_c2ff4ce1d2ba56134c6dcb4936a2ad80"] = (void *) &call_c2ff4ce1d2ba56134c6dcb4936a2ad80 ; 
 	fmap["call_c630d03c28159edfd6b41e32b6133d0b"] = (void *) &call_c630d03c28159edfd6b41e32b6133d0b ; 
@@ -1695,6 +1754,7 @@ void create_functions_map(){
 	fmap["call_d94650c9f181b5719a909169c77653dc"] = (void *) &call_d94650c9f181b5719a909169c77653dc ; 
 	fmap["call_df50b9eb5067c0b36c5a6fbb9fd7b389"] = (void *) &call_df50b9eb5067c0b36c5a6fbb9fd7b389 ; 
 	fmap["call_df6ff67bdcd8961b3dc93e126e908cd4"] = (void *) &call_df6ff67bdcd8961b3dc93e126e908cd4 ; 
+	fmap["call_e1d13c1c4e8e03ed66fa40881414a9cb"] = (void *) &call_e1d13c1c4e8e03ed66fa40881414a9cb ; 
 	fmap["call_e275d27556904ee35697caff0b637bbd"] = (void *) &call_e275d27556904ee35697caff0b637bbd ; 
 	fmap["call_e534e35af6b9563a11f771bb8c7e3c96"] = (void *) &call_e534e35af6b9563a11f771bb8c7e3c96 ; 
 	fmap["call_e561000695f157d5cbe9ce6a549a2efb"] = (void *) &call_e561000695f157d5cbe9ce6a549a2efb ; 
