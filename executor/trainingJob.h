@@ -49,8 +49,8 @@ class TrainingJob{
     bool isExiting = false;
     int numEpochs = 200 ;
     float last_accuracy = 9999999;
-    float alpha = 0.1;
-    int warnings = 4;
+    float alpha = 0.9;
+    int warnings = 6;
     
 public:
     static TrainingJob *instance ;
@@ -206,6 +206,8 @@ public:
         
         float *fdata ;
         
+        int ln = trainSched.size();
+        
         for(; j<trainSched.size(); j++){
             currentBatch = j;
             if(isExiting)
@@ -214,7 +216,17 @@ public:
                 fdata = (float *) (((cgtArray*)(trainSched[j]->getitem(0)))->data()) ;
                 *fdata = alpha ;
             }
+            clock_t st = clock();
             run_print(trainer, trainSched[j], false);
+            clock_t end = clock();
+            double elapsed_secs = double(end - st) / CLOCKS_PER_SEC;
+            
+            if(j%100 == 0){
+                saveParams();
+                saveState();
+            }
+//            trace(elapsed_secs);
+//            exit(0);
         }
         currentBatch = 0;
     }
@@ -241,9 +253,9 @@ public:
             trace(elapsed_secs);
             
             prev_acc = last_accuracy;
-            validate();
+            //validate();
             if(prev_acc < last_accuracy){
-                alpha /= 2.0 ;
+                alpha /= 4.0 ;
                 warnings--;
                 cout << endl << warnings << " tries left\n" ;
             }

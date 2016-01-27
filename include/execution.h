@@ -119,6 +119,8 @@ private:
 };
 
 void saveMemVector(vector<MemLocation> &mems, ofstream &f);
+void saveStr(const string &mems, ofstream &f);
+    string loadStr(ifstream &f);
 
 class Interpreter;
 
@@ -180,6 +182,7 @@ public:
 Interpreter* create_interpreter(ExecutionGraph*, vector<MemLocation> output_locs, int num_threads);
 
 
+
 class LoadArgument : public Instruction  {
 public:
     LoadArgument(const std::string& repr, int ind, const MemLocation& writeloc) : Instruction(LoadArgumentKind, repr, true), ind(ind), writeloc(writeloc) {}
@@ -191,6 +194,7 @@ public:
       writef(f, type);
       writef(f, ind);
       writeloc.save(f);
+        saveStr(repr(), f);
     }
 private:
     int ind;
@@ -211,6 +215,7 @@ public:
       writef(f, dtype);
       writeloc.save(f);
       saveMemVector(readlocs, f);
+        saveStr(repr(), f);
     }
 private:
     cgtDtype dtype;
@@ -230,6 +235,7 @@ public:
       writef(f, type);
       writeloc.save(f);
       saveMemVector(readlocs, f);
+        saveStr(repr(), f);
     }
 private:
     vector<MemLocation> readlocs;
@@ -249,6 +255,7 @@ public:
       writeloc.save(f);
       saveMemVector(readlocs, f);
       callable.save(f);
+        saveStr(repr(), f);
     }
 private:
     vector<MemLocation> readlocs;
@@ -269,6 +276,7 @@ public:
       writeloc.save(f);
       saveMemVector(readlocs, f);
       callable.save(f);
+        saveStr(repr(), f);
     }
 private:
     vector<MemLocation> readlocs;

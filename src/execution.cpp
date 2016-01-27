@@ -58,7 +58,11 @@ public:
             
             icnt++;
             try {
+            clock_t st = clock();
                 instr->fire(this);
+            clock_t end = clock();
+            double elapsed_secs = double(end - st) / CLOCKS_PER_SEC;
+//            trace(elapsed_secs);
             } catch (exception e) {
                 trace(e.what());
             }
@@ -359,7 +363,8 @@ Instruction * LoadArgument_load(ifstream &f){
   readf(f,ind);
   MemLocation wloc(f);
 
-  return new LoadArgument("Load Argument", ind, wloc);
+    string repr = loadStr(f);
+  return new LoadArgument(repr, ind, wloc);
 }
 
 Instruction * Alloc_load(ifstream &f){
@@ -369,14 +374,16 @@ Instruction * Alloc_load(ifstream &f){
   MemLocation wloc(f);
   vector<MemLocation> readlocs = loadMemVector(f);
 
-  return new Alloc("Alloc", dtype, readlocs, wloc);
+    string repr = loadStr(f);
+  return new Alloc(repr, dtype, readlocs, wloc);
 }
 
 Instruction * BuildTup_load(ifstream &f){
   MemLocation wloc(f);
   vector<MemLocation> readlocs = loadMemVector(f);
 
-  return new BuildTup("BuildTup", readlocs, wloc);
+    string repr = loadStr(f);
+  return new BuildTup(repr, readlocs, wloc);
 }
 
 Instruction * Byref_load(ifstream &f){
@@ -385,7 +392,8 @@ Instruction * Byref_load(ifstream &f){
   vector<MemLocation> readlocs = loadMemVector(f);
   ByRefCallable callable(f) ;
 
-  return new ReturnByRef("Return By Ref", readlocs, wloc, callable, false);
+    string repr = loadStr(f);
+  return new ReturnByRef(repr, readlocs, wloc, callable, false);
 
 }
 
@@ -394,8 +402,8 @@ Instruction * Byval_load(ifstream &f){
   MemLocation wloc(f);
   vector<MemLocation> readlocs = loadMemVector(f);
   ByValCallable callable = * new ByValCallable(f) ;
-
-  return new ReturnByVal("Return By Val", readlocs, wloc, callable, false);
+    string repr = loadStr(f);
+  return new ReturnByVal(repr, readlocs, wloc, callable, false);
 
 }
 
@@ -452,6 +460,46 @@ void saveMemVector(vector<MemLocation> &mems, ofstream &f){
 
 }
 
+void saveStr(const string &mems, ofstream &f){
+
+  int numInstrs = mems.size() ;
+
+  writef(f, numInstrs);
+    
+    f.write((char*)mems.c_str(), numInstrs);
+      char nullchar = '\0';
+      writef(f, nullchar);
+//
+//    char ch ;
+//  rep(i, numInstrs){
+//
+//      ch = mems[i];
+//    writef(f, ch);
+//  }
+
+
+}
+string loadStr(ifstream &f){
+
+  int numOuts;
+
+  readf(f, numOuts);
+   string outps;
+    
+  getline(f,outps, '\0');
+
+    
+//    char ch ;
+//  rep(i, numOuts){
+//      readf(f, ch);
+//      outps[i] = ch ;
+//  }
+
+  return outps ;
+
+
+
+}
 vector<MemLocation> loadMemVector(ifstream &f){
 
   int numOuts;
