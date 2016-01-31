@@ -208,8 +208,9 @@ public:
         
         int ln = trainSched.size();
         trace(ln);
+        int numbtch = 0 ;
         
-        for(; j<trainSched.size(); j++){
+        for(; j<trainSched.size(); j++, numbtch ++){
             currentBatch = j;
             if(isExiting)
                 return;
@@ -217,17 +218,24 @@ public:
                 fdata = (float *) (((cgtArray*)(trainSched[j]->getitem(0)))->data()) ;
                 *fdata = alpha ;
             }
-         TIMECH("TrainLoop")
-         {
-            run_print(trainer, trainSched[j], false);
 
-         }
-            
-            if(j%100 == 0){
-                saveParams();
-                saveState();
+            if (numbtch >= 1)
+            {
+               TIMECH("TrainLoop")
+               {
+                  run_print(trainer, trainSched[j], false);
+
+               }
+                exit(0);
             }
-            exit(0);
+                  else{
+                  run_print(trainer, trainSched[j], false);
+                  }
+
+            // if(j%100 == 0){
+            //     saveParams();
+            //     saveState();
+            // }
         }
         currentBatch = 0;
     }

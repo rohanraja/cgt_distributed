@@ -71,6 +71,7 @@ void* pptr;
                     int s = read->size();
                     float* readdata = (float*)read->data();
                     float* writedata = (float*)write->data();
+                    #pragma omp parallel for
                     for (int i=0; i < s; ++i) {
                         writedata[i] = scalar_call_01ea73a67790f024647388b85086685a(readdata[i]);
                     }
@@ -381,6 +382,7 @@ void* pptr;
                     int s = read->size();
                     long double* readdata = (long double*)read->data();
                     long double* writedata = (long double*)write->data();
+                    #pragma omp parallel for
                     for (int i=0; i < s; ++i) {
                         writedata[i] = scalar_call_2c43a850375e29e1a29ebf06b7e19c7f(readdata[i]);
                     }
@@ -417,6 +419,7 @@ void* pptr;
                     int s = read->size();
                     long double* readdata = (long double*)read->data();
                     long double* writedata = (long double*)write->data();
+                    #pragma omp parallel for
                     for (int i=0; i < s; ++i) {
                         writedata[i] = scalar_call_2d52f1a472bbd8bc778f047231e189aa(readdata[i]);
                     }
@@ -425,18 +428,17 @@ void* pptr;
                 static inline float scalar_call_2e5636f9ee548a895307078ff481642b(float x, float y) {return (x+0.0)/y;}
                 CGT_EXPORT_C void call_2e5636f9ee548a895307078ff481642b(void* cldata, cgtArray** reads, cgtArray* write) {
                     int s = reads[0]->size();
-                    trace(s);
                     float* in0 = (float*)reads[0]->data();
                     float* in1 = (float*)reads[1]->data();
                     float* out = (float*)write->data();
                     cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
-                    TIMECH("SCALER"){
+                    // TIMECH("SCALER"){
                     #pragma omp parallel for
                     for (int i=0; i < s; ++i) {
                         //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
                         out[i] = scalar_call_2e5636f9ee548a895307078ff481642b(in0[i], in1[i]);
                     }
-                    }
+                    // }
                 }
 
                 static inline long double scalar_call_3226404ff60d804c68e91acb5706242d(long double x, long double y) {return x-y;}
@@ -612,6 +614,7 @@ void* pptr;
 
             CGT_EXPORT_C void call_3f2152dbb82fc3bd6f125e49e35f7163(void* cldata, cgtArray** reads, cgtArray* write) {
                 cgtArray *read=reads[0];
+                    #pragma omp parallel for
                 for (int i0=0; i0 < write->shape()[0]; ++i0) { for (int i1=0; i1 < write->shape()[1]; ++i1) {
                     write->at<float>(i0,i1) = read->at<float>(i0,0);
                 }}
@@ -624,6 +627,7 @@ void* pptr;
                     int s = read->size();
                     float* readdata = (float*)read->data();
                     float* writedata = (float*)write->data();
+                    #pragma omp parallel for
                     for (int i=0; i < s; ++i) {
                         writedata[i] = scalar_call_41dec2fc4c17214cd47d4607fef1b7c3(readdata[i]);
                     }
@@ -1205,6 +1209,7 @@ int ax;
                     int s = read->size();
                     long double* readdata = (long double*)read->data();
                     long double* writedata = (long double*)write->data();
+                    #pragma omp parallel for
                     for (int i=0; i < s; ++i) {
                         writedata[i] = scalar_call_a7e3b5b5c89ee1e8695b678404663a40(readdata[i]);
                     }
@@ -1293,6 +1298,7 @@ void* data;
 
             CGT_EXPORT_C void call_b4d4a7c958d00599327cd46ab0d33562(void* cldata, cgtArray** reads, cgtArray* write) {
                 cgtArray *read=reads[0];
+                    #pragma omp parallel for
                 for (int i0=0; i0 < write->shape()[0]; ++i0) { for (int i1=0; i1 < write->shape()[1]; ++i1) {
                     write->at<long double>(i0,i1) = read->at<long double>(i0,0);
                 }}
@@ -1378,6 +1384,7 @@ void* pptr;
 
             CGT_EXPORT_C void call_c9f5b4046f71c9c458664aebb1182df9(void* cldata, cgtArray** reads, cgtArray* write) {
                 cgtArray *read=reads[0];
+                    #pragma omp parallel for
                 for (int i0=0; i0 < write->shape()[0]; ++i0) { for (int i1=0; i1 < write->shape()[1]; ++i1) {
                     write->at<long double>(i0,i1) = read->at<long double>(0,i1);
                 }}
@@ -1494,6 +1501,7 @@ double value;
 
             CGT_EXPORT_C void call_e275d27556904ee35697caff0b637bbd(void* cldata, cgtArray** reads, cgtArray* write) {
                 cgtArray *read=reads[0];
+                    #pragma omp parallel for
                 for (int i0=0; i0 < write->shape()[0]; ++i0) { for (int i1=0; i1 < write->shape()[1]; ++i1) {
                     write->at<float>(i0,i1) = read->at<float>(0,i1);
                 }}
@@ -1506,6 +1514,7 @@ double value;
                     int s = read->size();
                     float* readdata = (float*)read->data();
                     float* writedata = (float*)write->data();
+                    #pragma omp parallel for
                     for (int i=0; i < s; ++i) {
                         writedata[i] = scalar_call_e534e35af6b9563a11f771bb8c7e3c96(readdata[i]);
                     }

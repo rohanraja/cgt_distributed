@@ -8,6 +8,17 @@ all:
 		-Wl,-rpath,../build/OpenBLAS \
 	 	-lopenblas -lpthread
 
+ompl:
+	g++ -fopenmp -D EXECU  -std=c++11 -g -o a.out \
+		../src/cgt_common.cpp ../src/execution.cpp main.cpp	egreader.cpp trainingJob.cpp \
+		-I../include \
+		-I../build/OpenBLAS \
+		-L../build/lib \
+		-L../build/OpenBLAS \
+		-L. \
+		-Wl,-rpath,../build/OpenBLAS \
+		-Wl,-rpath,'$$ORIGIN' \
+	 	-lopenblas -lpthread
 omp:
 	g++-5 -fopenmp -D EXECU  -std=c++11 -g -o a.out \
 		../src/cgt_common.cpp ../src/execution.cpp main.cpp	egreader.cpp trainingJob.cpp \
