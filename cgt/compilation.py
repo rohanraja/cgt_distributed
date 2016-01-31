@@ -920,8 +920,13 @@ def _print_stats(key2stats, t_total):
     for row in rows:
         cumsum += row[3]
         row.append(cumsum)
+        unitCost = row[2] / row[1]
+        row.append(unitCost*1000)
+        row[2] *= 1000
+        row[3] *= 100
+        row[4] *= 100
     from thirdparty.tabulate import tabulate
-    print tabulate(rows, headers=["Instruction","Count","Time","Frac","Frac cumsum"])
+    print tabulate(rows, headers=["Instruction","Count","Time(ms)","Frac(%)","Frac cumsum(%)", "UnitTime(ms)"])
 
 def _copy(x):
     if isinstance(x, np.ndarray): return x.copy()

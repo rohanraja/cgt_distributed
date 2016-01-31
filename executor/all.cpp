@@ -18,6 +18,9 @@
 
 #include<map>
 
+#include<omp.h>
+#include<chrono>
+
 typedef struct closure_0077a2258ab15bfa9cafda07748efe2d {
 int ndim;
 void* shape;
@@ -422,13 +425,17 @@ void* pptr;
                 static inline float scalar_call_2e5636f9ee548a895307078ff481642b(float x, float y) {return (x+0.0)/y;}
                 CGT_EXPORT_C void call_2e5636f9ee548a895307078ff481642b(void* cldata, cgtArray** reads, cgtArray* write) {
                     int s = reads[0]->size();
+                    trace(s);
                     float* in0 = (float*)reads[0]->data();
                     float* in1 = (float*)reads[1]->data();
                     float* out = (float*)write->data();
                     cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+                    TIMECH("SCALER"){
+                    #pragma omp parallel for
                     for (int i=0; i < s; ++i) {
                         //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
                         out[i] = scalar_call_2e5636f9ee548a895307078ff481642b(in0[i], in1[i]);
+                    }
                     }
                 }
 

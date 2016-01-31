@@ -207,6 +207,7 @@ public:
         float *fdata ;
         
         int ln = trainSched.size();
+        trace(ln);
         
         for(; j<trainSched.size(); j++){
             currentBatch = j;
@@ -216,17 +217,17 @@ public:
                 fdata = (float *) (((cgtArray*)(trainSched[j]->getitem(0)))->data()) ;
                 *fdata = alpha ;
             }
-            clock_t st = clock();
+         TIMECH("TrainLoop")
+         {
             run_print(trainer, trainSched[j], false);
-            clock_t end = clock();
-            double elapsed_secs = double(end - st) / CLOCKS_PER_SEC;
+
+         }
             
             if(j%100 == 0){
                 saveParams();
                 saveState();
             }
-//            trace(elapsed_secs);
-//            exit(0);
+            exit(0);
         }
         currentBatch = 0;
     }
