@@ -57,15 +57,9 @@ public:
 //            trace(icnt);
             
             icnt++;
-            try {
-            clock_t st = clock();
+
+            // TIMECH(instr->repr().c_str()) 
                 instr->fire(this);
-            clock_t end = clock();
-            double elapsed_secs = double(end - st) / CLOCKS_PER_SEC;
-//            trace(elapsed_secs);
-            } catch (exception e) {
-                trace(e.what());
-            }
         }
         // cout << "\n\n";
         args_ = NULL;

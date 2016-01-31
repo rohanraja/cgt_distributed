@@ -59,6 +59,7 @@ void* pptr;
                     float* in1 = (float*)reads[1]->data();
                     float* out = (float*)write->data();
                     cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+                    #pragma omp parallel for
                     for (int i=0; i < s; ++i) {
                         //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
                         out[i] = scalar_call_00914cbe71181f85859917d0afbd6fa4(in0[i], in1[i]);
@@ -407,6 +408,7 @@ void* pptr;
                     float* in1 = (float*)reads[1]->data();
                     float* out = (float*)write->data();
                     cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+                    #pragma omp parallel for
                     for (int i=0; i < s; ++i) {
                         //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
                         out[i] = scalar_call_2cd8fbc2f681256d0c24de5a03a9fa18(in0[0], in1[i]);
@@ -760,6 +762,7 @@ long pptr;
                     int32_t* in1 = (int32_t*)reads[1]->data();
                     int64_t* out = (int64_t*)write->data();
                     cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+#pragma omp parallel for
                     for (int i=0; i < s; ++i) {
                         //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
                         out[i] = scalar_call_602ca48e0b0af2dd51e9fb9781fd3709(in0[i], in1[i]);
@@ -782,11 +785,13 @@ long pptr;
         static inline float reduction_call_654893363f89562cd042919f7d1efc24(float x, float y) {return x+y;}
         CGT_EXPORT_C void call_654893363f89562cd042919f7d1efc24(void* cldata, cgtArray** reads, cgtArray* write) {
             cgtArray *read=reads[0];
+                #pragma omp parallel for
             for (int i=0; i < write->size(); ++i) write->at<float>(i) = 0;
+                #pragma omp parallel for
             for (int i0=0; i0 < read->shape()[0]; ++i0) {
                 float x = write->at<float>(0);
                 float y = read->at<float>(i0) ;
-                //cout << "\n" << x << ", " << y ;
+                // cout << "\n" << x << ", " << y ;
                 write->at<float>(0) = reduction_call_654893363f89562cd042919f7d1efc24(x, y);
             }
         }
@@ -933,7 +938,7 @@ void* fromdata;
                 
                 cgtArray *tmp = *(cgtArray**)cldata->pptr ;
                 std::cout << (long)tmp << "\n^^^^^^^\n";
-                tmp->print();
+                // tmp->print();
                 if( *((long*)cldata->pptr) == 0)
                 {
                     //std::cout << "\n***\nALLOCATING NEW MEMORY FOR INMEMORY DATA\n***\n" ;
@@ -986,7 +991,7 @@ int ax;
                 cgtArray* in = reads[0];
                 cgtArray* out = new cgtArray(0, NULL, cgt_i8, cgtCPU);
                 printf("\nShapePtr = %ld\n", (long)(in->shape()));
-                in->print();
+                // in->print();
                 out->at<long>(0) = in->shape()[cl->ax];
                 return out;
             }
@@ -1071,6 +1076,7 @@ int ax;
                     int64_t* in1 = (int64_t*)reads[1]->data();
                     int64_t* out = (int64_t*)write->data();
                     cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+#pragma omp parallel for
                     for (int i=0; i < s; ++i) {
                         //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
                         out[i] = scalar_call_98467f237f93b280b2785a25087254f8(in0[0], in1[0]);
@@ -1081,13 +1087,22 @@ int ax;
         static inline float reduction_call_98ab48d6ea6663d494105ded831e534a(float x, float y) {return x+y;}
         CGT_EXPORT_C void call_98ab48d6ea6663d494105ded831e534a(void* cldata, cgtArray** reads, cgtArray* write) {
             cgtArray *read=reads[0];
+                #pragma omp parallel for
             for (int i=0; i < write->size(); ++i) write->at<float>(i) = 0;
-            for (int i0=0; i0 < read->shape()[0]; ++i0) { for (int i1=0; i1 < read->shape()[1]; ++i1) {
+
+                #pragma omp parallel for
+            for (int i0=0; i0 < read->shape()[0]; ++i0) { 
+
+              float sum = 0;
+            #pragma omp parallel for reduction(+ : sum)
+              for (int i1=0; i1 < read->shape()[1]; ++i1) {
                 float x = write->at<float>(i0,0);
                 float y = read->at<float>(i0,i1) ;
-                //cout << "\n" << x << ", " << y ;
-                write->at<float>(i0,0) = reduction_call_98ab48d6ea6663d494105ded831e534a(x, y);
-            }}
+                // cout << "\n" << x << ", " << y ;
+                sum += y ;// reduction_call_98ab48d6ea6663d494105ded831e534a(x, y);
+            }
+              write->at<float>(i0,0) = sum ;
+            }
         }
         
 
@@ -1098,6 +1113,7 @@ int ax;
                     long double* in1 = (long double*)reads[1]->data();
                     long double* out = (long double*)write->data();
                     cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+                    #pragma omp parallel for
                     for (int i=0; i < s; ++i) {
                         //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
                         out[i] = scalar_call_9b07fa1affdb10adab342f9030ea341f(in0[0], in1[i]);
@@ -1158,8 +1174,10 @@ int ax;
         static inline long double reduction_call_a50e1f55987d314a4ac296a7d7c995ef(long double x, long double y) {return x+y;}
         CGT_EXPORT_C void call_a50e1f55987d314a4ac296a7d7c995ef(void* cldata, cgtArray** reads, cgtArray* write) {
             cgtArray *read=reads[0];
+                #pragma omp parallel for
             for (int i=0; i < write->size(); ++i) write->at<long double>(i) = 0;
-            for (int i0=0; i0 < read->shape()[0]; ++i0) { for (int i1=0; i1 < read->shape()[1]; ++i1) {
+            for (int i0=0; i0 < read->shape()[0]; ++i0) {
+              for (int i1=0; i1 < read->shape()[1]; ++i1) {
                 long double x = write->at<long double>(0,0);
                 long double y = read->at<long double>(i0,i1) ;
                 //cout << "\n" << x << ", " << y ;
@@ -1175,6 +1193,7 @@ int ax;
                     int64_t* in1 = (int64_t*)reads[1]->data();
                     int64_t* out = (int64_t*)write->data();
                     cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+                    #pragma omp parallel for
                     for (int i=0; i < s; ++i) {
                         //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
                         out[i] = scalar_call_a51b30884986af971213422277600489(in0[i], in1[i]);
@@ -1258,6 +1277,7 @@ int ax;
                     long double* in1 = (long double*)reads[1]->data();
                     long double* out = (long double*)write->data();
                     cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+                    #pragma omp parallel for
                     for (int i=0; i < s; ++i) {
                         //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
                         out[i] = scalar_call_b0e8f1d124c3efce72291b857931c13d(in0[i], in1[i]);
@@ -1417,13 +1437,23 @@ void* pptr;
         static inline float reduction_call_d0b714f20d3618a23f5c379d8aba7e20(float x, float y) {return x+y;}
         CGT_EXPORT_C void call_d0b714f20d3618a23f5c379d8aba7e20(void* cldata, cgtArray** reads, cgtArray* write) {
             cgtArray *read=reads[0];
+                #pragma omp parallel for
             for (int i=0; i < write->size(); ++i) write->at<float>(i) = 0;
-            for (int i0=0; i0 < read->shape()[0]; ++i0) { for (int i1=0; i1 < read->shape()[1]; ++i1) {
+
+            // read->print();
+
+                #pragma omp parallel for
+              for (int i1=0; i1 < read->shape()[1]; ++i1) {
+                float sum = 0.0;
+            #pragma omp parallel for reduction(+ : sum)
+            for (int i0=0; i0 < read->shape()[0]; ++i0) { 
                 float x = write->at<float>(0,i1);
                 float y = read->at<float>(i0,i1) ;
                 //cout << "\n" << x << ", " << y ;
-                write->at<float>(0,i1) = reduction_call_d0b714f20d3618a23f5c379d8aba7e20(x, y);
-            }}
+                 sum += y ; // reduction_call_d0b714f20d3618a23f5c379d8aba7e20(x, y);
+            }
+              write->at<float>(0,i1) = sum ;
+              }
         }
         
 
@@ -1578,13 +1608,20 @@ int ndim;
         static inline float reduction_call_edecbd49e6ae28211a12d42213fd7e44(float x, float y) {return x+y;}
         CGT_EXPORT_C void call_edecbd49e6ae28211a12d42213fd7e44(void* cldata, cgtArray** reads, cgtArray* write) {
             cgtArray *read=reads[0];
+                #pragma omp parallel for
             for (int i=0; i < write->size(); ++i) write->at<float>(i) = 0;
-            for (int i0=0; i0 < read->shape()[0]; ++i0) { for (int i1=0; i1 < read->shape()[1]; ++i1) {
-                float x = write->at<float>(0,0);
+
+            float sum = 0.0;
+            #pragma omp parallel for reduction(+ : sum)
+            for (int i0=0; i0 < read->shape()[0]; ++i0) { 
+              for (int i1=0; i1 < read->shape()[1]; ++i1) {
+                // float x = write->at<float>(0,0);
                 float y = read->at<float>(i0,i1) ;
-                //cout << "\n" << x << ", " << y ;
-                write->at<float>(0,0) = reduction_call_edecbd49e6ae28211a12d42213fd7e44(x, y);
+                // cout << "\n" << x << ", " << y ;
+                sum += y;
+                //write->at<float>(0,0) = reduction_call_edecbd49e6ae28211a12d42213fd7e44(x, y);
             }}
+              write->at<float>(0,0) = sum;
         }
         
 
