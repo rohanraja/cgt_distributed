@@ -473,6 +473,8 @@ void* pptr;
                 cgtArray *in=reads[0];
                 long start = reads[1]->at<long>(0);
                 long step = reads[3]->at<long>(0);
+                in->print();
+                #pragma omp parallel for
                 for (int i0=0; i0 < write->shape()[0]; ++i0) { for (int i1=0; i1 < write->shape()[1]; ++i1) { for (int i2=0; i2 < write->shape()[2]; ++i2) {
                     write->at<long double>(i0,i1,i2) = in->at<long double>(start + step*i0,i1,i2);
                 }}}
@@ -495,6 +497,7 @@ int ax;
                 cgtArray *in=reads[0];
                 long start = reads[1]->at<long>(0);
                 long step = reads[3]->at<long>(0);
+                #pragma omp parallel for
                 for (int i0=0; i0 < write->shape()[0]; ++i0) {
                     write->at<float>(i0) = in->at<float>(start + step*i0);
                 }
@@ -891,7 +894,10 @@ int ax;
                 cgtArray *in=reads[0];
                 long start = reads[1]->at<long>(0);
                 long step = reads[3]->at<long>(0);
-                for (int i0=0; i0 < write->shape()[0]; ++i0) { for (int i1=0; i1 < write->shape()[1]; ++i1) { for (int i2=0; i2 < write->shape()[2]; ++i2) {
+                for (int i0=0; i0 < write->shape()[0]; ++i0) { 
+                  #pragma omp parallel for
+                  for (int i1=0; i1 < write->shape()[1]; ++i1) { 
+                  for (int i2=0; i2 < write->shape()[2]; ++i2) {
                     write->at<float>(i0,i1,i2) = in->at<float>(start + step*i0,i1,i2);
                 }}}
             }
