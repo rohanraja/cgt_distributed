@@ -9,7 +9,7 @@ all:
 	 	-lopenblas -lpthread
 
 ompl:
-	g++ -fopenmp -D EXECU  -std=c++11 -g -o a.out \
+	g++ -fopenmp -D EXECU -D OMP -std=c++11 -g -o a.out \
 		../src/cgt_common.cpp ../src/execution.cpp main.cpp	egreader.cpp trainingJob.cpp \
 		-I../include \
 		-I../build/OpenBLAS \
@@ -20,8 +20,30 @@ ompl:
 		-Wl,-rpath,'$$ORIGIN' \
 	 	-lopenblas -lpthread
 omp:
-	g++-5 -fopenmp -D EXECU  -std=c++11 -g -o a.out \
+	g++-5 -fopenmp -D EXECU -D OMP -std=c++11 -g -o a.out \
 		../src/cgt_common.cpp ../src/execution.cpp main.cpp	egreader.cpp trainingJob.cpp \
+		-I../include \
+		-I../build/OpenBLAS \
+		-L../build/lib \
+		-L../build/OpenBLAS \
+		-L. \
+		-Wl,-rpath,../build/OpenBLAS \
+		-Wl,-rpath,'$$ORIGIN' \
+	 	-lopenblas -lpthread
+simp:
+	g++-5 -D EXECU -std=c++11 -g -o simp.out \
+		../src/cgt_common.cpp ../src/execution.cpp noinp.cpp	egreader.cpp trainingJob.cpp \
+		-I../include \
+		-I../build/OpenBLAS \
+		-L../build/lib \
+		-L../build/OpenBLAS \
+		-L. \
+		-Wl,-rpath,../build/OpenBLAS \
+		-Wl,-rpath,'$$ORIGIN' \
+	 	-lopenblas -lpthread
+ompsimp:
+	g++-5 -fopenmp -D EXECU -D OMP -std=c++11 -g -o simpomp.out \
+		../src/cgt_common.cpp ../src/execution.cpp noinp.cpp	egreader.cpp trainingJob.cpp \
 		-I../include \
 		-I../build/OpenBLAS \
 		-L../build/lib \

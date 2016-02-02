@@ -1127,6 +1127,9 @@ class Fill(Op):
             CGT_EXPORT_C void $function($closure* cldata, cgtArray** reads, cgtArray* write) {
                 long s = write->size();
                 %(cdtype)s value = cldata->value;
+                #ifdef OMP
+                #pragma omp parallel for
+                #endif
                 for (int i=0; i < s; ++i) write->at<%(cdtype)s>(i) = value;
             }"""%dict(cdtype = np2c[outdtype])
         return NativeCompileInfo(func_code=func_code, closure_triples=self.get_closure())
@@ -1473,10 +1476,14 @@ class ElwiseBinary(Op):
                     %(cdtype1)s* in1 = (%(cdtype1)s*)reads[1]->data();
                     %(cdtype2)s* out = (%(cdtype2)s*)write->data();
                     cgt_check(write->size() == s, "Shape error in elementwise binary operation. You might be missing a call to cgt.broadcast(...)");
+                    #ifdef OMP
+                    #pragma omp parallel for
+                    #endif
                     for (int i=0; i < s; ++i) {
                         //std::cout << "Args " << in0[0] << ", " << in1[0] << "\n";
                         out[i] = scalar_$function(in0[%(index0)s], in1[%(index1)s]);
                     }
+
                 }"""%d
             return NativeCompileInfo(func_code=code, includes=["math.h"])
 
@@ -1808,7 +1815,14 @@ def gen_reduction_code(dtype, axes, ndim, reduction_expr, initval):
         static inline %(cdtype)s reduction_$function(%(cdtype)s x, %(cdtype)s y) {return %(reduction_expr)s;}
         CGT_EXPORT_C void $function(void* cldata, cgtArray** reads, cgtArray* write) {
             cgtArray *read=reads[0];
+            #ifdef OMP
+            #pragma omp parallel for
+            #endif
             for (int i=0; i < write->size(); ++i) write->at<%(cdtype)s>(i) = %(initval)s;
+
+            #ifdef OMP
+            #pragma omp parallel for
+            #endif
             %(openloops)s
                 %(cdtype)s x = write->at<%(cdtype)s>(%(outidxexpr)s);
                 %(cdtype)s y = read->at<%(cdtype)s>(%(inidxexpr)s) ;

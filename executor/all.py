@@ -10,7 +10,8 @@ files = map(lambda p: "/Users/rraja/.cgt_cache/" + p + "_0.cpp", prefixes)
 funcs = map(lambda p: "call_" + p, prefixes)
 print funcs
 
-out = ""
+out = """
+"""
 
 for fil in files:
     f = open(fil, 'r')
@@ -22,9 +23,7 @@ for fil in files:
 map_code = """
 
 #include<map>
-
 std::map<std::string, void *> fmap;
-
 
 void create_functions_map(){
 

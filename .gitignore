@@ -22,6 +22,8 @@ npn-debug.log
 .DS_Store
 4dev
 4build
+build*
+*.out
 
 # Build generated stuff
 doc/build

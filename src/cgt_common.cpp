@@ -51,8 +51,9 @@ void cgtArray::print() {
 }
 
 void cgtArray::print_data() {
-    print();
-    return;
+    // print();
+    // return;
+    //
   printf("\nPrinting Array:\n");
 
   float *it = (float*) data_ ;
