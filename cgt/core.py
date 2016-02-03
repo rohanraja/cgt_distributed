@@ -1810,15 +1810,23 @@ def gen_reduction_code(dtype, axes, ndim, reduction_expr, initval):
     initval %= d
     d["reduction_expr"] = reduction_expr
     d["initval"] = initval
-    return r"""
-        using namespace std ;
-        static inline %(cdtype)s reduction_$function(%(cdtype)s x, %(cdtype)s y) {return %(reduction_expr)s;}
-        CGT_EXPORT_C void $function(void* cldata, cgtArray** reads, cgtArray* write) {
-            cgtArray *read=reads[0];
+
+    singleReduct = """
+
+            double sum = 0;
+            %(cdtype)s *readArray = (%(cdtype)s *)read->data() ;
+
             #ifdef OMP
-            #pragma omp parallel for
+            #pragma omp parallel for reduction(+:sum)
             #endif
-            for (int i=0; i < write->size(); ++i) write->at<%(cdtype)s>(i) = %(initval)s;
+            for (int i=0; i < read->size(); ++i) 
+                sum += readArray[i] ;
+
+            write->at<%(cdtype)s>(%(outidxexpr)s) = sum ;
+
+    """%d
+
+    d["reduction_loop"] = """
 
             #ifdef OMP
             #pragma omp parallel for
@@ -1829,6 +1837,25 @@ def gen_reduction_code(dtype, axes, ndim, reduction_expr, initval):
                 //cout << "\n" << x << ", " << y ;
                 write->at<%(cdtype)s>(%(outidxexpr)s) = reduction_$function(x, y);
             %(closeloops)s
+    """%d
+
+    axes = list(axes)
+    axes.sort()
+    if axes == range(ndim):
+        d["reduction_loop"] = singleReduct
+        
+
+    return r"""
+        using namespace std ;
+        static inline %(cdtype)s reduction_$function(%(cdtype)s x, %(cdtype)s y) {return %(reduction_expr)s;}
+        CGT_EXPORT_C void $function(void* cldata, cgtArray** reads, cgtArray* write) {
+            cgtArray *read=reads[0];
+            #ifdef OMP
+            #pragma omp parallel for
+            #endif
+            for (int i=0; i < write->size(); ++i) write->at<%(cdtype)s>(i) = %(initval)s;
+
+            %(reduction_loop)s
         }
         """%d
 
