@@ -855,6 +855,13 @@ class SequentialInterpreter(Interpreter):
     def getarg(self, i):
         return self.args[i]
 
+    def runSched(self, fname):
+        ars = cgt.cycgt.arrays_from_file(fname)
+        for a in ars:
+            self.__call__(*list(a))
+
+        
+
 
 # ================================================================
 # Profiler

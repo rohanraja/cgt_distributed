@@ -235,7 +235,7 @@ cdef cgtDevtype devtype_fromstr(object s):
 ################################################################
 ### Execution graph 
 ################################################################
- 
+from libcpp.vector cimport vector
 cdef extern from "execution.h" namespace "cgt":
     cppclass ByRefCallable:
         ByRefCallable(cgtByRefFun, void*, const string &)
@@ -272,6 +272,15 @@ cdef extern from "execution.h" namespace "cgt":
 
     Interpreter* interpreter_from_file(char *)
     void interpreter_to_file(Interpreter *, const string &)
+    vector[cgtTuple *] get_schedule(const string &fname)
+
+def arrays_from_file(fname):
+
+    cdef vector[cgtTuple *] ret = get_schedule(fname)
+    out = []
+    for i in xrange(ret.size()):
+        out.append(cgt2py_object(ret[i], False))
+    return out
 
 cdef vector[long] _tovectorlong(object xs):
     cdef vector[long] out = vector[long]()
