@@ -51,6 +51,7 @@ class TrainingJob{
     float last_accuracy = 9999999;
     float alpha = 0.9;
     int warnings = 6;
+    bool decay = false ;
     
 public:
     static TrainingJob *instance ;
@@ -206,8 +207,8 @@ public:
         
         float *fdata ;
         
-        int ln = trainSched.size();
-        trace(ln);
+        // int ln = trainSched.size();
+        // trace(ln);
         int numbtch = 0 ;
         
         for(; j<trainSched.size(); j++, numbtch ++){
@@ -219,18 +220,20 @@ public:
                 *fdata = alpha ;
             }
 
+            #ifdef TIMELOOP
             if (numbtch >= 1)
             {
                TIMECH("TrainLoop")
-               {
                   run_print(trainer, trainSched[j], false);
-
-               }
                 exit(0);
             }
-                  else{
+            else{
+              run_print(trainer, trainSched[j], false);
+            }
+
+            #else
                   run_print(trainer, trainSched[j], false);
-                  }
+            #endif
 
             // if(j%100 == 0){
             //     saveParams();
@@ -250,20 +253,16 @@ public:
             
             currentEpoch = i;
             
-            clock_t st = clock();
             
             if(warnings <= 0)
                 return;
             
+            TIMECH("Epoch")
             trainLoop();
             
-            clock_t end = clock();
-            double elapsed_secs = double(end - st) / CLOCKS_PER_SEC;
-            trace(elapsed_secs);
-            
             prev_acc = last_accuracy;
-            //validate();
-            if(prev_acc < last_accuracy){
+            validate();
+            if(prev_acc < last_accuracy && decay){
                 alpha /= 4.0 ;
                 warnings--;
                 cout << endl << warnings << " tries left\n" ;

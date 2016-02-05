@@ -1828,21 +1828,17 @@ def gen_reduction_code(dtype, axes, ndim, reduction_expr, initval):
 
     d["reduction_loop"] = """
 
-            #ifdef OMP
-            #pragma omp parallel for
-            #endif
             %(openloops)s
                 %(cdtype)s x = write->at<%(cdtype)s>(%(outidxexpr)s);
                 %(cdtype)s y = read->at<%(cdtype)s>(%(inidxexpr)s) ;
-                //cout << "\n" << x << ", " << y ;
                 write->at<%(cdtype)s>(%(outidxexpr)s) = reduction_$function(x, y);
             %(closeloops)s
     """%d
 
-    axes = list(axes)
-    axes.sort()
-    if axes == range(ndim):
-        d["reduction_loop"] = singleReduct
+    # axes = list(axes)
+    # axes.sort()
+    # if axes == range(ndim):
+    #     d["reduction_loop"] = singleReduct
         
 
     return r"""

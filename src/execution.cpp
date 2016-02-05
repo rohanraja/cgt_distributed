@@ -58,7 +58,7 @@ public:
             
             icnt++;
 
-            // TIMECH(instr->repr().c_str()) 
+             // TIMECH(instr->repr().c_str()) 
                 instr->fire(this);
         }
         // cout << "\n\n";
@@ -411,6 +411,9 @@ Interpreter* interpreter_from_file(char * fname){
 
   ifstream f;
   f.open(fname, ios::binary | ios::in);
+    if (!f.good()) {
+        return NULL ;
+    }
 
   vector<MemLocation> outps = loadMemVector(f);
   ExecutionGraph *eg = loadExecutionGraph(f) ;

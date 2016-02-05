@@ -25,7 +25,7 @@ int main(int argc, char *args[] ){
       rep(i, trainSched.size()){
 
       TIMECH("Single Run")
-        run_print(inp, trainSched[i]);
+        run_print(inp, trainSched[i], false);
 
       }
     }

@@ -10,6 +10,9 @@
 
 void run_print(Interpreter * inp, cgtTuple * inptup, bool isPrint ){
     
+    if(inp ==NULL)
+        return;
+    
     if(isPrint)
         cout << "\n*************************************************\nResults:\n" ;
     IRC<cgtTuple> ret = IRC<cgtTuple> (inp->run(inptup)) ;
