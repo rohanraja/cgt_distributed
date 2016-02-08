@@ -74,6 +74,18 @@ void* pptr;
                     }
                 }
 
+            CGT_EXPORT_C void call_02bb642ccd2250c6db76db7b246b3e8e(void* cldata, cgtArray** reads, cgtArray* write) {
+                cgtArray *in=reads[0], *inc = reads[4];
+                long start = reads[1]->at<long>(0);
+                long step = reads[3]->at<long>(0);
+                cgt_assert(in->size() == write->size());
+                if (write->data() != in->data()) cgt_copy_array(write, in);
+                for (int i0=0; i0 < inc->shape()[0]; ++i0) { for (int i1=0; i1 < inc->shape()[1]; ++i1) {
+                    write->at<float>(start + step*i0,i1) += inc->at<float>(i0,i1);
+                }}
+            }
+            
+
                 static inline float scalar_call_0486a7d8d91ec22cdaff5147b528f1be(float x, float y) {return x-y;}
                 CGT_EXPORT_C void call_0486a7d8d91ec22cdaff5147b528f1be(void* cldata, cgtArray** reads, cgtArray* write) {
                     int s = reads[0]->size();
@@ -2568,6 +2580,18 @@ double value;
                 }
             }
             
+
+            CGT_EXPORT_C void call_e8a5cd895060aad3f98d95ce020ef778(void* cldata, cgtArray** reads, cgtArray* write) {
+                cgtArray *in=reads[0], *inc = reads[4];
+                long start = reads[1]->at<long>(0);
+                long step = reads[3]->at<long>(0);
+                cgt_assert(in->size() == write->size());
+                if (write->data() != in->data()) cgt_copy_array(write, in);
+                for (int i0=0; i0 < inc->shape()[0]; ++i0) { for (int i1=0; i1 < inc->shape()[1]; ++i1) {
+                    write->at<float>(i0,start + step*i1) += inc->at<float>(i0,i1);
+                }}
+            }
+            
 typedef struct closure_e8b17796de113e1b4ae5027aa31bdf46 {
 int ax;
 } closure_e8b17796de113e1b4ae5027aa31bdf46;
@@ -2865,6 +2889,7 @@ void create_functions_map(){
 	fmap["call_0077a2258ab15bfa9cafda07748efe2d"] = (void *) &call_0077a2258ab15bfa9cafda07748efe2d ; 
 	fmap["call_00914cbe71181f85859917d0afbd6fa4"] = (void *) &call_00914cbe71181f85859917d0afbd6fa4 ; 
 	fmap["call_01ea73a67790f024647388b85086685a"] = (void *) &call_01ea73a67790f024647388b85086685a ; 
+	fmap["call_02bb642ccd2250c6db76db7b246b3e8e"] = (void *) &call_02bb642ccd2250c6db76db7b246b3e8e ; 
 	fmap["call_0486a7d8d91ec22cdaff5147b528f1be"] = (void *) &call_0486a7d8d91ec22cdaff5147b528f1be ; 
 	fmap["call_07446b7655dd180a91f826341a8b28ee"] = (void *) &call_07446b7655dd180a91f826341a8b28ee ; 
 	fmap["call_0762a8e46046b932520c160b35d4ec56"] = (void *) &call_0762a8e46046b932520c160b35d4ec56 ; 
@@ -3042,6 +3067,7 @@ void create_functions_map(){
 	fmap["call_e5985f06daf02647b6fcd254e5c5882e"] = (void *) &call_e5985f06daf02647b6fcd254e5c5882e ; 
 	fmap["call_e611523a7e6a087733ffc5df4968398b"] = (void *) &call_e611523a7e6a087733ffc5df4968398b ; 
 	fmap["call_e8894ade3fc514d54ae656001a16a2f9"] = (void *) &call_e8894ade3fc514d54ae656001a16a2f9 ; 
+	fmap["call_e8a5cd895060aad3f98d95ce020ef778"] = (void *) &call_e8a5cd895060aad3f98d95ce020ef778 ; 
 	fmap["call_e8b17796de113e1b4ae5027aa31bdf46"] = (void *) &call_e8b17796de113e1b4ae5027aa31bdf46 ; 
 	fmap["call_eb80c1ab146f7c5b5bb0dd426b22554f"] = (void *) &call_eb80c1ab146f7c5b5bb0dd426b22554f ; 
 	fmap["call_ebe471ffc86c39419cb930d4c0d99376"] = (void *) &call_ebe471ffc86c39419cb930d4c0d99376 ; 
