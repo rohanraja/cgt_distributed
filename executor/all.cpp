@@ -888,6 +888,18 @@ long pptr;
                     }
                 }
 
+            CGT_EXPORT_C void call_479ac9a2be384300b93e7e3f1c31976d(void* cldata, cgtArray** reads, cgtArray* write) {
+                long n=0; // value along concat axis
+                for (int i=0; i < 25; ++i) {
+                    cgtArray* in = reads[i];
+                    for (int i0=0; i0 < in->shape()[0]; ++i0) {
+                        write->at<float>(i0+n) = in->at<float>(i0);
+                    }
+                    n += in->shape()[0];
+                }
+            }
+            
+
         using namespace std ;
         static inline float reduction_call_4830064b23695591a6af7d194be6a2a2(float x, float y) {return x+y;}
         CGT_EXPORT_C void call_4830064b23695591a6af7d194be6a2a2(void* cldata, cgtArray** reads, cgtArray* write) {
@@ -2909,6 +2921,7 @@ void create_functions_map(){
 	fmap["call_44fe2f9f36c46a1dc14e634bd0536233"] = (void *) &call_44fe2f9f36c46a1dc14e634bd0536233 ; 
 	fmap["call_46aa4554818a2927d268e9fc8894bc02"] = (void *) &call_46aa4554818a2927d268e9fc8894bc02 ; 
 	fmap["call_471580551479c7db61b80eff870865d7"] = (void *) &call_471580551479c7db61b80eff870865d7 ; 
+	fmap["call_479ac9a2be384300b93e7e3f1c31976d"] = (void *) &call_479ac9a2be384300b93e7e3f1c31976d ; 
 	fmap["call_4830064b23695591a6af7d194be6a2a2"] = (void *) &call_4830064b23695591a6af7d194be6a2a2 ; 
 	fmap["call_4894654a0f8c779625611cf68a5928a6"] = (void *) &call_4894654a0f8c779625611cf68a5928a6 ; 
 	fmap["call_4c2229220e536f222bbdd79ca5a5b429"] = (void *) &call_4c2229220e536f222bbdd79ca5a5b429 ; 
