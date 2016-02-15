@@ -131,12 +131,15 @@ def make_loss_and_grad_and_step(arch, size_input, size_output, size_mem, size_ba
     x_tnk = cgt.tensor3()
     targ_tnk = cgt.tensor3()
     make_network = make_deep_lstm if arch=="lstm" else make_deep_gru
-    make_network = make_simple_rnn
+    make_network = make_deep_gru
+    # make_network = make_simple_rnn
     network = make_network(size_input, size_mem, n_layers, size_output, size_batch)
     init_hiddens = [cgt.matrix() for _ in xrange(get_num_hiddens(arch, n_layers))]
+    init_hiddens2 = [cgt.shared(np.ones((size_batch, size_mem))) for _ in xrange(n_layers)]
+
     # TODO fixed sizes
 
-    cur_hiddens = init_hiddens
+    cur_hiddens = init_hiddens2
     loss = 0
     for t in xrange(n_unroll):
         outputs = network([x_tnk[t]] + cur_hiddens)
@@ -159,6 +162,10 @@ def make_loss_and_grad_and_step(arch, size_input, size_output, size_mem, size_ba
       up = (parm, parm - 0.1*grd)
       updates.append(up)
 
+    for (hid, curhid) in zip(init_hiddens2, final_hiddens):
+      up = (hid, hid - hid + curhid)
+      updates.append(up)
+
     with utils.Message("compiling loss+grad"):
         f_loss_and_grad = cgt.function([x_tnk, targ_tnk] + init_hiddens, [loss, flatgrad] + final_hiddens, updates = updates)
     f_loss = cgt.function([x_tnk, targ_tnk] + init_hiddens, loss)
@@ -169,9 +176,15 @@ def make_loss_and_grad_and_step(arch, size_input, size_output, size_mem, size_ba
     outputs = network([x_nk] + init_hiddens)
 
     f_step = cgt.function([x_nk]+init_hiddens, outputs)
+    paramInp = [ cgt.matrix() for i in range(len(params))] 
+    pUpdates = []
+    for pinp, prm in zip(paramInp, params):
+        pUpdates.append((prm, prm - prm + pinp))
+
+    paramResume = cgt.function(inputs=paramInp, outputs=[], updates = pUpdates)
 
     # print "node count", cgt.count_nodes(flatgrad)
-    return network, f_loss, f_loss_and_grad, f_step
+    return network, f_loss, f_loss_and_grad, f_step, paramResume
 
 
 class Table(dict):
@@ -266,6 +279,8 @@ def sample(f_step, init_hiddens, char2ind, n_steps, temperature, seed_text = "")
         x_1k = ind2onehot([index], vocab_size)
         net_outputs = f_step(x_1k, *cur_hiddens)
         cur_hiddens, logprobs_1k = net_outputs[:-1], net_outputs[-1]
+        # print logprobs_1k
+        # return
         t.write(char)
 
     cgt.utils.colorprint(cgt.utils.Color.YELLOW, t.getvalue() + "\n")
@@ -273,6 +288,7 @@ def sample(f_step, init_hiddens, char2ind, n_steps, temperature, seed_text = "")
 def main():
 
     nr.seed(0)
+    cgt.update_config(default_device=cgt.core.Device(devtype="cpu"), backend="native")
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_dir", type=str, default="alice")
@@ -280,7 +296,7 @@ def main():
     parser.add_argument("--size_batch", type=int,default=64)
     parser.add_argument("--n_layers",type=int,default=1)
     parser.add_argument("--n_unroll",type=int,default=6)
-    parser.add_argument("--step_size",type=float,default=.01)
+    parser.add_argument("--step_size",type=float,default=.1)
     parser.add_argument("--decay_rate",type=float,default=0.95)
     parser.add_argument("--n_epochs",type=int,default=100)
     parser.add_argument("--arch",choices=["lstm","gru"],default="gru")
@@ -292,19 +308,22 @@ def main():
     args = parser.parse_args()
 
     cgt.set_precision("quad" if args.grad_check else "single")
+    cgt.update_config(default_device=cgt.core.Device(devtype="cpu"), backend="native")
 
     assert args.n_unroll > 1
 
     loader = Loader(args.data_dir,args.size_batch, args.n_unroll, (1.0,0,0))
 
-    network, f_loss, f_loss_and_grad, f_step = make_loss_and_grad_and_step(args.arch, loader.size_vocab, 
+    network, f_loss, f_loss_and_grad, f_step, paramResume = make_loss_and_grad_and_step(args.arch, loader.size_vocab, 
         loader.size_vocab, args.size_mem, args.size_batch, args.n_layers, args.n_unroll)
 
     if args.profile: profiler.start()
 
     params = network.get_parameters()
     pc = ParamCollection(params)
-    pc.set_value_flat(nr.uniform(-.1, .1, size=(pc.get_total_size(),)))
+    pcInit = nr.uniform(-.1, .1, size=(pc.get_total_size(),))
+    # pcInit = np.ones((pc.get_total_size(),))
+    pc.set_value_flat(pcInit)
 
     def initialize_hiddens(n):
         return [np.ones((n, args.size_mem), cgt.floatX) for _ in xrange(get_num_hiddens(args.arch, args.n_layers))]
@@ -326,19 +345,23 @@ def main():
         print "Gradient check succeeded!"
         return
 
-    optim_state = make_rmsprop_state(theta=pc.get_value_flat(), step_size = args.step_size, 
-        decay_rate = args.decay_rate)
+    # optim_state = make_rmsprop_state(theta=pc.get_value_flat(), step_size = args.step_size, 
+        # decay_rate = args.decay_rate)
+
+    paramResume.runSched("/Users/rraja/code/xlearn/models/tmp.params")
+    sample(f_step, initialize_hiddens(1), char2ind=loader.char2ind, n_steps=1000, temperature=args.temperature, seed_text = "")
+    return
 
     for iepoch in xrange(args.n_epochs):
         losses = []
         tstart = time()
         print "starting epoch",iepoch
         cur_hiddens = initialize_hiddens(args.size_batch)
+        sample(f_step, initialize_hiddens(1), char2ind=loader.char2ind, n_steps=1000, temperature=args.temperature, seed_text = "")
         for (x,y) in loader.train_batches_iter():
             out = f_loss_and_grad(x,y, *cur_hiddens)
             loss = out[0]
             grad = out[1]
-            # import ipdb; ipdb.set_trace()
             # print loss
             cur_hiddens = out[2:]
             # rmsprop_update(grad, optim_state)

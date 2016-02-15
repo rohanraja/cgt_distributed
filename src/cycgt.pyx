@@ -282,6 +282,7 @@ def arrays_from_file(fname):
         out.append(cgt2py_object(ret[i], False))
     return out
 
+
 cdef vector[long] _tovectorlong(object xs):
     cdef vector[long] out = vector[long]()
     for x in xs: out.push_back(<long>x)
@@ -493,7 +494,12 @@ cdef class CppInterpreterWrapper:
     def saveToFile(self, fname):
         fname = "eg.bin"
         interpreter_to_file(self.interp, fname)
-    def record(self, fname):
+    def record(self, fname, *pyargs):
+
+        if len(pyargs) > 0:
+            record_arrays(fname, self.input_types, *pyargs )
+            return
+
         f = open(fname, 'w')
         f.write('')
         f.close()
@@ -510,6 +516,15 @@ cdef class CppInterpreterWrapper:
         print "Running Schedule %s\n" % fname
         self.interp.runSched(fname)
 
+def record_arrays(fname, input_types, *pyargs):
+    f = open(fname, 'w')
+    f.write('')
+    f.close()
+    pyargs = tuple(core.as_valid_array(arg,typ) for (arg,typ) in zip(pyargs,input_types)) 
+    cdef cgtTuple* cargs = new cgtTuple(len(pyargs))
+    for (i,pyarg) in enumerate(pyargs):
+        cargs.setitem(i, py2cgt_object(pyarg, True))
+    cargs.save(fname);
 
 def cgt_build_root():
     return osp.dirname(osp.dirname(osp.abspath(__file__)))

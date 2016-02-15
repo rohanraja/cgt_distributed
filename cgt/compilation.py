@@ -382,7 +382,7 @@ def run_compilation_pipeline(inputs, outputs, updates, givens):
     if isinp:
         # print "WRITING"
         inps_intep = inputs, outputs_simple, eg, node2memloc
-        dill.dump(inps_intep, open("inptps", 'w'))
+        # dill.dump(inps_intep, open("inptps", 'w'))
         #
         # for i in eg.instrs:
         #     try:
@@ -857,10 +857,16 @@ class SequentialInterpreter(Interpreter):
 
     def runSched(self, fname):
         ars = cgt.cycgt.arrays_from_file(fname)
+        outs = []
         for a in ars:
-            self.__call__(*list(a))
+            outs.append(self.__call__(*list(a)))
 
-        
+        return outs
+
+
+    def record(self, fname, *pyargs):
+        print "Saving Weights from Python Interpreter"
+        cgt.cycgt.record_arrays(fname, self.input_types, *pyargs )
 
 
 # ================================================================

@@ -92,7 +92,7 @@ def main():
 
     np.random.seed(0)
 
-    cgt.update_config(default_device=cgt.core.Device(devtype=args.devtype), backend="native")
+    cgt.update_config(default_device=cgt.core.Device(devtype=args.devtype), backend="python")
 
     if args.model=="conv":
         Xdata = Xdata.reshape(-1, 1, 28, 28)
@@ -144,16 +144,16 @@ def main():
     for pinp, prm in zip(paramInp, params):
         pUpdates.append((prm, prm - prm + pinp))
     paramResume = cgt.function(inputs=paramInp, outputs=[], updates = pUpdates)
-    paramResume.save("paramResume.inp")
+    # paramResume.save("paramResume.inp")
 
     computeloss = cgt.function(inputs=[X, y], outputs=[err_nodrop,cost_nodrop])
     train = cgt.function(inputs=[X, y], outputs=[cost_nodrop], updates=updates)
     pnew = map(lambda p: (3*p)/3, params)
     paramOut = cgt.function(inputs=[], outputs=params)
     
-    train.save("train.inp")
-    paramOut.save("param.inp")
-    computeloss.save("valid.inp")
+    # train.save("train.inp")
+    # paramOut.save("param.inp")
+    # computeloss.save("valid.inp")
 
     # train.record("train_sched.bin")
     # computeloss.record("valid_sched.bin")
@@ -190,7 +190,7 @@ def main():
         trainerr, trainloss = computeloss(Xtrain[:len(Xtest)], ytrain[:len(Xtest)])
         testerr, testloss = computeloss(Xtest, ytest)
         print fmt_row(10, [i_epoch, trainloss, trainerr, testloss, "%.2f%%"%(testerr), elapsed])
-    if args.profile: cgt.execution.profiler.print_stats()
+    if args.profile: cgt.profiler.print_stats()
 
 if __name__ == "__main__":
     main()
