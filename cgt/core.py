@@ -1336,6 +1336,9 @@ class ElwiseUnary(Op):
                     int s = read->size();
                     %(cdtype0)s* readdata = (%(cdtype0)s*)read->data();
                     %(cdtype1)s* writedata = (%(cdtype1)s*)write->data();
+                    #ifdef OMP
+                    #pragma omp parallel for
+                    #endif
                     for (int i=0; i < s; ++i) {
                         writedata[i] = scalar_$function(readdata[i]);
                     }
