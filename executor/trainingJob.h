@@ -232,13 +232,15 @@ public:
             }
 
             #else
+                 cout << currentBatch <<endl;
+                 TIMECH("TrainLoop")
                   run_print(trainer, trainSched[j], false);
             #endif
 
-            // if(j%100 == 0){
-            //     saveParams();
-            //     saveState();
-            // }
+            if(j%20 == 0){
+                saveParams();
+                saveState();
+            }
         }
         currentBatch = 0;
     }
@@ -261,7 +263,8 @@ public:
             trainLoop();
             
             prev_acc = last_accuracy;
-            validate();
+            if(isExiting == false)
+              validate();
             if(prev_acc < last_accuracy && decay){
                 alpha /= 4.0 ;
                 warnings--;
